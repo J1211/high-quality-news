@@ -1,0 +1,40 @@
+name: Hourly High-Quality News Filter
+
+on:
+  schedule:
+    # 每小时的第 15 分钟自动运行一次
+    - cron: '15 * * * *'
+  workflow_dispatch: # 允许你在 GitHub Actions 页面随时手动点击按钮立即运行
+
+permissions:
+  contents: write # 允许脚本把更新后的 json 数据提交回仓库
+
+jobs:
+  fetch-and-score:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 1. 检出仓库代码
+        uses: actions/checkout@v4
+
+      - name: 2. 配置 Python 环境
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: 3. 安装依赖
+        run: pip install -r requirements.txt
+
+      - name: 4. 运行抓取与 AI 严审脚本
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: python fetch_and_score.py
+
+      - name: 5. 自动提交更新后的新闻数据回仓库
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add high_quality_news.json seen_urls.json || true
+          git diff --staged --quiet || git commit -m "Auto-update high quality news [skip ci]"
+          git push
