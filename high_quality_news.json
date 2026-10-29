@@ -1,0 +1,74 @@
+[
+  {
+    "topic": "AI与硬科技",
+    "title": "三星交出史上最强财报：营业利润首破100万亿韩元 “存储荒”料将持续",
+    "source": "财联社",
+    "url": "https://www.cls.cn/detail/2518787",
+    "pub_date": "Thu, 29 Oct 2026 02:45:57 GMT",
+    "snippet": "①三星Q3财报显示，营收、利润双双飙升，均创下历史新高，营业利润首次突破100万亿韩元大关； ②不过，三星营收、利润均略逊于分析师预期，这令投资者感到失望； ③三星预计，未来几年内存供应紧张的局面将持续。 财联社10月29日讯（编辑 卞纯）周四早间，韩国存储芯片巨头三星电子公布了...",
+    "score": 9.5,
+    "reason": "顶级权威财联社快讯，详细披露三星电子历史级三季报数据（营业利润破100万亿韩元），并与分析师预期（LSEG）作横向基准对比，同时给出HBM销量与资本开支等核心硬核指标，信源与数据极度扎实。",
+    "model": "gemini:gemini-3.5-flash-lite",
+    "fetched_at": "2026-10-29 09:13 UTC"
+  },
+  {
+    "topic": "AI与硬科技",
+    "title": "AI产能投资正在“兑现”：从ASM财报看半导体设备景气度",
+    "source": "搜狐网",
+    "url": "https://m.sohu.com/a/1094453527_166680?scm=10001.325_13-325_13.0.0-0-0-0-0.5_1334",
+    "pub_date": "Thu, 29 Oct 2026 08:47:58 GMT",
+    "snippet": "ASM International三季报三重超预期：营收同比增约45%，四季度指引高于一致预期，2027年目标上调至超57亿欧元，提前三年锁定2030年目标，公司归因于AI相关产能投资。 核心观点 1. ASM三季报的罕见之处不在超预期的幅度，而在“兑现”的方式：当季营收、下季指...",
+    "score": 9.2,
+    "reason": "极高质量的半导体设备行业深度财报分析。以ASM三季报为切入点，横向对比ASML、应用材料、泛林集团等巨头数据，数据密度极高，客观印证了AI资本开支的兑现节奏。",
+    "model": "gemini:gemini-3.5-flash-lite",
+    "fetched_at": "2026-10-29 09:13 UTC"
+  },
+  {
+    "topic": "AI与硬科技",
+    "title": "Bloomberg 将基于领域知识的 AI 编码助手引入 BQuant",
+    "source": "Unite.AI",
+    "url": "https://www.unite.ai/zh-cn/bloomberg-adds-domain-grounded-ai-coding-assistant-to-bquant/",
+    "pub_date": "Wed, 28 Oct 2026 11:22:11 GMT",
+    "snippet": "AI 模型与平台 Bloomberg 将基于领域知识的 AI 编码助手引入 BQuant 将 Unite.AI 添加到您在 Google 上的首选来源 Bloomberg 于 2026 年 10 月 28 日推出了 BQuant Assistant。这款对话式 AI 编码助手内置...",
+    "score": 8.8,
+    "reason": "彭博官方推出BQuant Assistant的产品公告，包含明确的功能定位、发布时间与架构说明，信息源权威客观",
+    "model": "gemini:gemini-3.5-flash-lite",
+    "fetched_at": "2026-10-29 09:12 UTC"
+  },
+  {
+    "topic": "AI与硬科技",
+    "title": "Instagram 采用原生 AI 架构对用户界面进行了现代化改造，将 token 成本降低了 33%",
+    "source": "InfoQ-CN",
+    "url": "https://www.infoq.cn/article/bXKVgLdpf7HONYHIi6Su",
+    "pub_date": "Wed, 28 Oct 2026 13:00:39 GMT",
+    "snippet": "Instagram Direct 将其 Android 用户界面从旧版的 Android View 系统迁移到了 Jetpack Compose，从而创建了一个 AI 原生的用户界面代码库，使 AI 编码代理更容易理解、修改和维护。据 Instagram 工程师称，这次迁移使用户...",
+    "score": 8.5,
+    "reason": "技术工程类报道，详细披露了Instagram迁移的量化指标（代码量减少50%、token成本降低33%等），信源明确且具备技术参考价值",
+    "model": "gemini:gemini-3.5-flash-lite",
+    "fetched_at": "2026-10-29 09:12 UTC"
+  },
+  {
+    "topic": "AI与硬科技",
+    "title": "日活1.68亿，AI短剧只赚一块钱",
+    "source": "新浪网",
+    "url": "https://finance.sina.cn/2026-10-28/detail-iniwukpz5959953.d.html?vt=4&wm=1029?q",
+    "pub_date": "Thu, 29 Oct 2026 02:15:00 GMT",
+    "snippet": "日活1.68亿，AI短剧只赚一块钱 21世纪经济报道记者 雷雨薇 王其馨 早高峰的地铁车厢里，竖屏短剧成为通勤族填充碎片时间的主流选择。 40秒一集的强节奏剧情卡在反转处戛然而止，指尖滑动间，逆袭、豪门、复仇等爽感桥段快速更迭。 AI短剧已经从行业概念渗透进大众的内容消费日常，也...",
+    "score": 8.5,
+    "reason": "引用了QuestMobile、掌阅、DataEye等多方数据，客观呈现AI短剧赛道的成本降幅、日活与合规清退情况，数据密度与基准较好",
+    "model": "gemini:gemini-3.5-flash-lite",
+    "fetched_at": "2026-10-29 09:12 UTC"
+  },
+  {
+    "topic": "AI与硬科技",
+    "title": "AI推高算力需求 海力士、摩尔线程三季度营收大增",
+    "source": "财新",
+    "url": "https://companies.caixin.com/2026-10-29/102498532.html",
+    "pub_date": "Thu, 29 Oct 2026 07:23:00 GMT",
+    "snippet": "【财新网】AI算力需求兑现为芯片厂商业绩。三季度，韩国存储巨头SK海力士（KRX:000660；NASDAQ:SKHY）单季营收首次突破100万亿韩元，营业利润同比增长逾六倍，并以长约形式提前锁定2027年至2028年的过半产能。 当地时间10月28日，海力士发布2026年第三季...",
+    "score": 9.5,
+    "reason": "源自SK海力士官方财报，包含单季营收突破100万亿韩元、利润率、长约锁定产能等极高密度的一手财务数据和横向基准，完全符合高分标准",
+    "model": "gemini:gemini-3.5-flash-lite",
+    "fetched_at": "2026-10-29 09:12 UTC"
+  }
+]
