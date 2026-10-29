@@ -1,6 +1,42 @@
 [
   {
     "topic": "AI与硬科技",
+    "title": "谷歌的“大麻烦”：AI还要烧钱，但搜索已受冲击",
+    "source": "华尔街见闻",
+    "url": "https://wallstreetcn.com/articles/3784724",
+    "pub_date": "Thu, 29 Oct 2026 00:39:33 GMT",
+    "snippet": "Alphabet第三季度财报全面失守，令市场对其AI投资回报的疑虑骤然升温。 据彭博报道，Alphabet第三季度剔除流量获取成本后的营收为1112亿美元，略低于分析师预期的1113亿美元；每股收益仅2.12美元，远低于华尔街预期的2.99美元。财报公布后，Alphabet股价盘...",
+    "score": 8.5,
+    "reason": "基于Alphabet最新季度财报，披露了核心搜索业务收入不及预期、AI查询货币化率较低等关键事实与具体财务指标，并附带了分析师预期对比，属于高质量财报拆解。",
+    "model": "gemini:gemini-3.5-flash-lite",
+    "fetched_at": "2026-10-29 16:10 UTC"
+  },
+  {
+    "topic": "AI与硬科技",
+    "title": "Anthropic招股书公布后，国内大模型会因此被重估吗？",
+    "source": "新浪财经",
+    "url": "https://finance.sina.com.cn/jjxw/2026-10-29/doc-iniwwtux5308433.shtml?cre=tianyi&mod=pchp&loc=32&r=0&rfunc=60&tj=cxvertical_pc_hp&tr=12",
+    "pub_date": "Thu, 29 Oct 2026 10:18:00 GMT",
+    "snippet": "界面新闻记者 | 伍洋宇 界面新闻编辑 | 文姝琪 Anthropic近日公开的招股书，为全球模型厂商及其投资人都提供了一组更具体的参照。 作为行业当前收入和估值都最高的公司，这份文件昭示了一家模型公司的高估值与其财务表现之间应有的关系。 10月26日，Anthropic向美国证...",
+    "score": 8.5,
+    "reason": "基于Anthropic最新公开的S-1招股书展开，提供了详实的一手财务数据（收入、毛利率、亏损结构及ARR估值倍数），并探讨了对行业估值体系的参考意义，客观克制。",
+    "model": "gemini:gemini-3.5-flash-lite",
+    "fetched_at": "2026-10-29 16:10 UTC"
+  },
+  {
+    "topic": "AI与硬科技",
+    "title": "AI 行业重磅并购：彭博社称美满电子最快下周宣布收购光通信龙头 Lumentum",
+    "source": "同花顺财经",
+    "url": "http://field.10jqka.com.cn/20261029/c681213953.shtml",
+    "pub_date": "Thu, 29 Oct 2026 00:42:12 GMT",
+    "snippet": "IT之家10月29日消息，彭博社今天(10月29日)发布博文，报道称美国半导体（881121）公司美满电子(Marvell)计划收购数据中心光通信设备（881129）制造商朗美通(Lumentum)，目前双方正在磋商谈判，交易最快可能于下周宣布。 IT之家援引博文介绍，双方尚未达...",
+    "score": 9.0,
+    "reason": "源自彭博社的一手信源，报道了半导体行业美满电子拟收购光通信龙头Lumentum的重大并购事件，包含了具体的市值数据、市场反应与逻辑分析，符合实质性新事实增量与数据密度标准。",
+    "model": "gemini:gemini-3.5-flash-lite",
+    "fetched_at": "2026-10-29 16:10 UTC"
+  },
+  {
+    "topic": "AI与硬科技",
     "title": "三星交出史上最强财报：营业利润首破100万亿韩元 “存储荒”料将持续",
     "source": "财联社",
     "url": "https://www.cls.cn/detail/2518787",
