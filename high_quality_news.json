@@ -1,6 +1,54 @@
 [
   {
     "topic": "AI与硬科技",
+    "title": "胜宏科技AI算力订单需求旺盛，Q4业绩加速可期|财报解读",
+    "source": "新浪财经",
+    "url": "https://finance.sina.com.cn/roll/2026-10-30/doc-iniwyfwf4790898.shtml",
+    "pub_date": "Fri, 30 Oct 2026 01:05:00 GMT",
+    "snippet": "胜宏科技（300476.SZ/2476.HK）2026年三季报显示，前三季度实现营业收入184.61亿元，同比增长30.77%；归母净利润33.84亿元，同比增长4.28%；扣非净利润36.94亿元，同比增长13.74%。 但这份财报真正的分量，不在利润表的第一行，而在三个层层递...",
+    "score": 8.5,
+    "reason": "胜宏科技三季报财报解读，深入剖析了归母与扣非净利润差异、环比毛利率变化及1.6T光模块PCB等高端产品放量细节，数据密度与业务逻辑清晰",
+    "model": "gemini:gemini-3.5-flash-lite",
+    "fetched_at": "2026-10-30 14:09 UTC"
+  },
+  {
+    "topic": "AI与硬科技",
+    "title": "SNDK财报：半导体领域的佼佼者，但85%的毛利率是否已是天花板？",
+    "source": "Moomoo",
+    "url": "http://www.moomoo.com/hans/community/feed/sandisk-earnings-85-margins-near-a-plateau-but-can-ai-117527189520390",
+    "pub_date": "Fri, 30 Oct 2026 01:09:54 GMT",
+    "snippet": "财报强劲，芯片股却疲软：半导体周期要反转了吗？ $闪迪 (SNDK.US)$其收入的同比增速已从51%放缓至23%，但由人工智能驱动的数据中心需求仍贡献了88%的增量收入。长期供货协议提升了业绩的可见性，不过盈利的可持续性仍是估值层面的核心争议所在。 又一份超预期的财报，但增长正...",
+    "score": 8.5,
+    "reason": "基于闪迪（SNDK）最新财报的深度拆解，提供营收、每股收益、毛利率变化、数据中心增量占比等详实数据，且对估值与周期进行了客观审视",
+    "model": "gemini:gemini-3.5-flash-lite",
+    "fetched_at": "2026-10-30 14:09 UTC"
+  },
+  {
+    "topic": "AI与硬科技",
+    "title": "百度APP AI能力迭代，搜索引入递归自进化机制",
+    "source": "网易新闻客户端",
+    "url": "https://c.m.163.com/news/a/LAGPUUUP0519APGA.html",
+    "pub_date": "Fri, 30 Oct 2026 10:27:00 GMT",
+    "snippet": "本文来源：时代周报 10月30日，百度在北京召开百度APP产品沟通会，对外披露搜索端技术新进展，新增递归自我进化能力，同时推出新版搜索 AI 接口，面向开发者开启限时优惠，活动档位报价低至4.9元每千次调用，在定价上低于DeepSeek同类搜索 API。本次升级集中在搜索交互、视...",
+    "score": 8.5,
+    "reason": "详细披露了百度APP搜索端技术升级、递归自进化机制及具体的API限时定价（4.9元每千次），具备极高的一手事实与商业对标价值",
+    "model": "gemini:gemini-3.5-flash-lite",
+    "fetched_at": "2026-10-30 14:09 UTC"
+  },
+  {
+    "topic": "AI与硬科技",
+    "title": "昆仑万维重注短剧，周亚辉重排AI资产",
+    "source": "新浪财经",
+    "url": "https://finance.sina.com.cn/roll/2026-10-30/doc-iniwzazt8185199.shtml",
+    "pub_date": "Fri, 30 Oct 2026 10:33:55 GMT",
+    "snippet": "21世纪经济报道记者 雷晨 10月29日，昆仑万维披露2026年三季报。前三季度，公司收入达到89.37亿元，较上年同期增加53.96%；归母净利润0.03亿元，较上年同期实现扭亏。同期，非经常性损益达到15.49亿元，扣非归母净亏损15.46亿元。 前三季度，天工AI（人工智能...",
+    "score": 8.5,
+    "reason": "基于昆仑万维三季报的财报深度解析，提供了详细的营业收入、归母净利润、销售费用率、毛利率等硬核财务数据，并横向对比了业务转型与资本运作情况，信息增量高。",
+    "model": "gemini:gemini-3.5-flash-lite",
+    "fetched_at": "2026-10-30 14:09 UTC"
+  },
+  {
+    "topic": "AI与硬科技",
     "title": "存储芯片涨价，君正股份前三季净利增逾九倍",
     "source": "网易新闻客户端",
     "url": "https://c.m.163.com/news/a/LAG568VP05198SGG.html",
