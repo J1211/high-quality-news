@@ -1,6 +1,78 @@
 [
   {
     "topic": "AI与硬科技",
+    "title": "Anthropic冲刺IPO：一场与OpenAI的估值、营收和算力竞赛",
+    "source": "财联社",
+    "url": "https://www.cls.cn/detail/2521127",
+    "pub_date": "Sat, 31 Oct 2026 06:47:00 GMT",
+    "snippet": "随着Anthropic推进IPO，全球两家头部AI公司Anthropic与OpenAI的竞争再次成为市场关注的焦点。 编者按： 本文以Anthropic最新招股书及近期媒体报道为基础，从估值、营收、盈利能力和算力投入四个维度，对两家公司的经营状况与发展战略进行全面比较，力求通过直...",
+    "score": 9.0,
+    "reason": "基于Anthropic招股书与SEC文件的深度财报剖析，直接对比Anthropic与OpenAI的季度营收、估值、算力支出等核心财务与基础设施指标，信源硬核、横向基准扎实。",
+    "model": "gemini:gemini-3.5-flash-lite",
+    "fetched_at": "2026-10-31 12:25 UTC"
+  },
+  {
+    "topic": "AI与硬科技",
+    "title": "“硬科技”三季报：算力链高增兑现 新赛道蓄力启航",
+    "source": "搜狐网",
+    "url": "https://m.sohu.com/a/1095450397_267106?scm=10001.325_13-325_13.0.0-0-0-0-0.5_1334",
+    "pub_date": "Sat, 31 Oct 2026 10:01:39 GMT",
+    "snippet": "新华社北京10月31日电 《中国证券报》31日刊发文章《“硬科技”三季报多点开花：算力链高增兑现 新赛道蓄力启航》。文章称，随着A股上市公司2026年三季报披露收官，“硬科技”板块交出一份亮眼“成绩单”：在全球智算基础设施扩张与国产算力自主化的双重驱动下，AI算力产业链营收、利润...",
+    "score": 9.0,
+    "reason": "基于A股硬科技板块三季报的系统性盘算与横向对比，涵盖摩尔线程、寒武纪等多家龙头企业的具体营收增幅及官方宏观数据，客观严谨，数据密度极高。",
+    "model": "gemini:gemini-3.5-flash-lite",
+    "fetched_at": "2026-10-31 12:25 UTC"
+  },
+  {
+    "topic": "AI与硬科技",
+    "title": "这一AI“卖铲人”，赴港IPO进程提速",
+    "source": "网易新闻客户端",
+    "url": "https://c.m.163.com/news/a/LAJHELON0519D4UH.html",
+    "pub_date": "Sat, 31 Oct 2026 11:56:00 GMT",
+    "snippet": "AI“卖铲人”，赴港上市最新进展。 10月30日，中国证监会更新境内企业境外发行证券及上市备案进展，北京硅基流动科技股份有限公司（简称“硅基流动”）赴港IPO备案申请状态显示为“已接收”。2026年6月30日，公司向港交所主板提交上市申请，“已接收”表明备案申请进入办理流程。 招...",
+    "score": 9.0,
+    "reason": "源自官方赴港IPO备案与招股书文件，提供了详细的词元吞吐量、市占率排名、毛利及亏损财务数据，数据密度高且信源权威。",
+    "model": "gemini:gemini-3.5-flash-lite",
+    "fetched_at": "2026-10-31 12:25 UTC"
+  },
+  {
+    "topic": "AI与硬科技",
+    "title": "从算法到芯片，Momenta正在下一盘什么棋？",
+    "source": "网易新闻客户端",
+    "url": "https://c.m.163.com/news/a/LAJH5OHA05118O92.html",
+    "pub_date": "Sat, 31 Oct 2026 11:51:00 GMT",
+    "snippet": "文 | 节点AI，作者 | 道哥 新芯航途8个月出货超20万颗，折射智能驾驶产业链竞争新趋势。 10月29日，AI芯片公司新芯航途（XHEART）正式发布全新产品X7 Ultra，一颗面向智能驾驶大模型的车规级AI芯片，拥有700 TOPS大模型算力。 但比新品参数更值得关注的，...",
+    "score": 8.5,
+    "reason": "围绕Momenta生态企业新芯航途的新品发布及商业化进展展开，披露了明确的出货量与订单量数据，具备实质性产业增量与行业对标分析。",
+    "model": "gemini:gemini-3.5-flash-lite",
+    "fetched_at": "2026-10-31 12:25 UTC"
+  },
+  {
+    "topic": "AI与硬科技",
+    "title": "历时一年半，苹果在华AI合作终落定",
+    "source": "新浪财经",
+    "url": "https://finance.sina.com.cn/roll/2026-10-31/doc-inixcfyv3893859.shtml",
+    "pub_date": "Sat, 31 Oct 2026 09:47:18 GMT",
+    "snippet": "来源：羊城派 10月31日，阿里巴巴宣布与苹果达成合作，将千问集成至Apple智能（Apple Intelligence）。中国用户可在Siri、写作工具及视觉智能中直接调用千问的文本与图像理解、内容生成能力。这些功能将于11月4日起随iOS开发者Beta版开放测试，12月随iO...",
+    "score": 8.5,
+    "reason": "详实梳理了苹果在华AI合作最终落定阿里千问的时间线、集成入口及合规背景，信源明确，事实增量与商业价值极高。",
+    "model": "gemini:gemini-3.5-flash-lite",
+    "fetched_at": "2026-10-31 12:25 UTC"
+  },
+  {
+    "topic": "AI与硬科技",
+    "title": "独家专访麦楷亚洲联合创始人：穿透潜在“史上最大IPO”的虚实",
+    "source": "21财经",
+    "url": "https://m.21jingji.com/article/20261030/herald/0c4087a69341c939ab86c35737367023_zaker.html",
+    "pub_date": "Sat, 31 Oct 2026 08:26:31 GMT",
+    "snippet": "南方财经 21世纪经济报道记者吴斌 上海报道 Anthropic一纸S-1落地，潜在的“史上最大IPO”呼之欲出。 “最吓人的数字最不重要”，麦楷亚洲会计师事务所联合创始人和联合主席助·伯斯汀（Drew Bernstein）近日在接受21世纪经济报道记者独家专访时如是感叹。剥开这...",
+    "score": 8.5,
+    "reason": "一手信源的深度专家专访（麦楷亚洲联合创始人），对Anthropic的S-1文件、算力账单、资本支出链条及潜在风险进行了专业且有深度的财务穿透分析，数据密度与思考性高。",
+    "model": "gemini:gemini-3.5-flash-lite",
+    "fetched_at": "2026-10-31 12:25 UTC"
+  },
+  {
+    "topic": "AI与硬科技",
     "title": "当VLM开始\"做梦\"：一个让AI在脑海里转魔方的实验",
     "source": "网易新闻客户端",
     "url": "https://c.m.163.com/news/a/LAH6U3E00511DTVV.html",
