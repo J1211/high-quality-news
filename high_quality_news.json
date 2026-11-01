@@ -1,6 +1,30 @@
 [
   {
     "topic": "AI与硬科技",
+    "title": "从线缆到备电 算力“买电”重塑电力设备企业成长逻辑",
+    "source": "网易新闻客户端",
+    "url": "https://c.m.163.com/news/a/LAL3GQSH05198CJN.html",
+    "pub_date": "Sun, 01 Nov 2026 02:31:00 GMT",
+    "snippet": "财联社11月1日讯（记者 方彦博）三季报披露收官，电力设备板块企业的业绩落地，在传统设备招标承压、毛利走平背景下，一批前瞻布局AIDC供配电、备电以及特高压交付的企业，凭借新业务交出亮眼答卷，订单高增，成功确立企业的“第二增长曲线”。 业内人士认为，三季报清晰勾勒出电力设备行业的...",
+    "score": 8.7,
+    "reason": "立足电力设备上市公司最新三季报（长飞光纤、亨通光电等），深入梳理AIDC算力扩容对供配电及备电产业链的量化驱动，数据密度极高，同业横向对比清晰。",
+    "model": "gemini:gemini-3.6-flash",
+    "fetched_at": "2026-11-01 23:35 UTC"
+  },
+  {
+    "topic": "AI与硬科技",
+    "title": "台积电Q3利润或创纪录，联手格罗方德扩大CoWoS硅中介层供应",
+    "source": "TradingKey",
+    "url": "https://www.tradingkey.com/zh-hans/analysis/stocks/us-stock/262217746-tsmc-record-q3-profit-globalfoundries-cowos-silicon-interposer-supply-tradingkey",
+    "pub_date": "Sun, 01 Nov 2026 09:13:19 GMT",
+    "snippet": "台积电Q3利润或创纪录，联手格罗方德扩大CoWoS硅中介层供应 受强劲AI芯片需求与先进封装订单驱动，台积电第三季度净利润预计同比大幅增长，资本支出指引亦随之调高。为缓解供应链瓶颈，台积电与格罗方德达成五年期约20亿美元的制造协议，由后者生产CoWoS封装所需的硅中介层，预计20...",
+    "score": 9.0,
+    "reason": "一手财经与产业新闻，明确披露台积电Q3财务数据、资本开支指引，以及与格罗方德20亿美元多年期硅中介层制造协议的细节，数据密度高，行业审视客观。",
+    "model": "gemini:gemini-3.6-flash",
+    "fetched_at": "2026-11-01 23:35 UTC"
+  },
+  {
+    "topic": "AI与硬科技",
     "title": "修补“漏水船”：腾讯AI的B端转向",
     "source": "网易新闻客户端",
     "url": "https://c.m.163.com/news/a/LALO42AJ05118O92.html",
