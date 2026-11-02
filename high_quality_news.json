@@ -1,6 +1,123 @@
 [
   {
     "topic": "AI与硬科技",
+    "sub_topic": "算力硬件",
+    "title": "安森美半导体(ON.US)Q3业绩放榜在即 AI数据中心业务、毛利率及Q4指引成最大看点",
+    "source": "同花顺财经",
+    "url": "https://news.10jqka.com.cn/20261102/c681350768.shtml",
+    "pub_date": "Mon, 02 Nov 2026 07:08:49 GMT",
+    "snippet": "安森美半导体（ON）(ON.US)将于11月2日(周一)美股盘后公布2026年第三季度业绩。市场目前预计，安森美半导体（ON）Q3营收将同比增长10%至17亿美元，调整后每股收益将同比增长逾39%至0.88美元。 除了第三季度业绩，市场同样关注安森美半导体（ON）将会给出的第四季...",
+    "score": 8.5,
+    "reason": "前瞻性分析安森美Q3财报看点，围绕AI数据中心电源业务、PSG毛利率及现金流改善提供清晰的财务预期与横向产业链传导验证，数据详实。",
+    "model": "gemini:gemini-3.5-flash-lite",
+    "fetched_at": "2026-11-02 15:48 UTC"
+  },
+  {
+    "topic": "AI与硬科技",
+    "sub_topic": "财报资本",
+    "title": "从“卖流量”到“卖算力”，运营商“三兄弟”迎盈利大考",
+    "source": "新京报",
+    "url": "https://www.bjnews.com.cn/detail/1793600419129332.html",
+    "pub_date": "Mon, 02 Nov 2026 06:26:00 GMT",
+    "snippet": "由于新旧业务换档，三大运营商业绩承压。 2026年三季报显示，今年前三季度，中国移动、中国电信归母净利润分别下降7.9%、14.84%，中国联通归母净利润下降33.8%；中国移动、中国电信营收也分别下滑1.85和3.59%，只有中国联通营收实现同比增长0.6%，增量主要来自通信产...",
+    "score": 8.8,
+    "reason": "依托三大运营商2026年三季报具体营收、净利降幅数据，深入剖析增值税政策调整与传统业务换档背景下的“算力盈利大考”，并引入IDC关于MaaS及私有化部署的市场份额横向基准，专业客观。",
+    "model": "gemini:gemini-3.5-flash-lite",
+    "fetched_at": "2026-11-02 15:48 UTC"
+  },
+  {
+    "topic": "AI与硬科技",
+    "sub_topic": "宏观政经",
+    "title": "全球AI投资，进入“深水区”",
+    "source": "新浪军事",
+    "url": "https://mil.news.sina.com.cn/2026-11-02/doc-inixiiqx2308316.shtml",
+    "pub_date": "Mon, 02 Nov 2026 12:14:00 GMT",
+    "snippet": "原标题：全球AI投资，进入“深水区” 全球AI竞争当前很大程度上围绕模型能力、芯片性能和算力规模展开，但巨额资本开支与商业回报之间并非简单的正比关系。如何让基础设施投入更有效地转化为经济效益，正在成为全球AI产业需要回答的重要问题。 人工智能（AI）正成为全球科技巨头争夺的“战略...",
+    "score": 8.5,
+    "reason": "以亚马逊Q3财报（资本开支激增与自由现金流负增长）为切入点，客观审视全球AI投资进入深水区后的回报率困境，信源权威，叙事克制中立。",
+    "model": "gemini:gemini-3.5-flash-lite",
+    "fetched_at": "2026-11-02 15:48 UTC"
+  },
+  {
+    "topic": "AI与硬科技",
+    "sub_topic": "财报资本",
+    "title": "业绩“热”、股价“冷”，存储芯片怎么了",
+    "source": "手机网易网",
+    "url": "https://www.163.com/dy/article/LAP0T55K0552C2FY.html",
+    "pub_date": "Mon, 02 Nov 2026 15:02:20 GMT",
+    "snippet": "11月2日，美股存储芯片股盘前多数上涨，SK海力士盘前大涨超4%，美光科技、闪迪、AMD等涨超2%，此前持续深度调整的美股存储芯片板块似乎有了一线转机。在A股市场，存储芯片板块经历了集体大幅回撤，截至11月2日，部分个股自高点的累计跌幅甚至超过70%。 与之形成强烈反差的是，A股...",
+    "score": 9.0,
+    "reason": "详细拆解了A股存储芯片多头业绩大增（如江波龙、佰维存储三季报数据）与二级市场股价暴跌70%的“冰火两重天”反差，包含具体财报财务指标、多方信源及横向行情对比，数据密度高且具备深刻的思考性。",
+    "model": "gemini:gemini-3.5-flash-lite",
+    "fetched_at": "2026-11-02 15:48 UTC"
+  },
+  {
+    "topic": "AI与硬科技",
+    "sub_topic": "财报资本",
+    "title": "中国AI的下一批赢家，不只是卖铲子的公司",
+    "source": "网易新闻客户端",
+    "url": "https://c.m.163.com/news/a/LAOVRU8P05198NMR.html",
+    "pub_date": "Mon, 02 Nov 2026 14:44:00 GMT",
+    "snippet": "中国AI产业的投资逻辑，正在从技术创新转向商业化落地。 伯恩斯坦（Bernstein）10月27日发布的最新中国市场深度报告《China Next Winners: From AI to Alpha》指出，中国AI产业的机会正在从大模型和算力基础设施，向更广泛的实体经济扩散。国产...",
+    "score": 9.0,
+    "reason": "深度拆解伯恩斯坦（Bernstein）研报，包含极高密度的横向基准数据（如长鑫存储2028年53万片/月产能对比美光等），全面分析了中国AI从算力建投向产业盈利落地的传导机制。",
+    "model": "gemini:gemini-3.6-flash",
+    "fetched_at": "2026-11-02 15:48 UTC"
+  },
+  {
+    "topic": "AI与硬科技",
+    "sub_topic": "宏观政经",
+    "title": "传统利多失灵，黄金为何跌跌不休？",
+    "source": "Jiemian.com",
+    "url": "https://www.jiemian.com/article/15282595.html",
+    "pub_date": "Mon, 02 Nov 2026 08:47:19 GMT",
+    "snippet": "界面新闻记者 | 近期黄金走势令交易员感到困惑：所有传统利多黄金的因素都在，金价却走出了一轮下跌行情。 美债收益率已从10月初5.36%的历史高位回落至5%下方，美元指数也从102.95的18个月高点温和回落至101.8附近；美联储10月29日议息会议按兵不动，按照常理这会给金价...",
+    "score": 8.8,
+    "reason": "深入剖析黄金价格反常下跌背后的流动性挤压、股市保证金追缴及AI乐观预期对法币信用博弈等多重宏观逻辑，多方观点印证，逻辑推演严密。",
+    "model": "gemini:gemini-3.6-flash",
+    "fetched_at": "2026-11-02 15:48 UTC"
+  },
+  {
+    "topic": "AI与硬科技",
+    "sub_topic": "模型应用",
+    "title": "中信科陈山枝：AI手机爆发将推动通信从服务于人转向服务智能体",
+    "source": "新浪财经",
+    "url": "https://finance.sina.cn/2026-11-02/detail-inixicih3039631.d.html?vt=4",
+    "pub_date": "Mon, 02 Nov 2026 02:47:46 GMT",
+    "snippet": "中信科陈山枝：AI手机爆发将推动通信从服务于人转向服务智能体 21世纪经济报道记者邓浩 刷视频、看直播，人们习惯了从网络上下载内容。但当手机里的AI开始帮人处理任务，路上的智能网联汽车不断上传感知数据，工厂里的机器人需要相互配合，通信网络要忙的事情就变了：既要把信息送到人面前，也...",
+    "score": 8.7,
+    "reason": "权威专家访谈，针对AI手机及具身智能体通信需求演进提供了高密度量化数据（如芯片成本增量仅约1美元、2028年规模商用时间节点等），视角前瞻且客观中立。",
+    "model": "gemini:gemini-3.6-flash",
+    "fetched_at": "2026-11-02 15:48 UTC"
+  },
+  {
+    "topic": "AI与硬科技",
+    "sub_topic": "模型应用",
+    "title": "AI Agent加速“上岗”，企业AI创新力迎账本检验",
+    "source": "手机新浪网",
+    "url": "https://k.sina.com.cn/article_1651428902_626ece2602001labk.html?from=tech",
+    "pub_date": "Mon, 02 Nov 2026 09:04:00 GMT",
+    "snippet": "21世纪经济报道记者 吴佳楠 2026年，AI Agent赛道正站在一个微妙的分水岭上。 一边是从游戏研发到跨境电商，从智能客服到数据分析，Agent开始真正干活。腾讯云互联网行业技术总经理陈亮在2026腾讯全球数字生态大会期间接受包括21世纪经济报道在内的媒体采访时透露，无论T...",
+    "score": 8.5,
+    "reason": "深入拆解AI Agent在企业端商业化落地的真实ROI难题，提出了Token消耗斜率与业务收益斜率博弈的客观商业框架，具备深度思考价值。",
+    "model": "gemini:gemini-3.6-flash",
+    "fetched_at": "2026-11-02 15:48 UTC"
+  },
+  {
+    "topic": "AI与硬科技",
+    "sub_topic": "模型应用",
+    "title": "360战投入局，RoboScience完成数亿元A2轮融资",
+    "source": "21财经",
+    "url": "https://m.21jingji.com/article/20261102/herald/0774e2f91d54e3e60f04af84a8e759e3_zaker.html",
+    "pub_date": "Mon, 02 Nov 2026 10:48:01 GMT",
+    "snippet": "21世纪经济报道记者 石恩泽 一级市场融资趋紧的传言之下，具身智能赛道仍有公司拿到大额资金。 11月2日，具身智能企业RoboScience机器科学宣布完成A2轮数亿元融资。本轮融资由琥珀资本、鸿瑞达投资、上海半导体产投联合领投，爽资本、360战投、国联通宝、金鼎资本及多家上市公...",
+    "score": 8.5,
+    "reason": "披露了具身智能创业公司的融资事实，并给出了数据成本（降至0.05元/条）、训练时长（400万小时）及解耦架构等明确的技术与商业化参照指标，叙事较为客观。",
+    "model": "gemini:gemini-3.6-flash",
+    "fetched_at": "2026-11-02 15:48 UTC"
+  },
+  {
+    "topic": "AI与硬科技",
     "title": "【BT财报瞬析】SK海力士利润超预期7．6％，断言内存短缺持续到2030年_公司新闻",
     "source": "证券之星",
     "url": "https://stock.stockstar.com/IG2026110200003713.shtml",
@@ -9,7 +126,8 @@
     "score": 8.6,
     "reason": "SK海力士Q3财报及HBM产业的深度剖析，提供了财报超预期幅度、HBM与DDR5溢价对比（500%-700%）、晶圆产能占用比例（15%-18%）等极高密度且具备横向参照系的数据，分析深刻且具备风险警示。",
     "model": "gemini:gemini-3.6-flash",
-    "fetched_at": "2026-11-02 06:01 UTC"
+    "fetched_at": "2026-11-02 06:01 UTC",
+    "sub_topic": "财报资本"
   },
   {
     "topic": "AI与硬科技",
@@ -21,7 +139,8 @@
     "score": 8.6,
     "reason": "引用知名券商研报，详尽梳理北美四大科技巨头（亚马逊、谷歌、微软、Meta）26Q3的现金资本开支、自由现金流及云服务增速对比，数据密度高且提供了清晰的同业基准参照系。",
     "model": "gemini:gemini-3.6-flash",
-    "fetched_at": "2026-11-02 06:01 UTC"
+    "fetched_at": "2026-11-02 06:01 UTC",
+    "sub_topic": "财报资本"
   },
   {
     "topic": "AI与硬科技",
@@ -33,7 +152,8 @@
     "score": 9.0,
     "reason": "基于刚披露完毕的科创板三季报，对16家半导体设备核心企业进行横向业绩透视，包含中微、拓荆、盛美上海等多家龙头公司的具体营收、净利增幅及细分赛道分化原因，数据密度极高且具备客观横向基准。",
     "model": "gemini:gemini-3.6-flash",
-    "fetched_at": "2026-11-02 06:01 UTC"
+    "fetched_at": "2026-11-02 06:01 UTC",
+    "sub_topic": "财报资本"
   },
   {
     "topic": "AI与硬科技",
@@ -45,7 +165,8 @@
     "score": 8.5,
     "reason": "基于国家数据局座谈会这一具体事件，结合国金及浙商证券研报数据，详尽剖析具身智能在真实物理交互数据上的供需缺口（千万小时级与90%缺口），具备高数据密度与产业前瞻价值。",
     "model": "gemini:gemini-3.6-flash",
-    "fetched_at": "2026-11-02 06:01 UTC"
+    "fetched_at": "2026-11-02 06:01 UTC",
+    "sub_topic": "宏观政经"
   },
   {
     "topic": "AI与硬科技",
@@ -57,7 +178,8 @@
     "score": 8.7,
     "reason": "立足电力设备上市公司最新三季报（长飞光纤、亨通光电等），深入梳理AIDC算力扩容对供配电及备电产业链的量化驱动，数据密度极高，同业横向对比清晰。",
     "model": "gemini:gemini-3.6-flash",
-    "fetched_at": "2026-11-01 23:35 UTC"
+    "fetched_at": "2026-11-01 23:35 UTC",
+    "sub_topic": "财报资本"
   },
   {
     "topic": "AI与硬科技",
@@ -69,7 +191,8 @@
     "score": 9.0,
     "reason": "一手财经与产业新闻，明确披露台积电Q3财务数据、资本开支指引，以及与格罗方德20亿美元多年期硅中介层制造协议的细节，数据密度高，行业审视客观。",
     "model": "gemini:gemini-3.6-flash",
-    "fetched_at": "2026-11-01 23:35 UTC"
+    "fetched_at": "2026-11-01 23:35 UTC",
+    "sub_topic": "财报资本"
   },
   {
     "topic": "AI与硬科技",
@@ -81,7 +204,8 @@
     "score": 8.6,
     "reason": "围绕腾讯AI战略向B端转向展开分析，数据密度极高。详细引用了财报资本开支、服务器成本、自由现金流等核心财务指标，并结合了第三方平台月活数据横向对比，逻辑客观中立。",
     "model": "gemini:gemini-3.6-flash",
-    "fetched_at": "2026-11-01 19:40 UTC"
+    "fetched_at": "2026-11-01 19:40 UTC",
+    "sub_topic": "财报资本"
   },
   {
     "topic": "AI与硬科技",
@@ -93,7 +217,8 @@
     "score": 8.7,
     "reason": "基于官方基金三季报披露，详尽对比分析了知名基金经理在AI半导体与消费板块的调仓差异，数据丰富客观，洞察深入。",
     "model": "gemini:gemini-3.6-flash",
-    "fetched_at": "2026-11-01 19:40 UTC"
+    "fetched_at": "2026-11-01 19:40 UTC",
+    "sub_topic": "财报资本"
   },
   {
     "topic": "AI与硬科技",
@@ -105,7 +230,8 @@
     "score": 8.8,
     "reason": "深度剖析OpenAI Astra发布对具身智能领域的冲击，对比通用大模型与具身模型的范式差异，并结合宝马工厂等具体工业落地数据分析现实困境，一手调研与横向对比充分。",
     "model": "gemini:gemini-3.6-flash",
-    "fetched_at": "2026-11-01 19:40 UTC"
+    "fetched_at": "2026-11-01 19:40 UTC",
+    "sub_topic": "模型应用"
   },
   {
     "topic": "AI与硬科技",
@@ -117,7 +243,8 @@
     "score": 8.6,
     "reason": "聚焦世界顶尖科学家论坛上的芯片技术前沿，引用中国科学院及半导体龙头（拓荆科技、Lam、AMAT）的具体研发数据与实测效果，数据密度高且观点中立深刻。",
     "model": "gemini:gemini-3.6-flash",
-    "fetched_at": "2026-11-01 19:40 UTC"
+    "fetched_at": "2026-11-01 19:40 UTC",
+    "sub_topic": "算力硬件"
   },
   {
     "topic": "AI与硬科技",
@@ -129,7 +256,8 @@
     "score": 9.1,
     "reason": "极高密度的硬核产业链跟踪，横向覆盖台积电封装产能/报价、云巨头RPO与营收、英伟达及博通结构化融资等多方权威数据，对比基准详尽且价值中立。",
     "model": "gemini:gemini-3.6-flash",
-    "fetched_at": "2026-11-01 15:11 UTC"
+    "fetched_at": "2026-11-01 15:11 UTC",
+    "sub_topic": "财报资本"
   },
   {
     "topic": "AI与硬科技",
@@ -141,7 +269,8 @@
     "score": 8.5,
     "reason": "信息密度极高的硬科技早报，包含云巨头自由现金流、标普评级下调细节及天文AI科研提速具体数据，多方印证且叙事克制。",
     "model": "gemini:gemini-3.6-flash",
-    "fetched_at": "2026-11-01 15:11 UTC"
+    "fetched_at": "2026-11-01 15:11 UTC",
+    "sub_topic": "财报资本"
   },
   {
     "topic": "AI与硬科技",
@@ -153,7 +282,8 @@
     "score": 8.8,
     "reason": "硬核财报点评，提供了营收、归母/扣非净利、毛利率、合同负债及现金流等多维同比环比数据与基准参照，摆事实列数据，客观严谨。",
     "model": "gemini:gemini-3.6-flash",
-    "fetched_at": "2026-11-01 15:11 UTC"
+    "fetched_at": "2026-11-01 15:11 UTC",
+    "sub_topic": "宏观政经"
   },
   {
     "topic": "AI与硬科技",
@@ -165,7 +295,8 @@
     "score": 8.5,
     "reason": "独家深度专访顶尖科学家，结合OpenAI和Anthropic最新AI数学研究手稿等具体事件，展开克制、严谨的客观学术与教育影响剖析。",
     "model": "gemini:gemini-3.6-flash",
-    "fetched_at": "2026-11-01 15:11 UTC"
+    "fetched_at": "2026-11-01 15:11 UTC",
+    "sub_topic": "模型应用"
   },
   {
     "topic": "AI与硬科技",
@@ -177,7 +308,8 @@
     "score": 8.9,
     "reason": "独家一手硬科技报道，首次披露地平线征程7算力目标及“星空”芯片细节与团队变动，新事实增量大，分析客观中立。",
     "model": "gemini:gemini-3.6-flash",
-    "fetched_at": "2026-11-01 07:32 UTC"
+    "fetched_at": "2026-11-01 07:32 UTC",
+    "sub_topic": "算力硬件"
   },
   {
     "topic": "AI与硬科技",
@@ -189,7 +321,8 @@
     "score": 8.8,
     "reason": "详尽剖析三星电子Q3半导体部门财报，提供高度密集的财务与产品数据，并与SK海力士进行横向市占率与竞争格局对比，叙事中立严谨。",
     "model": "gemini:gemini-3.6-flash",
-    "fetched_at": "2026-11-01 07:32 UTC"
+    "fetched_at": "2026-11-01 07:32 UTC",
+    "sub_topic": "财报资本"
   },
   {
     "topic": "AI与硬科技",
@@ -201,7 +334,8 @@
     "score": 8.7,
     "reason": "敏锐捕捉一级市场对物理AI/具身智能热度退烧的最新态度转向，引用了过去一年的精准融资统计数据（503起/960亿元），并采访多位一线机构与创业者，客观揭示了算力巨头入局与LP风险偏好变化的影响。",
     "model": "gemini:gemini-3.6-flash",
-    "fetched_at": "2026-11-01 07:31 UTC"
+    "fetched_at": "2026-11-01 07:31 UTC",
+    "sub_topic": "模型应用"
   },
   {
     "topic": "AI与硬科技",
@@ -213,7 +347,8 @@
     "score": 8.5,
     "reason": "基于半导体生态大会现场采写，深入探讨AI大模型时代EDA与STCO（系统级协同优化）的技术演进，采访了行业协会、研究机构及企业核心技术高管，技术专业度高且叙事克制。",
     "model": "gemini:gemini-3.6-flash",
-    "fetched_at": "2026-11-01 07:31 UTC"
+    "fetched_at": "2026-11-01 07:31 UTC",
+    "sub_topic": "算力硬件"
   },
   {
     "topic": "AI与硬科技",
@@ -225,7 +360,8 @@
     "score": 8.8,
     "reason": "围绕物理AI对端侧SoC需求变化的新趋势，结合多家相关上市公司三季报财务数据（同比/环比及分化表现）进行横向对比，并包含芯片企业专家、券商分析师及存储企业负责人的独立采访，数据密度高且逻辑严密。",
     "model": "gemini:gemini-3.6-flash",
-    "fetched_at": "2026-11-01 07:31 UTC"
+    "fetched_at": "2026-11-01 07:31 UTC",
+    "sub_topic": "财报资本"
   },
   {
     "topic": "AI与硬科技",
@@ -237,7 +373,8 @@
     "score": 9.0,
     "reason": "三季报深度财务拆解，客观列示营收、净利与应收账款暴增等关键数据，深入分析量价撕裂与财务隐患，叙事克制、逻辑严密。",
     "model": "gemini:gemini-3.6-flash",
-    "fetched_at": "2026-11-01 01:14 UTC"
+    "fetched_at": "2026-11-01 01:14 UTC",
+    "sub_topic": "财报资本"
   },
   {
     "topic": "AI与硬科技",
@@ -249,7 +386,8 @@
     "score": 8.8,
     "reason": "源自官方法说会与三季报一手信源，包含量产节点、项目营收指引及具体财务数据，数据密度高且具备明确商业增量。",
     "model": "gemini:gemini-3.6-flash",
-    "fetched_at": "2026-11-01 01:14 UTC"
+    "fetched_at": "2026-11-01 01:14 UTC",
+    "sub_topic": "财报资本"
   },
   {
     "topic": "AI与硬科技",
@@ -261,7 +399,8 @@
     "score": 8.8,
     "reason": "深度剖析AI驱动存储芯片（HBM）挤占通用内存（DRAM/NAND）产能的传导机制。数据密度高（SK海力士265亿IPO、美光产能售罄节点、600亿市场预测），提供清晰的横向对比与产业纵深。",
     "model": "gemini:gemini-3.6-flash",
-    "fetched_at": "2026-11-01 01:13 UTC"
+    "fetched_at": "2026-11-01 01:13 UTC",
+    "sub_topic": "财报资本"
   },
   {
     "topic": "AI与硬科技",
@@ -273,7 +412,8 @@
     "score": 8.6,
     "reason": "权威官媒实地调研报道，数据密度高（总算力19万P、智算占比90%、规划投资额500亿等），客观呈现东数西算落地与算力产业集聚细节。",
     "model": "gemini:gemini-3.6-flash",
-    "fetched_at": "2026-11-01 01:13 UTC"
+    "fetched_at": "2026-11-01 01:13 UTC",
+    "sub_topic": "宏观政经"
   },
   {
     "topic": "AI与硬科技",
@@ -285,7 +425,8 @@
     "score": 9.0,
     "reason": "高质量A股三季报全景透视。包含了5572家上市公司整体及Q3单季营收/净利宏观数据，跨行业（金融、地产、信息技术、材料等）进行了严密的同比增速与盈利占比横向对比，数据密度极高，叙事客观中立。",
     "model": "gemini:gemini-3.6-flash",
-    "fetched_at": "2026-10-31 17:44 UTC"
+    "fetched_at": "2026-10-31 17:44 UTC",
+    "sub_topic": "财报资本"
   },
   {
     "topic": "AI与硬科技",
@@ -297,7 +438,8 @@
     "score": 9.0,
     "reason": "综合多家具体大厂（Meta、Alphabet、亚马逊、三星等）2026年三季报的核心财报数据，横向对比了云收入、积压订单及自由现金流转负的客观事实，信源可靠且数据详实。",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-31 17:43 UTC"
+    "fetched_at": "2026-10-31 17:43 UTC",
+    "sub_topic": "财报资本"
   },
   {
     "topic": "AI与硬科技",
@@ -309,7 +451,8 @@
     "score": 8.5,
     "reason": "复盘A股周度主力资金流向，列举了具体的行业板块资金净流入/流出金额及头部个股涨跌幅，具备扎实的数据基准和客观的市场多空盘面梳理。",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-31 17:43 UTC"
+    "fetched_at": "2026-10-31 17:43 UTC",
+    "sub_topic": "财报资本"
   },
   {
     "topic": "AI与硬科技",
@@ -321,7 +464,8 @@
     "score": 9.0,
     "reason": "源自路透社权威信源，提供详尽的五大科技巨头现金流、资本支出（5569亿美元）、自由现金流赤字以及回购规模削减的具体对比数据，数据密度高且跨期横向基准清晰。",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-31 17:43 UTC"
+    "fetched_at": "2026-10-31 17:43 UTC",
+    "sub_topic": "财报资本"
   },
   {
     "topic": "AI与硬科技",
@@ -333,7 +477,8 @@
     "score": 9.0,
     "reason": "基于Anthropic招股书与SEC文件的深度财报剖析，直接对比Anthropic与OpenAI的季度营收、估值、算力支出等核心财务与基础设施指标，信源硬核、横向基准扎实。",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-31 12:25 UTC"
+    "fetched_at": "2026-10-31 12:25 UTC",
+    "sub_topic": "财报资本"
   },
   {
     "topic": "AI与硬科技",
@@ -345,7 +490,8 @@
     "score": 9.0,
     "reason": "基于A股硬科技板块三季报的系统性盘算与横向对比，涵盖摩尔线程、寒武纪等多家龙头企业的具体营收增幅及官方宏观数据，客观严谨，数据密度极高。",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-31 12:25 UTC"
+    "fetched_at": "2026-10-31 12:25 UTC",
+    "sub_topic": "财报资本"
   },
   {
     "topic": "AI与硬科技",
@@ -357,7 +503,8 @@
     "score": 9.0,
     "reason": "源自官方赴港IPO备案与招股书文件，提供了详细的词元吞吐量、市占率排名、毛利及亏损财务数据，数据密度高且信源权威。",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-31 12:25 UTC"
+    "fetched_at": "2026-10-31 12:25 UTC",
+    "sub_topic": "财报资本"
   },
   {
     "topic": "AI与硬科技",
@@ -369,7 +516,8 @@
     "score": 8.5,
     "reason": "围绕Momenta生态企业新芯航途的新品发布及商业化进展展开，披露了明确的出货量与订单量数据，具备实质性产业增量与行业对标分析。",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-31 12:25 UTC"
+    "fetched_at": "2026-10-31 12:25 UTC",
+    "sub_topic": "算力硬件"
   },
   {
     "topic": "AI与硬科技",
@@ -381,7 +529,8 @@
     "score": 8.5,
     "reason": "详实梳理了苹果在华AI合作最终落定阿里千问的时间线、集成入口及合规背景，信源明确，事实增量与商业价值极高。",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-31 12:25 UTC"
+    "fetched_at": "2026-10-31 12:25 UTC",
+    "sub_topic": "模型应用"
   },
   {
     "topic": "AI与硬科技",
@@ -393,7 +542,8 @@
     "score": 8.5,
     "reason": "一手信源的深度专家专访（麦楷亚洲联合创始人），对Anthropic的S-1文件、算力账单、资本支出链条及潜在风险进行了专业且有深度的财务穿透分析，数据密度与思考性高。",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-31 12:25 UTC"
+    "fetched_at": "2026-10-31 12:25 UTC",
+    "sub_topic": "财报资本"
   },
   {
     "topic": "AI与硬科技",
@@ -405,7 +555,8 @@
     "score": 8.8,
     "reason": "深度拆解前沿视觉语言模型（VLM）世界模型的学术突破，提供详尽的对比基准数据（准确率从48.25%到87.5%）、消融实验印证，科学叙事严谨克制。",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-31 05:38 UTC"
+    "fetched_at": "2026-10-31 05:38 UTC",
+    "sub_topic": "模型应用"
   },
   {
     "topic": "AI与硬科技",
@@ -417,7 +568,8 @@
     "score": 8.5,
     "reason": "紧扣医疗AI进医保后的商业化痛点（如“合并结算”、“缺数减收”等实质性政策博弈），多方行业专家信源印证，数据与现实逻辑扎实，无空洞情绪。",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-31 05:38 UTC"
+    "fetched_at": "2026-10-31 05:38 UTC",
+    "sub_topic": "模型应用"
   },
   {
     "topic": "AI与硬科技",
@@ -429,7 +581,8 @@
     "score": 9.0,
     "reason": "源自学术权威期刊《Science Advances》的突破性技术进展，报道了北大团队在氮化镓CMOS领域的具体性能指标（如6T-SRAM的读写裕度），属于硬科技实质性突破。",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-31 05:38 UTC"
+    "fetched_at": "2026-10-31 05:38 UTC",
+    "sub_topic": "算力硬件"
   },
   {
     "topic": "AI与硬科技",
@@ -441,7 +594,8 @@
     "score": 8.5,
     "reason": "通过财报数据横向对比（Alphabet、Meta、微软2019与2025年营销费用率与资本开支），数据密度高，有明确的财务基准和深刻的商业洞察。",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-31 05:38 UTC"
+    "fetched_at": "2026-10-31 05:38 UTC",
+    "sub_topic": "财报资本"
   },
   {
     "topic": "AI与硬科技",
@@ -453,7 +607,8 @@
     "score": 9.2,
     "reason": "依托Wind/Choice全行业三季报硬核数据，提供明确的营收/净利对比基准、市占率及各细分龙头（如长鑫科技、北方华创等）具体财务表现，信源权威，客观中立。",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-31 05:38 UTC"
+    "fetched_at": "2026-10-31 05:38 UTC",
+    "sub_topic": "财报资本"
   },
   {
     "topic": "AI与硬科技",
@@ -465,7 +620,8 @@
     "score": 9.0,
     "reason": "独家且硬核的商业信源，引用彭博社及SpaceX/Anthropic财务文件，披露1205亿美元算力合同细节及收入结构变化，数据极具价值。",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-30 23:50 UTC"
+    "fetched_at": "2026-10-30 23:50 UTC",
+    "sub_topic": "财报资本"
   },
   {
     "topic": "AI与硬科技",
@@ -477,7 +633,8 @@
     "score": 9.0,
     "reason": "高质量的深度产业分析，以日月光法说会财报数据为依托，详细披露资本开支上修至115亿美元、LEAP营收目标及毛利率，数据密度高，多方印证。",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-30 23:50 UTC"
+    "fetched_at": "2026-10-30 23:50 UTC",
+    "sub_topic": "宏观政经"
   },
   {
     "topic": "AI与硬科技",
@@ -489,7 +646,8 @@
     "score": 8.5,
     "reason": "标准的财报深度快解，提供沪硅产业三季报营业收入、扣非净利润、研发费用率及产品矩阵等核心财务与业务数据，横向与纵向对照清晰。",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-30 23:50 UTC"
+    "fetched_at": "2026-10-30 23:50 UTC",
+    "sub_topic": "财报资本"
   },
   {
     "topic": "AI与硬科技",
@@ -501,7 +659,8 @@
     "score": 8.5,
     "reason": "基于三大运营商三季报数据，梳理算力收入增长与传统业务下行的对比，提供了具体的业务占比和同比数据，客观展现行业转型阵痛。",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-30 23:50 UTC"
+    "fetched_at": "2026-10-30 23:50 UTC",
+    "sub_topic": "财报资本"
   },
   {
     "topic": "AI与硬科技",
@@ -513,7 +672,8 @@
     "score": 8.5,
     "reason": "围绕硅谷巨头财报及Anthropic IPO招股书数据，剖析AI产业链各方成本与现金流压力，数据详实，信源权威，叙事克制。",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-30 23:50 UTC"
+    "fetched_at": "2026-10-30 23:50 UTC",
+    "sub_topic": "财报资本"
   },
   {
     "topic": "AI与硬科技",
@@ -525,7 +685,8 @@
     "score": 8.5,
     "reason": "评测AI对视频物理世界理解能力的深度技术分析，依托4DCodeBench测试结果，给出了明确的静态与动态指标评分（0.91分对0.67分）及方法统计比例，数据详实，视角客观。",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-30 23:49 UTC"
+    "fetched_at": "2026-10-30 23:49 UTC",
+    "sub_topic": "模型应用"
   },
   {
     "topic": "AI与硬科技",
@@ -537,7 +698,8 @@
     "score": 8.5,
     "reason": "聚焦谷歌与微软财报表现及现金流差异，具备具体的财报营收、资本开支数据及分析师预期对比，展现了一手信源与行业横向基准，逻辑克制清晰。",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-30 23:49 UTC"
+    "fetched_at": "2026-10-30 23:49 UTC",
+    "sub_topic": "财报资本"
   },
   {
     "topic": "AI与硬科技",
@@ -549,7 +711,8 @@
     "score": 8.5,
     "reason": "沐曦股份三季报披露规范，给出明确的营收增长率（128.45%）、扭亏数据以及具体的软件栈版本与万卡级应用落地进展，信源权威。",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-30 19:22 UTC"
+    "fetched_at": "2026-10-30 19:22 UTC",
+    "sub_topic": "财报资本"
   },
   {
     "topic": "AI与硬科技",
@@ -561,7 +724,8 @@
     "score": 8.5,
     "reason": "基于协创数据三季报及投资者关系活动记录，详细披露了营收净利、算力服务合同履约保障及融资安排，数据详实，逻辑清晰。",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-30 19:22 UTC"
+    "fetched_at": "2026-10-30 19:22 UTC",
+    "sub_topic": "财报资本"
   },
   {
     "topic": "AI与硬科技",
@@ -573,7 +737,8 @@
     "score": 9.0,
     "reason": "源自官方三季报，数据极具含金量（营收破百亿、净利增逾2倍、研发占比31%），并提供了SEMI行业预测及自身产能规划等横向基准，是一篇高质量的财报硬科技新闻。",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-30 19:22 UTC"
+    "fetched_at": "2026-10-30 19:22 UTC",
+    "sub_topic": "财报资本"
   },
   {
     "topic": "AI与硬科技",
@@ -585,7 +750,8 @@
     "score": 8.5,
     "reason": "聚焦商务部与科技部最新发布的出口限制目录修订及临时登记机制，依托路透社等信源进行制度成本分析，具备较高的政策增量与合规分析价值。",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-30 19:21 UTC"
+    "fetched_at": "2026-10-30 19:21 UTC",
+    "sub_topic": "宏观政经"
   },
   {
     "topic": "AI与硬科技",
@@ -597,7 +763,8 @@
     "score": 8.8,
     "reason": "源自智元创新日的一手经营数据（上半年收入近20亿、出货9700台、份额超43%），并引入Counterpoint与IDC等权威基准，同时探讨了行业商业化痛点，数据密度高且客观。",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-30 19:21 UTC"
+    "fetched_at": "2026-10-30 19:21 UTC",
+    "sub_topic": "模型应用"
   },
   {
     "topic": "AI与硬科技",
@@ -609,7 +776,8 @@
     "score": 8.5,
     "reason": "胜宏科技三季报财报解读，深入剖析了归母与扣非净利润差异、环比毛利率变化及1.6T光模块PCB等高端产品放量细节，数据密度与业务逻辑清晰",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-30 14:09 UTC"
+    "fetched_at": "2026-10-30 14:09 UTC",
+    "sub_topic": "宏观政经"
   },
   {
     "topic": "AI与硬科技",
@@ -621,7 +789,8 @@
     "score": 8.5,
     "reason": "基于闪迪（SNDK）最新财报的深度拆解，提供营收、每股收益、毛利率变化、数据中心增量占比等详实数据，且对估值与周期进行了客观审视",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-30 14:09 UTC"
+    "fetched_at": "2026-10-30 14:09 UTC",
+    "sub_topic": "宏观政经"
   },
   {
     "topic": "AI与硬科技",
@@ -633,7 +802,8 @@
     "score": 8.5,
     "reason": "详细披露了百度APP搜索端技术升级、递归自进化机制及具体的API限时定价（4.9元每千次），具备极高的一手事实与商业对标价值",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-30 14:09 UTC"
+    "fetched_at": "2026-10-30 14:09 UTC",
+    "sub_topic": "模型应用"
   },
   {
     "topic": "AI与硬科技",
@@ -645,7 +815,8 @@
     "score": 8.5,
     "reason": "基于昆仑万维三季报的财报深度解析，提供了详细的营业收入、归母净利润、销售费用率、毛利率等硬核财务数据，并横向对比了业务转型与资本运作情况，信息增量高。",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-30 14:09 UTC"
+    "fetched_at": "2026-10-30 14:09 UTC",
+    "sub_topic": "宏观政经"
   },
   {
     "topic": "AI与硬科技",
@@ -657,7 +828,8 @@
     "score": 8.8,
     "reason": "三季报硬核数据密度极高，详细拆解了君正股份前三季度及单季度的营收、净利、细分芯片业务（存储/计算/模拟）毛利率变动及资产负债表核心指标，基准对比清晰。",
     "model": "gemini:gemini-3.6-flash",
-    "fetched_at": "2026-10-30 07:06 UTC"
+    "fetched_at": "2026-10-30 07:06 UTC",
+    "sub_topic": "宏观政经"
   },
   {
     "topic": "AI与硬科技",
@@ -669,7 +841,8 @@
     "score": 8.8,
     "reason": "基于海关总署权威数据，深入拆解AI算力产业链对整体进口的拉动贡献。包含具体进口金额、同比增速及分品类数据对比，数据密度高且具备宏观思考价值。",
     "model": "gemini:gemini-3.6-flash",
-    "fetched_at": "2026-10-30 07:06 UTC"
+    "fetched_at": "2026-10-30 07:06 UTC",
+    "sub_topic": "宏观政经"
   },
   {
     "topic": "AI与硬科技",
@@ -681,7 +854,8 @@
     "score": 9.0,
     "reason": "一手权威财经视角，数据密度极高。围绕CoreWeave债券收益率、五年期CDS利差及隐含违约概率展开深度金融风险定价分析，横向与纵向参照系充沛。",
     "model": "gemini:gemini-3.6-flash",
-    "fetched_at": "2026-10-30 07:06 UTC"
+    "fetched_at": "2026-10-30 07:06 UTC",
+    "sub_topic": "宏观政经"
   },
   {
     "topic": "AI与硬科技",
@@ -693,7 +867,8 @@
     "score": 8.5,
     "reason": "结合三季报对半导体零部件赛道进行了深度剖析，包含具体财务数据、同比环比增幅及产业链传导分析，信源客观。",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-30 01:01 UTC"
+    "fetched_at": "2026-10-30 01:01 UTC",
+    "sub_topic": "财报资本"
   },
   {
     "topic": "AI与硬科技",
@@ -705,7 +880,8 @@
     "score": 9.0,
     "reason": "一手信源（财报电话会纪要），包含具体的资本开支、供需预测及业务逻辑拆解，数据扎实、基准清晰。",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-30 01:01 UTC"
+    "fetched_at": "2026-10-30 01:01 UTC",
+    "sub_topic": "财报资本"
   },
   {
     "topic": "AI与硬科技",
@@ -717,7 +893,8 @@
     "score": 9.0,
     "reason": "依托韩国央行及国际媒体客观审视韩国半导体热潮背后的结构性隐患与宏观数据（如GDP增量贡献、出口占比、AI资本支出放缓风险），数据扎实，视角客观。",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-30 01:01 UTC"
+    "fetched_at": "2026-10-30 01:01 UTC",
+    "sub_topic": "宏观政经"
   },
   {
     "topic": "AI与硬科技",
@@ -729,7 +906,8 @@
     "score": 8.5,
     "reason": "兼顾宏观政策与具体产业数据（如华为AI加速器出货量、市场份额、全球专利占比等），论述自主可控与开放合作的辩证关系，数据密度与基准较好。",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-30 01:01 UTC"
+    "fetched_at": "2026-10-30 01:01 UTC",
+    "sub_topic": "宏观政经"
   },
   {
     "topic": "AI与硬科技",
@@ -741,7 +919,8 @@
     "score": 8.5,
     "reason": "披露了国际星闪联盟最新的出货量数据（预计全年达1.5亿至2亿颗）、车企落地进展及成本对比，信息增量大，信源明确。",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-30 01:01 UTC"
+    "fetched_at": "2026-10-30 01:01 UTC",
+    "sub_topic": "算力硬件"
   },
   {
     "topic": "AI与硬科技",
@@ -753,7 +932,8 @@
     "score": 9.0,
     "reason": "结合IDC与Counterpoint等第三方权威机构数据，深度剖析了2026年Q3全球及中国智能手机市场出货量下跌、存储芯片成本飙升的产业链传导机制，数据详实，宏观基准清晰。",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-30 01:01 UTC"
+    "fetched_at": "2026-10-30 01:01 UTC",
+    "sub_topic": "财报资本"
   },
   {
     "topic": "AI与硬科技",
@@ -765,7 +945,8 @@
     "score": 8.5,
     "reason": "围绕拟上市公司华普微的招股书展开，详细对比了研发费用率、同行业均值、供应链与内控合规等多维度数据，事实扎实，具有较高投资参考价值。",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-30 01:01 UTC"
+    "fetched_at": "2026-10-30 01:01 UTC",
+    "sub_topic": "财报资本"
   },
   {
     "topic": "AI与硬科技",
@@ -777,7 +958,8 @@
     "score": 8.9,
     "reason": "基于官方IPO招股书的硬核深度调查。数据极为详实且批判性强，客观揭示了公司长期亏损、关联交易畸高、核心产品毛利率为负以及产能利用率低却仍募资扩产等核心风险点。",
     "model": "gemini:gemini-3.6-flash",
-    "fetched_at": "2026-10-29 21:08 UTC"
+    "fetched_at": "2026-10-29 21:08 UTC",
+    "sub_topic": "宏观政经"
   },
   {
     "topic": "AI与硬科技",
@@ -789,7 +971,8 @@
     "score": 9.2,
     "reason": "高质量硬财经财报拆解。数据密度极高，深入剖析了云计算（ASIC/GPU机柜出货量及环比）、通信网络（800G交换机）、财务质量（ROE、扣非净利、财务费用）及资本动作等多个维度，逻辑极其客观严密。",
     "model": "gemini:gemini-3.6-flash",
-    "fetched_at": "2026-10-29 21:08 UTC"
+    "fetched_at": "2026-10-29 21:08 UTC",
+    "sub_topic": "财报资本"
   },
   {
     "topic": "AI与硬科技",
@@ -801,7 +984,8 @@
     "score": 8.7,
     "reason": "引述权威媒体对算力租赁板块三季报的纵深梳理，包含高密度的上市公司具体财务数据（营收、利润、订单量），深入剖析了行业折旧与刚性成本导致的结构性分化。",
     "model": "gemini:gemini-3.6-flash",
-    "fetched_at": "2026-10-29 21:08 UTC"
+    "fetched_at": "2026-10-29 21:08 UTC",
+    "sub_topic": "财报资本"
   },
   {
     "topic": "AI与硬科技",
@@ -813,7 +997,8 @@
     "score": 8.5,
     "reason": "深入分析谷歌TorchTPU和亚马逊TorchNeuron对英伟达CUDA生态的冲击，切入点专业，技术逻辑清晰。",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-29 21:08 UTC"
+    "fetched_at": "2026-10-29 21:08 UTC",
+    "sub_topic": "算力硬件"
   },
   {
     "topic": "AI与硬科技",
@@ -825,7 +1010,8 @@
     "score": 8.5,
     "reason": "独家专访彭博全球首席经济学家欧乐鹰，深入探讨美联储利率决议、通胀驱动因素及AI资产风险，观点专业有深度。",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-29 21:08 UTC"
+    "fetched_at": "2026-10-29 21:08 UTC",
+    "sub_topic": "宏观政经"
   },
   {
     "topic": "AI与硬科技",
@@ -837,7 +1023,8 @@
     "score": 9.0,
     "reason": "以兆威机电三季报为据，梳理了营收微增、净利下滑、成本攀升与百倍市盈率之间的量化对照，数据详实，视角客观严谨。",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-29 21:08 UTC"
+    "fetched_at": "2026-10-29 21:08 UTC",
+    "sub_topic": "财报资本"
   },
   {
     "topic": "AI与硬科技",
@@ -849,7 +1036,8 @@
     "score": 8.5,
     "reason": "基于Alphabet最新季度财报，披露了核心搜索业务收入不及预期、AI查询货币化率较低等关键事实与具体财务指标，并附带了分析师预期对比，属于高质量财报拆解。",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-29 16:10 UTC"
+    "fetched_at": "2026-10-29 16:10 UTC",
+    "sub_topic": "财报资本"
   },
   {
     "topic": "AI与硬科技",
@@ -861,7 +1049,8 @@
     "score": 8.5,
     "reason": "基于Anthropic最新公开的S-1招股书展开，提供了详实的一手财务数据（收入、毛利率、亏损结构及ARR估值倍数），并探讨了对行业估值体系的参考意义，客观克制。",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-29 16:10 UTC"
+    "fetched_at": "2026-10-29 16:10 UTC",
+    "sub_topic": "宏观政经"
   },
   {
     "topic": "AI与硬科技",
@@ -873,7 +1062,8 @@
     "score": 9.0,
     "reason": "源自彭博社的一手信源，报道了半导体行业美满电子拟收购光通信龙头Lumentum的重大并购事件，包含了具体的市值数据、市场反应与逻辑分析，符合实质性新事实增量与数据密度标准。",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-29 16:10 UTC"
+    "fetched_at": "2026-10-29 16:10 UTC",
+    "sub_topic": "财报资本"
   },
   {
     "topic": "AI与硬科技",
@@ -885,7 +1075,8 @@
     "score": 9.5,
     "reason": "顶级权威财联社快讯，详细披露三星电子历史级三季报数据（营业利润破100万亿韩元），并与分析师预期（LSEG）作横向基准对比，同时给出HBM销量与资本开支等核心硬核指标，信源与数据极度扎实。",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-29 09:13 UTC"
+    "fetched_at": "2026-10-29 09:13 UTC",
+    "sub_topic": "财报资本"
   },
   {
     "topic": "AI与硬科技",
@@ -897,7 +1088,8 @@
     "score": 9.2,
     "reason": "极高质量的半导体设备行业深度财报分析。以ASM三季报为切入点，横向对比ASML、应用材料、泛林集团等巨头数据，数据密度极高，客观印证了AI资本开支的兑现节奏。",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-29 09:13 UTC"
+    "fetched_at": "2026-10-29 09:13 UTC",
+    "sub_topic": "财报资本"
   },
   {
     "topic": "AI与硬科技",
@@ -909,7 +1101,8 @@
     "score": 8.8,
     "reason": "彭博官方推出BQuant Assistant的产品公告，包含明确的功能定位、发布时间与架构说明，信息源权威客观",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-29 09:12 UTC"
+    "fetched_at": "2026-10-29 09:12 UTC",
+    "sub_topic": "模型应用"
   },
   {
     "topic": "AI与硬科技",
@@ -921,7 +1114,8 @@
     "score": 8.5,
     "reason": "技术工程类报道，详细披露了Instagram迁移的量化指标（代码量减少50%、token成本降低33%等），信源明确且具备技术参考价值",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-29 09:12 UTC"
+    "fetched_at": "2026-10-29 09:12 UTC",
+    "sub_topic": "模型应用"
   },
   {
     "topic": "AI与硬科技",
@@ -933,7 +1127,8 @@
     "score": 8.5,
     "reason": "引用了QuestMobile、掌阅、DataEye等多方数据，客观呈现AI短剧赛道的成本降幅、日活与合规清退情况，数据密度与基准较好",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-29 09:12 UTC"
+    "fetched_at": "2026-10-29 09:12 UTC",
+    "sub_topic": "模型应用"
   },
   {
     "topic": "AI与硬科技",
@@ -945,6 +1140,7 @@
     "score": 9.5,
     "reason": "源自SK海力士官方财报，包含单季营收突破100万亿韩元、利润率、长约锁定产能等极高密度的一手财务数据和横向基准，完全符合高分标准",
     "model": "gemini:gemini-3.5-flash-lite",
-    "fetched_at": "2026-10-29 09:12 UTC"
+    "fetched_at": "2026-10-29 09:12 UTC",
+    "sub_topic": "财报资本"
   }
 ]
