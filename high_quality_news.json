@@ -1,6 +1,45 @@
 [
   {
     "topic": "AI与硬科技",
+    "sub_topic": "宏观政经",
+    "title": "韩国半导体产业“一枝独秀”存隐忧",
+    "source": "手机网易网",
+    "url": "https://www.163.com/dy/article/LAPRJOP90514CQIE.html",
+    "pub_date": "Mon, 02 Nov 2026 22:49:04 GMT",
+    "snippet": "图为位于韩国京畿道华城市的三星电子公司半导体制造工厂。（视觉中国） 全球人工智能发展浪潮催生了新一轮产业红利，韩国无疑成为目前的赢家之一，其三季度经济增长超预期，二季度经常账户顺差首次超过德国和日本的总和，全年出口总额有望突破1万亿美元。但半导体出口占韩国出口总额的近一半，产业结...",
+    "score": 9.0,
+    "reason": "引用了韩国央行及IMF的权威宏观经济与半导体出口具体数据（如经常账户顺差、三季度半导体出口额同比激增218.7%等），并客观分析了产业结构“一枝独秀”背后的隐忧，数据密度高、基准清晰。",
+    "model": "gemini:gemini-3.5-flash-lite",
+    "fetched_at": "2026-11-02 23:32 UTC"
+  },
+  {
+    "topic": "AI与硬科技",
+    "sub_topic": "模型应用",
+    "title": "DeepSeek上新模式强化智能体能力：一句话定制AI插件，公开提示词搞定3D可视化到视频编辑",
+    "source": "华尔街见闻",
+    "url": "https://wallstreetcn.com/articles/3785017",
+    "pub_date": "Mon, 02 Nov 2026 21:57:18 GMT",
+    "snippet": "DeepSeek正在进一步将AI智能体（Agent）的能力从执行任务拓展到自主构建工具。 11月2日周一，DeepSeek Harness团队宣布推出全新的“创作者模式”（Creator Mode），用户只需通过自然语言描述需求，即可将想法转化为可安装、可使用的自定义插件，扩展H...",
+    "score": 8.5,
+    "reason": "聚焦DeepSeek推出“创作者模式”的新进展，客观报道了其通过自然语言生成插件、扩展智能体能力的具体功能与7组演示案例，同时指出了其在生产环境可靠性与安全合规方面的挑战，叙事克制中立。",
+    "model": "gemini:gemini-3.5-flash-lite",
+    "fetched_at": "2026-11-02 23:32 UTC"
+  },
+  {
+    "topic": "AI与硬科技",
+    "sub_topic": "财报资本",
+    "title": "AI搜索不赚钱",
+    "source": "Jiemian.com",
+    "url": "https://www.jiemian.com/article/15279428.html",
+    "pub_date": "Mon, 02 Nov 2026 03:47:52 GMT",
+    "snippet": "文｜旧叔笔谈 因为AI，谷歌跌出了上市22年来最差的一天。 10月29日美股收盘，Alphabet A类股大跌12.64%，收在283.82美元每股。按收盘价算，这家公司一天之内蒸发了约5000亿美元市值，创下公司2004年上市以来最差的单日表现。 不止于此，放到华尔街的历史坐标...",
+    "score": 9.0,
+    "reason": "文章基于Alphabet（谷歌）最新三季度财报数据，详细拆解了总营收、谷歌云增速以及广告收入不及预期的核心原因，数据翔实，并客观分析了AI Mode搜索变现面临的创新者窘境，信源权威且分析深入。",
+    "model": "gemini:gemini-3.5-flash-lite",
+    "fetched_at": "2026-11-02 23:32 UTC"
+  },
+  {
+    "topic": "AI与硬科技",
     "sub_topic": "算力硬件",
     "title": "安森美半导体(ON.US)Q3业绩放榜在即 AI数据中心业务、毛利率及Q4指引成最大看点",
     "source": "同花顺财经",
