@@ -11,14 +11,16 @@ from googlenewsdecoder import gnewsdecoder
 
 # ================= 1. 核心配置区 =================
 SCORE_THRESHOLD = 8.5       # 录取分数线（>= 8.5分才保留）
-BATCH_SIZE = 8              # 每次打包 8 篇发给 AI（既省 API 请求次数，又方便 AI 在同批次内做事件去重）
-MAX_PER_FEED = 6            # 每个 RSS 源最多提取 6 篇候选，防止单一信源垄断名额
+BATCH_SIZE = 8              # 每次打包 8 篇发给 AI
+MAX_PER_FEED = 6            # 每个 RSS 源最多提取 6 篇候选
 MAX_ARTICLES_PER_RUN = 16   # 每次定时任务总共最多送审 16 篇
 
 DATA_FILE = "high_quality_news.json"
 SEEN_FILE = "seen_urls.json"
 
-# 主题与 RSS 源配置（已加入 -快科技 -IT之家 源头降噪，并实现多源均衡配额）
+VALID_SUB_TOPICS = {"算力硬件", "模型应用", "财报资本", "宏观政经"}
+
+# 主题与 RSS 源配置
 TOPICS = {
     "AI与硬科技": [
         # 源1：严肃财经与深度科技媒体定向源
@@ -30,46 +32,53 @@ TOPICS = {
     ]
 }
 
-# 1. 标题黑名单：含感叹号、情绪词、炒股词、或典型单一公司公关喜报词，直接秒杀
+# 1. 标题黑名单：新增拦截“掀桌/巧了/急了”等自媒体引战体，以及“券商最新研判/评级”等吹票标题
 TITLE_BLACKLIST = re.compile(
-    r"(!|！|震惊|暴跌|崩盘|涨停|跌停|午评|收评|概念股|必看|彻底慌了|断崖式|ETF|掘金|龙头股|价值重估|满仓|飙升|入选.*指数|斩获.*奖|荣获.*奖)"
+    r"(!|！|震惊|暴跌|崩盘|涨停|跌停|午评|收评|概念股|必看|彻底慌了|断崖式|ETF|掘金|龙头股|价值重估|满仓|飙升|入选.*指数|斩获.*奖|荣获.*奖|掀桌|巧了|打脸|急了|亮剑|霸气|券商最新研判|早报（)"
 )
 
-# 2. 正文开头黑名单：拦截数码网站拆条快讯与发布会口水通稿（检查正文前 120 字）
+# 2. 正文开头黑名单：拦截数码快讯与发布会口水通稿
 HEAD_BLACKLIST = re.compile(
     r"(快科技\s*\d+月\d+日|驱动之家|站长之家|太平洋科技|CNMO|IT之家.*现场消息|在今天的发布会上)"
 )
 
-# 3. 正文末尾黑名单：拦截文末夹带私货的 ETF/股票营销软文（检查正文后 350 字）
+# 3. 正文末尾黑名单：新增拦截单一股票“投资评级：增持/买入”的卖方吹票短研报
 TAIL_BLACKLIST = re.compile(
-    r"(基金有风险|投资需谨慎|风险提示：本文|不构成投资建议|ETF联接|代码：\d{6}|关注【|扫码领)"
+    r"(基金有风险|投资需谨慎|风险提示：本文|不构成投资建议|ETF联接|代码：\d{6}|关注【|扫码领|投资评级：增持|投资评级：买入|维持“增持”|维持“买入”)"
 )
 
-# 多模型自动故障转移池（未配置 GROQ_API_KEY 时会自动跳过 groq 节点，后续添加 Key 自动生效）
+# 多模型自动故障转移池
 MODEL_POOL = [
-    {"provider": "gemini", "model": "gemini-3.6-flash"},      # 主力首选：高智商、大上下文、已验证可用
-    {"provider": "groq",   "model": "openai/gpt-oss-120b"},   # Groq 120B 旗舰（配置 GROQ_API_KEY 后激活）
-    {"provider": "groq",   "model": "qwen/qwen3.8-27b"},      # Groq 中文强模型（配置 GROQ_API_KEY 后激活）
-    {"provider": "gemini", "model": "gemini-2.5-flash"},      # Gemini 次选
-    {"provider": "gemini", "model": "gemini-3.5-flash-lite"}, # Gemini 极速轻量保底
-    {"provider": "groq",   "model": "openai/gpt-oss-20b"},    # Groq 极速保底
+    {"provider": "gemini", "model": "gemini-3.6-flash"},
+    {"provider": "groq",   "model": "openai/gpt-oss-120b"},
+    {"provider": "groq",   "model": "qwen/qwen3.8-27b"},
+    {"provider": "gemini", "model": "gemini-2.5-flash"},
+    {"provider": "gemini", "model": "gemini-3.5-flash-lite"},
+    {"provider": "groq",   "model": "openai/gpt-oss-20b"},
 ]
 
-# 8.5分冷酷主编评分矩阵 Prompt（新增跨批次事件去重 & 严打发布会 PPT 通稿）
-SYSTEM_PROMPT = """你是一位极其严苛、客观的硬科技与财经新闻总编。请对输入的新闻列表进行独立质量打分（满分10分，支持小数如8.5、9.0）。
+# 8.5分冷酷主编评分矩阵 + 四大子版块分类 Prompt
+SYSTEM_PROMPT = """你是一位极其严苛、客观的硬科技与财经新闻总编。请对输入的新闻列表进行独立质量打分（满分10分，支持小数如8.5、9.0），并为其归类子版块。
 
 【高分核心标准（决定能否上 8.5 分）】：
-1. 实质性新事实增量（30%）：围绕新发生的具体客观商业/技术事件（如财报发布、核心供应链突破、明确金额的并购/资本开支、重大政策落地），而非旧闻综述。
-2. 数据密度与横向基准（30%）：不仅有具体数字，还必须提供客观参照系（如第三方机构市占率对比、同业公司财务/良率对比、同比/环比核心指标、分析师预期对比），具备深度可思考性。
+1. 实质性新事实增量（30%）：围绕新发生的具体客观商业/技术事件（财报发布、核心供应链突破、明确金额的并购/资本开支、重大政策落地），而非旧闻综述。
+2. 数据密度与横向基准（30%）：不仅有具体数字，还必须提供客观参照系（如第三方市占率对比、同业公司财务/良率对比、同比/环比核心指标、分析师预期对比），具备深度可思考性。
 3. 一手信源与多方印证（20%）：源自官方财报、监管文件、权威调研机构（如IDC、Counterpoint、彭博、路透）或核心供应链独家披露。
-4. 叙事克制与价值中立（20%）：摆事实列数据，不替读者下结论，不强行煽情或点评企业家性格。
+4. 叙事克制与价值中立（20%）：摆事实列数据，不替读者下结论，不强行煽情或使用自媒体博眼球话术。
 
 【一票否决与封顶红线（严格执行！）】：
-- 【事件级去重铁律（打 0.0 分）】：如果某篇候选文章与我提供的《近期已发布新闻清单》属于同一个具体事件（例如同一家公司的同一份财报、同一场发布会），或者当前批次内有多篇文章报道同一事件，**只允许保留信息最全面、数据最客观的那 1 篇**，其余重复事件文章必须全部打 0.0 分，并在 reason 中注明“同事件重复报道”。
-- 【厂商发布会 PPT 通稿封顶 7.5 分】：单一厂商新品发布会的单方参数罗列（照抄厂商发布会宣传口径如“性能提升100%”、“算力XX TOPS”，缺乏第三方独立测试或行业客观审视），最高不得超过 7.5 分！
-- 【单一企业公关喜报封顶 7.0 分】：以某一家公司入选某指数、某榜单、荣获某奖项为主角的企业公关通稿（IR/PR稿），即使附带了公司财报数据，最高不得超过 7.0 分！
-- 【主观注水综述封顶 7.0 分】：事实骨架单薄，却展开大量主观评论、讲故事的文章，最高 7.0 分。
-- 【软文与标题党封顶 5.0 分】：夹带基金/股票推荐或情绪化博眼球，最高 5.0 分。
+- 【事件级去重铁律（打 0.0 分）】：若候选文章与《近期已发布新闻清单》或同批次其他文章属同一具体事件（如同一家公司的同一份财报、同一场发布会），**只允许保留信息最全面、数据最客观的那 1 篇**，其余重复事件文章一律打 0.0 分，reason 写“同事件重复报道”。
+- 【自媒体引战/爽文体封顶 5.0 分】：标题或行文带有“掀桌、打脸、彻底慌了、巧了”等自媒体情绪化博弈爽文色彩的，即便引用了真实政策或数据，最高不超过 5.0 分！
+- 【单一中小个股看多研报/吹票稿封顶 7.5 分】：针对单一中小市值公司的常规季报看多通稿、券商“买入/增持”推荐稿，若缺乏全行业横向对比或独立批判性视角（如应收账款/现金流风险拆解），最高不超过 7.5 分！
+- 【地方政绩宣传/空洞评论员文章封顶 7.0 分】：缺乏核心商业与技术博弈细节的地方园区算力政绩稿、口号式社论，最高不超过 7.0 分！
+- 【厂商发布会 PPT 通稿与单一企业获奖喜报封顶 7.5 分】。
+
+【子版块四选一规则（sub_topic 字段）】：
+请根据文章的核心信息增量，严格从以下 4 个词中选择 1 个填入 `sub_topic`：
+- "算力硬件"：芯片半导体、HBM/DRAM存储、CoWoS先进封装、EDA、半导体设备、数据中心电力/液冷、智能硬件供应链。
+- "模型应用"：大模型算法与架构(VLM/世界模型)、具身智能/机器人、自动驾驶、AI软硬件生态、B端/C端AI应用商业化落地、前沿学者访谈。
+- "财报资本"：科技公司季报/年报业绩拆解、IPO招股书透视、并购重组(M&A)、投融资估值、大厂资本开支(CapEx)与金融信贷风险。
+- "宏观政经"：宏观进出口贸易数据、国家算力/数据监管政策、央行利率、出口管制与全球半导体产业地缘格局。
 
 请严格输出 JSON 格式（不要输出任何多余文字），格式如下：
 {
@@ -77,13 +86,14 @@ SYSTEM_PROMPT = """你是一位极其严苛、客观的硬科技与财经新闻�
     {
       "id": 0,
       "score": 9.0,
+      "sub_topic": "算力硬件",
       "reason": "简明扼要写出打分依据或淘汰原因"
     }
   ]
 }"""
 
 
-# ================= 2. 辅助与去重工具函数 =================
+# ================= 2. 辅助与分类回填工具函数 =================
 def load_json(filepath, default):
     if os.path.exists(filepath):
         try:
@@ -100,8 +110,18 @@ def save_json(filepath, data):
 def make_hash(text):
     return hashlib.md5(text.encode("utf-8")).hexdigest()[:12]
 
+def fallback_sub_topic(title, snippet, reason):
+    """兜底分类器（同时用于为存量 79 篇老文章自动回填 sub_topic）"""
+    text = f"{title} {snippet} {reason}"
+    if re.search(r"(进出口|海关总署|数据局|美联储|利率|央行|自主可控|乌兰察布|冷焦虑|出口管制|掀桌|关税|国家标准)", text):
+        return "宏观政经"
+    if re.search(r"(财报|三季报|季报|Q3|Q4|营收|净利|利润|毛利率|IPO|招股书|估值|并购|收购|持仓|张坤|次贷|现金流|回购|分红|市盈率|增持|主力资金|闯关创业板|资本开支)", text):
+        return "财报资本"
+    if re.search(r"(芯片|半导体|晶圆|台积电|CoWoS|封装|HBM|内存|DRAM|存储|闪存|光模块|光互联|液冷|买电|电力设备|EDA|氮化镓|星闪|手机出货|端侧SoC|征程7|服务器)", text):
+        return "算力硬件"
+    return "模型应用"
+
 def is_similar_title(new_title, existing_titles, threshold=0.42):
-    """计算标题字词重合度（拦截同一事件换标题重发）"""
     tokens_new = set(re.findall(r"[\u4e00-\u9fa5]|[a-zA-Z0-9]+", new_title.lower()))
     if len(tokens_new) < 4:
         return False
@@ -115,7 +135,6 @@ def is_similar_title(new_title, existing_titles, threshold=0.42):
     return False
 
 def decode_and_extract(gnews_url):
-    """解码 Google News 加密链接并提取干净的正文"""
     real_url = gnews_url
     if "news.google.com" in gnews_url:
         try:
@@ -138,16 +157,13 @@ def decode_and_extract(gnews_url):
 
 # ================= 3. 多模型轮询调用函数 =================
 def call_llm_with_fallback(batch_articles, recent_accepted_titles):
-    """将一批文章打包发给模型池，附带近期已发布标题清单供 AI 跨批次去重"""
     gemini_key = os.environ.get("GEMINI_API_KEY", "").strip()
     groq_key = os.environ.get("GROQ_API_KEY", "").strip()
 
-    # 构建近期已入选新闻清单（供 AI 识别同一事件）
     history_block = "无"
     if recent_accepted_titles:
         history_block = "\n".join([f"- {t}" for t in recent_accepted_titles[:15]])
 
-    # 构建打包输入文本（首尾切片法）
     article_blocks = []
     for idx, art in enumerate(batch_articles):
         body = art["body"]
@@ -220,6 +236,14 @@ def call_llm_with_fallback(batch_articles, recent_accepted_titles):
 def main():
     seen_ids = set(load_json(SEEN_FILE, []))
     saved_news = load_json(DATA_FILE, [])
+
+    # 为存量历史文章自动补齐 sub_topic 字段并持久化
+    for item in saved_news:
+        if item.get("sub_topic") not in VALID_SUB_TOPICS:
+            item["sub_topic"] = fallback_sub_topic(
+                item.get("title", ""), item.get("snippet", ""), item.get("reason", "")
+            )
+
     recent_titles = [item.get("title", "") for item in saved_news[:30]]
     candidates = []
 
@@ -248,36 +272,30 @@ def main():
                 if title_hash in seen_ids:
                     continue
 
-                # 拦截1：标题黑名单（含感叹号、情绪词、入选指数等公关词）
                 if TITLE_BLACKLIST.search(title):
                     print(f"    [本地拦截-标题黑名单] {title[:28]}...")
                     seen_ids.add(title_hash)
                     continue
 
-                # 拦截2：本地标题相似度去重（防止同一发布会/同一事件拆条洗版）
                 all_known_titles = recent_titles + [c["title"] for c in candidates]
                 if is_similar_title(title, all_known_titles):
                     print(f"    [本地拦截-同事件近似标题] {title[:28]}...")
                     seen_ids.add(title_hash)
                     continue
 
-                # 解码并提取正文
                 real_url, body = decode_and_extract(link)
                 seen_ids.add(title_hash)
 
-                # 拦截3：正文字数过短（提高门槛至 450 字）
                 if len(body) < 450:
                     print(f"    [本地拦截-正文过短({len(body)}字)] {title[:25]}...")
                     continue
 
-                # 拦截4：数码快讯与发布会口水通稿（检查前 120 字）
                 if HEAD_BLACKLIST.search(body[:120]):
                     print(f"    [本地拦截-快讯/发布会通稿] {title[:25]}...")
                     continue
 
-                # 拦截5：文末软文/ETF推广（检查后 350 字）
                 if TAIL_BLACKLIST.search(body[-350:]):
-                    print(f"    [本地拦截-文末软文推广] {title[:25]}...")
+                    print(f"    [本地拦截-文末软文/荐股评级] {title[:25]}...")
                     continue
 
                 candidates.append({
@@ -307,13 +325,16 @@ def main():
                 continue
             score = float(res.get("score", 0))
             reason = res.get("reason", "")
+            sub_topic = res.get("sub_topic", "").strip()
+            if sub_topic not in VALID_SUB_TOPICS:
+                sub_topic = fallback_sub_topic(art["title"], art["snippet"], reason)
 
             if score >= SCORE_THRESHOLD:
-                # 终审通过后，再次把该标题加入 recent_titles，供下一批次去重参考
                 recent_titles.insert(0, art["title"])
-                print(f"  🌟 [入选! {score}分] {art['title']} ({art['source']})")
+                print(f"  🌟 [入选! {score}分 | {sub_topic}] {art['title']} ({art['source']})")
                 saved_news.insert(0, {
                     "topic": art["topic"],
+                    "sub_topic": sub_topic,
                     "title": art["title"],
                     "source": art["source"],
                     "url": art["url"],
