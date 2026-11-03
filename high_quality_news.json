@@ -1,6 +1,58 @@
 [
   {
     "topic": "AI与硬科技",
+    "sub_topic": "算力硬件",
+    "title": "以色列Tower半导体三季度营收5.26亿美元同比增长33%",
+    "source": "维度网",
+    "url": "https://www.wedoany.com/shortnews/502436.html",
+    "pub_date": "Tue, 03 Nov 2026 03:08:00 GMT",
+    "snippet": "以色列Tower半导体三季度营收5.26亿美元同比增长33% \t\t\t\t\t\t\t\t\t2026-11-03 11:08 \t\t\t\t\t\t\t\t  收藏 11月2日，以色列晶圆代工企业Tower Semiconductor（高塔半导体）发布第三季度财务业绩，截至9月30日的三个月内，公司实现营...",
+    "score": 9.0,
+    "reason": "基于以色列高塔半导体（Tower Semiconductor）官方三季度财报，披露了营收、净利润、毛利率及硅光子业务具体数据和横向对比，信源权威、数据详实。",
+    "model": "gemini:gemini-3.5-flash-lite",
+    "fetched_at": "2026-11-03 06:46 UTC"
+  },
+  {
+    "topic": "AI与硬科技",
+    "sub_topic": "财报资本",
+    "title": "苹果上财季营收1145亿美元创新高：iPhone增长17%，存储芯片涨价压制利润空间",
+    "source": "ThePaper.cn",
+    "url": "https://www.thepaper.cn/newsDetail_forward_34392892",
+    "pub_date": "Tue, 03 Nov 2026 00:51:41 GMT",
+    "snippet": "- +1 苹果上财季营收1145亿美元创新高：iPhone增长17%，存储芯片涨价压制利润空间 美国当地时间11月2日，苹果公司发布2026财年第四季度财报。截至9月26日的三个月内，公司实现营收1144.8亿美元，同比增长12%；净利润307.1亿美元，同比增长12%；摊薄后每...",
+    "score": 9.2,
+    "reason": "源自官方财报披露（苹果2026财年Q4），包含精确的营收、净利润、各项业务具体增速及存储芯片涨价等供应链成本对利润的压制，数据密度极高。",
+    "model": "gemini:gemini-3.5-flash-lite",
+    "fetched_at": "2026-11-03 06:46 UTC"
+  },
+  {
+    "topic": "AI与硬科技",
+    "sub_topic": "财报资本",
+    "title": "T早报｜Anthropic披露近9000亿美元算力支出承诺；Marvell拟1150亿美元收购光通信Lumentum；苹果季度收入超预期",
+    "source": "财新",
+    "url": "https://companies.caixin.com/2026-11-03/102500164.html",
+    "pub_date": "Tue, 03 Nov 2026 00:30:00 GMT",
+    "snippet": "【财新网】 Anthropic披露近9000亿美元算力支出承诺 当地时间11月2日，AI公司Anthropic更新IPO招股书，披露三季度营收169.6亿美元，环比增长47%，低于二季度的144%；营业亏损5.67亿美元，而二季度盈利9.74亿美元，主要受短期算力采购成本上升影响...",
+    "score": 9.0,
+    "reason": "源自Anthropic更新的IPO招股书以及Marvell大额并购，兼具财报营收、亏损、算力承诺具体金额及横向同业对比，数据密度与一手信源极高。",
+    "model": "gemini:gemini-3.5-flash-lite",
+    "fetched_at": "2026-11-03 06:46 UTC"
+  },
+  {
+    "topic": "AI与硬科技",
+    "sub_topic": "算力硬件",
+    "title": "显卡11连涨后急刹车，华强北商家：我也看不懂",
+    "source": "手机新浪网",
+    "url": "https://k.sina.com.cn/article_5182171545_134e1a99902002l4jc.html?from=finance&kdurlshow=1",
+    "pub_date": "Tue, 03 Nov 2026 02:04:00 GMT",
+    "snippet": "界面新闻记者 | 陆柯言 界面新闻编辑 | 文姝琪 AI数据中心对存储芯片的争夺，正在一路传导到深圳华强北的柜台。 显卡是这条传导链上反应最剧烈的一环。以英伟达RTX 5080为例，10月下旬这张显卡在电商平台的报价一度冲到2万元，截至10月27日，RTX 50系列显卡价格连涨了...",
+    "score": 8.5,
+    "reason": "以深圳华强北显卡价格剧烈波动为切入点，结合上游英伟达GPU政策与集邦咨询存储合约价，具备鲜活的一手供应链观察与宏观传导逻辑。",
+    "model": "gemini:gemini-3.5-flash-lite",
+    "fetched_at": "2026-11-03 06:46 UTC"
+  },
+  {
+    "topic": "AI与硬科技",
     "sub_topic": "宏观政经",
     "title": "韩国半导体产业“一枝独秀”存隐忧",
     "source": "手机网易网",
