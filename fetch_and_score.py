@@ -10,31 +10,55 @@ from datetime import datetime, timezone
 from googlenewsdecoder import gnewsdecoder
 
 # ================= 1. 核心配置区 =================
-SCORE_THRESHOLD = 8.5       # 录取分数线（>= 8.5分才保留）
+SCORE_THRESHOLD = 8.5       # 统一录取分数线（>= 8.5分保留）
 BATCH_SIZE = 8              # 每次打包 8 篇发给 AI
-MAX_PER_FEED = 6            # 每个 RSS 源最多提取 6 篇候选
-MAX_ARTICLES_PER_RUN = 16   # 每次定时任务总共最多送审 16 篇
+MAX_PER_FEED = 4            # 每个 RSS 源最多提取 4 篇高优候选
+MAX_ARTICLES_PER_RUN = 20   # 每次定时任务总共最多送审 20 篇
 
 DATA_FILE = "high_quality_news.json"
 SEEN_FILE = "seen_urls.json"
+STATUS_FILE = "status.json"
 
-VALID_SUB_TOPICS = {"算力硬件", "模型应用", "财报资本", "宏观政经"}
+VALID_SUB_TOPICS = {
+    "AI与硬科技": {"算力硬件", "模型应用", "财报资本", "宏观政经"},
+    "影视文化": {"深度影评", "新片动向", "行业商业", "影视科技"},
+}
 
-# 主题与 RSS 源配置
+# 主题与 RSS 源配置（AI与硬科技 + 影视文化 双版块并行）
 TOPICS = {
     "AI与硬科技": [
-        # 源1：严肃财经与深度科技媒体定向源
+        # 科技源1：严肃财经与深度科技媒体定向源
         "https://news.google.com/rss/search?q=(AI+OR+人工智能+OR+芯片+OR+算力+OR+半导体+OR+大模型)+(财新+OR+第一财经+OR+21世纪+OR+界面+OR+路透+OR+彭博+OR+经济观察报)+when:1d&hl=zh-CN&gl=CN&ceid=CN:zh-Hans",
-        # 源2：网易新闻（163.com）硬科技报道（排除数码快讯转载）
+        # 科技源2：网易新闻（163.com）硬科技报道（排除数码快讯转载）
         "https://news.google.com/rss/search?q=(AI+OR+芯片+OR+半导体+OR+算力+OR+大模型)+site:163.com+-快科技+-IT之家+-驱动之家+when:1d&hl=zh-CN&gl=CN&ceid=CN:zh-Hans",
-        # 源3：全网硬科技核心事件源（聚焦财报、流片、产能、并购与行业数据）
+        # 科技源3：全网硬科技核心事件源
         "https://news.google.com/rss/search?q=(AI芯片+OR+算力+OR+半导体+OR+晶圆+OR+HBM+OR+存储芯片)+(财报+OR+营收+OR+量产+OR+市占率+OR+良率+OR+资本开支)+-快科技+-IT之家+when:1d&hl=zh-CN&gl=CN&ceid=CN:zh-Hans"
+    ],
+    "影视文化": [
+        # 影视源1：深度影评、剧作分析与导演主创专访（源头屏蔽票房与娱乐八卦）
+        "https://news.google.com/rss/search?q=(影评+OR+豆瓣+OR+导演+OR+编剧+OR+专访+OR+电影节+OR+戛纳+OR+奥斯卡+OR+剧集)+(深度+OR+叙事+OR+镜头+OR+主创+OR+美学+OR+创作)+-票房+-破亿+-排片+-绯闻+-恋情+-穿搭+when:2d&hl=zh-CN&gl=CN&ceid=CN:zh-Hans",
+        # 影视源2：国内外重磅新片/新剧动向与权威口碑前瞻
+        "https://news.google.com/rss/search?q=(新片+OR+新剧+OR+定档+OR+首映+OR+美剧+OR+英剧+OR+韩剧+OR+Netflix+OR+HBO+OR+AppleTV+OR+院线)+(导演+OR+改编+OR+口碑+OR+烂番茄+OR+豆瓣+OR+电影节)+-票房+-破亿+-粉丝+-应援+-街拍+when:2d&hl=zh-CN&gl=CN&ceid=CN:zh-Hans",
+        # 影视源3：影视行业商业博弈与影视前沿科技（流媒体、制片成本、AI影视工业与虚拟制片）
+        "https://news.google.com/rss/search?q=(影视+OR+好莱坞+OR+流媒体+OR+奈飞+OR+迪士尼+OR+爱奇艺+OR+腾讯视频+OR+电影工业)+(AI+OR+虚拟制片+OR+视效+OR+特效+OR+制作成本+OR+版权+OR+财报+OR+战略)+-票房+-涨停+-概念股+when:2d&hl=zh-CN&gl=CN&ceid=CN:zh-Hans"
     ]
 }
 
-# 1. 标题黑名单：新增拦截“掀桌/巧了/急了”等自媒体引战体，以及“券商最新研判/评级”等吹票标题
+# 信源白名单（抓取时自动排在队列最前面，优先享用配额）
+VIP_SOURCES = re.compile(
+    r"(财新|晚点|LatePost|第一财经|21世纪|界面|路透|彭博|Bloomberg|经济观察报|澎湃|毒眸|娱理|三联|新京报|虎嗅|36氪|芯东西)"
+)
+
+# 信源黑名单（命中直接丢弃）
+SOURCE_BLACKLIST = re.compile(
+    r"(百家号|营销号|股吧|彩票|算命|娱乐八卦|粉丝网|追星)"
+)
+
+# 1. 标题黑名单：拦截科技标题党、引战爽文、影视八卦粉圈词、以及票房/排片播报
 TITLE_BLACKLIST = re.compile(
-    r"(!|！|震惊|暴跌|崩盘|涨停|跌停|午评|收评|概念股|必看|彻底慌了|断崖式|ETF|掘金|龙头股|价值重估|满仓|飙升|入选.*指数|斩获.*奖|荣获.*奖|掀桌|巧了|打脸|急了|亮剑|霸气|券商最新研判|早报（)"
+    r"(!|！|震惊|暴跌|崩盘|涨停|跌停|午评|收评|概念股|必看|彻底慌了|断崖式|ETF|掘金|龙头股|价值重估|满仓|飙升|"
+    r"入选.*指数|斩获.*奖|荣获.*奖|掀桌|巧了|打脸|急了|亮剑|霸气|券商最新研判|早报（|"
+    r"票房|排片|破\d+亿|恋情|绯闻|离婚|出轨|街拍|红毯|艳压|少女感|冻龄|颜值|撕番|应援|生图|演技炸裂|看哭)"
 )
 
 # 2. 正文开头黑名单：拦截数码快讯与发布会口水通稿
@@ -42,12 +66,11 @@ HEAD_BLACKLIST = re.compile(
     r"(快科技\s*\d+月\d+日|驱动之家|站长之家|太平洋科技|CNMO|IT之家.*现场消息|在今天的发布会上)"
 )
 
-# 3. 正文末尾黑名单：新增拦截单一股票“投资评级：增持/买入”的卖方吹票短研报
+# 3. 正文末尾黑名单：拦截文末夹带私货的 ETF/股票营销软文与单股增持评级
 TAIL_BLACKLIST = re.compile(
     r"(基金有风险|投资需谨慎|风险提示：本文|不构成投资建议|ETF联接|代码：\d{6}|关注【|扫码领|投资评级：增持|投资评级：买入|维持“增持”|维持“买入”)"
 )
 
-# 多模型自动故障转移池
 MODEL_POOL = [
     {"provider": "gemini", "model": "gemini-3.6-flash"},
     {"provider": "groq",   "model": "openai/gpt-oss-120b"},
@@ -57,28 +80,33 @@ MODEL_POOL = [
     {"provider": "groq",   "model": "openai/gpt-oss-20b"},
 ]
 
-# 8.5分冷酷主编评分矩阵 + 四大子版块分类 Prompt
-SYSTEM_PROMPT = """你是一位极其严苛、客观的硬科技与财经新闻总编。请对输入的新闻列表进行独立质量打分（满分10分，支持小数如8.5、9.0），并为其归类子版块。
+# 双轨制 8.5分冷酷主编评分矩阵 + 原文核心原句摘录 Prompt
+SYSTEM_PROMPT = """你是一位极其严苛、客观的硬科技、商业与严肃影视文化总编。请对输入的新闻列表进行独立质量打分（满分10分，支持小数如8.5、9.0），归类子版块，并摘录原文核心原句。
 
-【高分核心标准（决定能否上 8.5 分）】：
-1. 实质性新事实增量（30%）：围绕新发生的具体客观商业/技术事件（财报发布、核心供应链突破、明确金额的并购/资本开支、重大政策落地），而非旧闻综述。
-2. 数据密度与横向基准（30%）：不仅有具体数字，还必须提供客观参照系（如第三方市占率对比、同业公司财务/良率对比、同比/环比核心指标、分析师预期对比），具备深度可思考性。
-3. 一手信源与多方印证（20%）：源自官方财报、监管文件、权威调研机构（如IDC、Counterpoint、彭博、路透）或核心供应链独家披露。
-4. 叙事克制与价值中立（20%）：摆事实列数据，不替读者下结论，不强行煽情或使用自媒体博眼球话术。
+【双轨制 8.5分高分核心标准】：
+▶ 轨道 A（适用于【AI与硬科技】全领域、以及【影视文化】中的行业商业/影视科技）：
+1. 实质性新事实增量（30%）：围绕新发生的具体商业/技术事件（财报发布、供应链突破、AI影视技术落地、流媒体战略调整、并购融资、政策落地），而非旧闻拼凑。
+2. 数据密度与横向基准（30%）：不仅有具体数字，还必须提供客观参照系（如市占率对比、同业财务/良率/成本对比、同比/环比核心指标）。
+3. 一手信源与叙事克制（40%）：源自官方财报、权威机构、核心供应链或独家披露；摆事实列数据，不煽情不吹捧。
+
+▶ 轨道 B（适用于【影视文化】中的深度影评、新片动向）：
+1. 深度影评与主创专访（≥8.5分标准）：必须具备扎实的剧作文本细读（叙事结构、人物弧光、镜头调度/视听语言分析、导演作者性演变或时代社会议题剖析），逻辑严密、观点独立有深度；或为导演/编剧/制片人干货极密的一手幕后创作专访。
+2. 新片/新剧动向（≥8.5分标准）：围绕真正具有艺术或行业标杆意义的国内外院线新片/流媒体新剧（如三大电影节/奥斯卡动向、名导新作、高口碑剧集），提供详实的创作背景、主创脉络或权威媒体/场刊/豆瓣/烂番茄专业口碑参照。
 
 【一票否决与封顶红线（严格执行！）】：
-- 【事件级去重铁律（打 0.0 分）】：若候选文章与《近期已发布新闻清单》或同批次其他文章属同一具体事件（如同一家公司的同一份财报、同一场发布会），**只允许保留信息最全面、数据最客观的那 1 篇**，其余重复事件文章一律打 0.0 分，reason 写“同事件重复报道”。
-- 【自媒体引战/爽文体封顶 5.0 分】：标题或行文带有“掀桌、打脸、彻底慌了、巧了”等自媒体情绪化博弈爽文色彩的，即便引用了真实政策或数据，最高不超过 5.0 分！
-- 【单一中小个股看多研报/吹票稿封顶 7.5 分】：针对单一中小市值公司的常规季报看多通稿、券商“买入/增持”推荐稿，若缺乏全行业横向对比或独立批判性视角（如应收账款/现金流风险拆解），最高不超过 7.5 分！
-- 【地方政绩宣传/空洞评论员文章封顶 7.0 分】：缺乏核心商业与技术博弈细节的地方园区算力政绩稿、口号式社论，最高不超过 7.0 分！
-- 【厂商发布会 PPT 通稿与单一企业获奖喜报封顶 7.5 分】。
+- 【事件级去重铁律（打 0.0 分）】：若候选文章与《近期已发布新闻清单》或同批次其他文章属同一具体事件，**只保留信息最全面、最深刻的那 1 篇**，其余重复事件文章一律打 0.0 分，reason 写“同事件重复报道”。
+- 【票房播报一票否决（最高 5.0 分）】：读者明确不关心票房数据！凡是以院线票房数字播报、排片占比、周末票房榜、“票房破X亿”喜报为核心的文章，一律最高 5.0 分淘汰！
+- 【娱乐八卦/粉圈吹捧/注水剧情复述（打 0.0~5.0 分）】：明星恋情绯闻、红毯穿搭、粉圈控评（“演技炸裂、全员封神”）、片方无脑宣发通稿、或单纯按时间线复述剧情而无深度剧作分析的解说文，一律淘汰！
+- 【自媒体引战体/单一中小个股增持吹票研报/厂商发布会PPT通稿/地方政绩稿（最高 7.5 分）】：一律不予通过！
 
-【子版块四选一规则（sub_topic 字段）】：
-请根据文章的核心信息增量，严格从以下 4 个词中选择 1 个填入 `sub_topic`：
-- "算力硬件"：芯片半导体、HBM/DRAM存储、CoWoS先进封装、EDA、半导体设备、数据中心电力/液冷、智能硬件供应链。
-- "模型应用"：大模型算法与架构(VLM/世界模型)、具身智能/机器人、自动驾驶、AI软硬件生态、B端/C端AI应用商业化落地、前沿学者访谈。
-- "财报资本"：科技公司季报/年报业绩拆解、IPO招股书透视、并购重组(M&A)、投融资估值、大厂资本开支(CapEx)与金融信贷风险。
-- "宏观政经"：宏观进出口贸易数据、国家算力/数据监管政策、央行利率、出口管制与全球半导体产业地缘格局。
+【子版块严格四选一规则（sub_topic 字段）】：
+- 若文章所属领域为 `AI与硬科技`，请严格从以下 4 个词中选 1 个：
+  "算力硬件" | "模型应用" | "财报资本" | "宏观政经"
+- 若文章所属领域为 `影视文化`，请严格从以下 4 个词中选 1 个：
+  "深度影评" | "新片动向" | "行业商业" | "影视科技"
+
+【原文核心原句摘录规则（key_quotes 字段）】：
+- 对于评分 >= 8.5 的文章，请直接从正文中**一字不改地摘抄 1~2 句最核心的数据原句或核心论断原话**（控制在 60~140 字以内，绝不要自己改写或总结！）。若评分 < 8.5，key_quotes 填空字符串 "" 即可。
 
 请严格输出 JSON 格式（不要输出任何多余文字），格式如下：
 {
@@ -87,6 +115,7 @@ SYSTEM_PROMPT = """你是一位极其严苛、客观的硬科技与财经新闻�
       "id": 0,
       "score": 9.0,
       "sub_topic": "算力硬件",
+      "key_quotes": "正文原句摘录...",
       "reason": "简明扼要写出打分依据或淘汰原因"
     }
   ]
@@ -110,16 +139,24 @@ def save_json(filepath, data):
 def make_hash(text):
     return hashlib.md5(text.encode("utf-8")).hexdigest()[:12]
 
-def fallback_sub_topic(title, snippet, reason):
-    """兜底分类器（同时用于为存量 79 篇老文章自动回填 sub_topic）"""
+def fallback_sub_topic(topic, title, snippet, reason):
     text = f"{title} {snippet} {reason}"
-    if re.search(r"(进出口|海关总署|数据局|美联储|利率|央行|自主可控|乌兰察布|冷焦虑|出口管制|掀桌|关税|国家标准)", text):
-        return "宏观政经"
-    if re.search(r"(财报|三季报|季报|Q3|Q4|营收|净利|利润|毛利率|IPO|招股书|估值|并购|收购|持仓|张坤|次贷|现金流|回购|分红|市盈率|增持|主力资金|闯关创业板|资本开支)", text):
-        return "财报资本"
-    if re.search(r"(芯片|半导体|晶圆|台积电|CoWoS|封装|HBM|内存|DRAM|存储|闪存|光模块|光互联|液冷|买电|电力设备|EDA|氮化镓|星闪|手机出货|端侧SoC|征程7|服务器)", text):
-        return "算力硬件"
-    return "模型应用"
+    if topic == "影视文化":
+        if re.search(r"(AI|虚拟制片|特效|视效|LED棚|IMAX|杜比|后期|渲染|数字人|生成式|技术)", text):
+            return "影视科技"
+        if re.search(r"(财报|营收|利润|订阅|会员|奈飞|Netflix|迪士尼|爱奇艺|腾讯视频|出品|成本|版权|并购|罢工|商业)", text):
+            return "行业商业"
+        if re.search(r"(定档|预告|首映|开机|杀青|立项|片单|戛纳|威尼斯|柏林|奥斯卡|艾美奖|新片|新剧|开播)", text):
+            return "新片动向"
+        return "深度影评"
+    else:
+        if re.search(r"(进出口|海关总署|数据局|美联储|利率|央行|自主可控|乌兰察布|冷焦虑|出口管制|掀桌|关税|国家标准)", text):
+            return "宏观政经"
+        if re.search(r"(财报|三季报|季报|Q3|Q4|营收|净利|利润|毛利率|IPO|招股书|估值|并购|收购|持仓|张坤|次贷|现金流|回购|分红|市盈率|增持|主力资金|闯关创业板|资本开支)", text):
+            return "财报资本"
+        if re.search(r"(芯片|半导体|晶圆|台积电|CoWoS|封装|HBM|内存|DRAM|存储|闪存|光模块|光互联|液冷|买电|电力设备|EDA|氮化镓|星闪|手机出货|端侧SoC|征程7|服务器)", text):
+            return "算力硬件"
+        return "模型应用"
 
 def is_similar_title(new_title, existing_titles, threshold=0.42):
     tokens_new = set(re.findall(r"[\u4e00-\u9fa5]|[a-zA-Z0-9]+", new_title.lower()))
@@ -172,7 +209,7 @@ def call_llm_with_fallback(batch_articles, recent_accepted_titles):
         else:
             sliced_body = body
         article_blocks.append(
-            f"【候选文章 ID: {idx}】\n标题：{art['title']}\n来源：{art['source']}\n正文切片：\n{sliced_body}\n"
+            f"【候选文章 ID: {idx}】\n所属领域：{art['topic']}\n标题：{art['title']}\n来源：{art['source']}\n正文切片：\n{sliced_body}\n"
         )
 
     user_prompt = (
@@ -237,24 +274,33 @@ def main():
     seen_ids = set(load_json(SEEN_FILE, []))
     saved_news = load_json(DATA_FILE, [])
 
-    # 为存量历史文章自动补齐 sub_topic 字段并持久化
+    # 为存量历史文章自动补齐 sub_topic 字段
     for item in saved_news:
-        if item.get("sub_topic") not in VALID_SUB_TOPICS:
+        t_name = item.get("topic", "AI与硬科技")
+        valid_set = VALID_SUB_TOPICS.get(t_name, VALID_SUB_TOPICS["AI与硬科技"])
+        if item.get("sub_topic") not in valid_set:
             item["sub_topic"] = fallback_sub_topic(
-                item.get("title", ""), item.get("snippet", ""), item.get("reason", "")
+                t_name, item.get("title", ""), item.get("snippet", ""), item.get("reason", "")
             )
 
     recent_titles = [item.get("title", "") for item in saved_news[:30]]
     candidates = []
+    scanned_count = 0
+    local_filtered_count = 0
 
-    print("🔍 Step 1: 开始按多信源均衡配额拉取 RSS 并进行本地粗筛...")
+    print("🔍 Step 1: 开始按【AI与硬科技 + 影视文化】均衡配额拉取 RSS 并进行本地粗筛...")
     for topic, urls in TOPICS.items():
         for feed_idx, rss_url in enumerate(urls, 1):
             feed = feedparser.parse(rss_url)
+            # VIP_SOURCES 白名单信源优先排在前面，优先获得配额
+            sorted_entries = sorted(
+                feed.entries,
+                key=lambda x: 0 if VIP_SOURCES.search(x.get("title", "")) else 1
+            )
             feed_count = 0
-            print(f"  📡 正在扫描 [{topic}] 源 #{feed_idx} (共 {len(feed.entries)} 条条目)...")
+            print(f"  📡 正在扫描 [{topic}] 源 #{feed_idx} (共 {len(sorted_entries)} 条条目，VIP信源已提权)...")
 
-            for entry in feed.entries:
+            for entry in sorted_entries:
                 if feed_count >= MAX_PER_FEED or len(candidates) >= MAX_ARTICLES_PER_RUN:
                     break
 
@@ -272,15 +318,28 @@ def main():
                 if title_hash in seen_ids:
                     continue
 
+                scanned_count += 1
+
+                # 信源黑名单拦截
+                if SOURCE_BLACKLIST.search(source):
+                    print(f"    [本地拦截-信源黑名单({source})] {title[:25]}...")
+                    seen_ids.add(title_hash)
+                    local_filtered_count += 1
+                    continue
+
+                # 标题黑名单拦截
                 if TITLE_BLACKLIST.search(title):
                     print(f"    [本地拦截-标题黑名单] {title[:28]}...")
                     seen_ids.add(title_hash)
+                    local_filtered_count += 1
                     continue
 
+                # 同事件标题近似度拦截
                 all_known_titles = recent_titles + [c["title"] for c in candidates]
                 if is_similar_title(title, all_known_titles):
                     print(f"    [本地拦截-同事件近似标题] {title[:28]}...")
                     seen_ids.add(title_hash)
+                    local_filtered_count += 1
                     continue
 
                 real_url, body = decode_and_extract(link)
@@ -288,14 +347,17 @@ def main():
 
                 if len(body) < 450:
                     print(f"    [本地拦截-正文过短({len(body)}字)] {title[:25]}...")
+                    local_filtered_count += 1
                     continue
 
                 if HEAD_BLACKLIST.search(body[:120]):
                     print(f"    [本地拦截-快讯/发布会通稿] {title[:25]}...")
+                    local_filtered_count += 1
                     continue
 
                 if TAIL_BLACKLIST.search(body[-350:]):
                     print(f"    [本地拦截-文末软文/荐股评级] {title[:25]}...")
+                    local_filtered_count += 1
                     continue
 
                 candidates.append({
@@ -313,9 +375,12 @@ def main():
     print(f"📦 Step 2: 本地严筛完成，共选出 {len(candidates)} 篇高潜力候选文章进入 AI 终审。")
 
     newly_accepted = 0
+    last_used_model = "无需调用 (本轮无新候选)"
+
     for i in range(0, len(candidates), BATCH_SIZE):
         batch = candidates[i : i + BATCH_SIZE]
         scores_list, used_model = call_llm_with_fallback(batch, recent_titles)
+        last_used_model = used_model
 
         score_map = {item.get("id"): item for item in scores_list if isinstance(item, dict)}
 
@@ -325,21 +390,25 @@ def main():
                 continue
             score = float(res.get("score", 0))
             reason = res.get("reason", "")
-            sub_topic = res.get("sub_topic", "").strip()
-            if sub_topic not in VALID_SUB_TOPICS:
-                sub_topic = fallback_sub_topic(art["title"], art["snippet"], reason)
+            key_quotes = (res.get("key_quotes") or "").strip()
+            t_name = art["topic"]
+            sub_topic = (res.get("sub_topic") or "").strip()
+            if sub_topic not in VALID_SUB_TOPICS.get(t_name, set()):
+                sub_topic = fallback_sub_topic(t_name, art["title"], art["snippet"], reason)
 
             if score >= SCORE_THRESHOLD:
                 recent_titles.insert(0, art["title"])
-                print(f"  🌟 [入选! {score}分 | {sub_topic}] {art['title']} ({art['source']})")
+                print(f"  🌟 [入选! {score}分 | {t_name} › {sub_topic}] {art['title']} ({art['source']})")
                 saved_news.insert(0, {
-                    "topic": art["topic"],
+                    "topic": t_name,
                     "sub_topic": sub_topic,
                     "title": art["title"],
                     "source": art["source"],
                     "url": art["url"],
                     "pub_date": art["pub_date"],
                     "snippet": art["snippet"],
+                    "key_quotes": key_quotes,
+                    "body": art["body"],  # 保存无广告纯净正文供前端直接展开阅读
                     "score": score,
                     "reason": reason,
                     "model": used_model,
@@ -347,13 +416,26 @@ def main():
                 })
                 newly_accepted += 1
             else:
-                print(f"  🗑️ [淘汰 {score}分] {art['title'][:22]}... | 原因: {reason[:38]}...")
+                print(f"  🗑️ [淘汰 {score}分 | {t_name}] {art['title'][:22]}... | 原因: {reason[:38]}...")
 
         if i + BATCH_SIZE < len(candidates):
             time.sleep(6)
 
-    save_json(DATA_FILE, saved_news[:200])
-    save_json(SEEN_FILE, list(seen_ids)[-2000:])
+    # 保存文章数据与已读账本
+    save_json(DATA_FILE, saved_news[:250])
+    save_json(SEEN_FILE, list(seen_ids)[-2500:])
+
+    # 保存后台运行健康状态供前端顶部状态栏展示
+    status_data = {
+        "last_run_utc": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
+        "scanned": scanned_count,
+        "local_filtered": local_filtered_count,
+        "ai_evaluated": len(candidates),
+        "accepted": newly_accepted,
+        "model": last_used_model,
+        "healthy": (last_used_model != "none")
+    }
+    save_json(STATUS_FILE, status_data)
     print(f"🎉 运行结束！本次新增 {newly_accepted} 篇高质量（>={SCORE_THRESHOLD}分）新闻。")
 
 if __name__ == "__main__":
