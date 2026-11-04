@@ -1,6 +1,8 @@
 import json
 import os
 import re
+from datetime import datetime, timezone, timedelta
+from email.utils import parsedate_to_datetime
 import streamlit as st
 
 st.set_page_config(
@@ -9,7 +11,9 @@ st.set_page_config(
     layout="wide"
 )
 
-# ================= 1. 母子联动分类架构配置 (双版块正式启用) =================
+TZ_UTC8 = timezone(timedelta(hours=8))
+
+# ================= 1. 母子联动分类架构配置 =================
 TOPIC_SCHEMA = {
     "AI与硬科技": {
         "icon": "🤖",
@@ -34,7 +38,31 @@ TOPIC_SCHEMA = {
 DATA_FILE = "high_quality_news.json"
 STATUS_FILE = "status.json"
 
-# ================= 2. 存量与兜底智能归类引擎 =================
+
+# ================= 2. 时间转 UTC+8 与存量智能归类工具 =================
+def to_utc8_str(raw_str):
+    """将 GMT / UTC 时间字符串统一转换为 YYYY-MM-DD HH:MM (UTC+8)"""
+    if not raw_str:
+        return ""
+    s = raw_str.strip()
+    # 1. 解析 RSS 标准时间 (如: Thu, 29 Oct 2026 06:47:05 GMT)
+    try:
+        dt = parsedate_to_datetime(s)
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        return dt.astimezone(TZ_UTC8).strftime("%Y-%m-%d %H:%M (UTC+8)")
+    except Exception:
+        pass
+    # 2. 解析 status.json 时间 (如: 2026-11-04 06:48 UTC)
+    for fmt in ("%Y-%m-%d %H:%M UTC", "%Y-%m-%d %H:%M"):
+        try:
+            dt = datetime.strptime(s, fmt).replace(tzinfo=timezone.utc)
+            return dt.astimezone(TZ_UTC8).strftime("%Y-%m-%d %H:%M (UTC+8)")
+        except Exception:
+            pass
+    return s
+
+
 def infer_sub_topic(item):
     topic = item.get("topic", "AI与硬科技")
     if topic not in TOPIC_SCHEMA:
@@ -89,17 +117,21 @@ def load_status():
         return None
 
 
-# ================= 3. 定制方框卡片 CSS 样式 =================
+# ================= 3. 定制紧凑主控台与方框 CSS 样式 =================
 st.markdown("""
 <style>
-div.stButton > button {
-    height: auto !important;
-    padding: 13px 10px !important;
-    border-radius: 10px !important;
-    transition: all 0.18s ease-in-out !important;
-    white-space: pre-wrap !important;
-    line-height: 1.45 !important;
+/* 压缩页面顶部留白 */
+.block-container {
+    padding-top: 2rem !important;
 }
+/* 按钮通用紧凑圆角样式 */
+div.stButton > button {
+    height: 42px !important;
+    padding: 0px 12px !important;
+    border-radius: 8px !important;
+    transition: all 0.16s ease-in-out !important;
+}
+/* 未选中态：微光深色边框 */
 div.stButton > button[kind="secondary"] {
     border: 1px solid rgba(250, 250, 250, 0.16) !important;
     background-color: rgba(255, 255, 255, 0.02) !important;
@@ -108,28 +140,29 @@ div.stButton > button[kind="secondary"]:hover {
     border-color: rgba(255, 75, 75, 0.6) !important;
     background-color: rgba(255, 75, 75, 0.06) !important;
 }
+/* 选中点亮态：高亮红框与微发光 */
 div.stButton > button[kind="primary"] {
-    border: 2px solid #ff4b4b !important;
-    background-color: rgba(255, 75, 75, 0.16) !important;
+    border: 1.5px solid #ff4b4b !important;
+    background-color: rgba(255, 75, 75, 0.15) !important;
     color: #ffffff !important;
     font-weight: 600 !important;
-    box-shadow: 0 0 12px rgba(255, 75, 75, 0.25) !important;
+    box-shadow: 0 0 10px rgba(255, 75, 75, 0.22) !important;
 }
 </style>
 """, unsafe_allow_html=True)
 
-# ================= 4. 页面头部与后台巡检健康状态栏 =================
+# ================= 4. 头部标题与 UTC+8 巡检状态栏 =================
 st.title("📡 高质量新闻筛选器 (Score ≥ 8.5)")
-st.caption("过滤流量党、情绪化渲染与商业软文 · 仅保留高事实密度、有横向基准或深度思考价值的一手报道")
 
 status_info = load_status()
 if status_info:
     dot = "🟢 巡检正常" if status_info.get("healthy", True) else "🔴 巡检异常"
+    run_time_utc8 = to_utc8_str(status_info.get("last_run_utc", ""))
     st.caption(
-        f"`{dot}` 　|　 **最近巡检：** {status_info.get('last_run_utc', '')} 　|　 "
-        f"**本轮漏斗：** 扫描新条目 {status_info.get('scanned', 0)} 篇 ➔ "
-        f"本地拦截 {status_info.get('local_filtered', 0)} 篇 ➔ "
-        f"AI 终审 {status_info.get('ai_evaluated', 0)} 篇 ➔ "
+        f"`{dot}` 　|　 **最近巡检：** {run_time_utc8} 　|　 "
+        f"**本轮漏斗：** 扫描 {status_info.get('scanned', 0)} ➔ "
+        f"拦截 {status_info.get('local_filtered', 0)} ➔ "
+        f"终审 {status_info.get('ai_evaluated', 0)} ➔ "
         f"新增入选 **{status_info.get('accepted', 0)}** 篇 　|　 "
         f"**引擎：** `{status_info.get('model', '')}`"
     )
@@ -141,22 +174,25 @@ if "active_topic" not in st.session_state:
 if "selected_subs" not in st.session_state:
     st.session_state.selected_subs = set()
 
-# ================= 5. 一级大频道切换栏 =================
-st.markdown("##### 🧭 一级频道切换")
+# ================= 5. 第一行：【主控台合一】（频道切换 + 评分门槛 + 搜索框同行对齐） =================
+c1, c2, c3, c_score, c_search = st.columns([1.25, 1.15, 1.15, 1.25, 2.7])
+
 channel_options = list(TOPIC_SCHEMA.keys()) + ["全站总览"]
-c_cols = st.columns(len(channel_options))
+channel_cols = [c1, c2, c3]
 
 for idx, ch_name in enumerate(channel_options):
     if ch_name == "全站总览":
         ch_count = len(news_list)
         ch_icon = "🌐"
+        ch_label = f"{ch_icon} 全站 · {ch_count}"
     else:
         ch_count = sum(1 for n in news_list if n.get("topic") == ch_name)
         ch_icon = TOPIC_SCHEMA[ch_name]["icon"]
+        ch_label = f"{ch_icon} {ch_name} · {ch_count}"
 
     is_active_ch = (st.session_state.active_topic == ch_name)
-    if c_cols[idx].button(
-        f"{ch_icon} {ch_name}  ({ch_count} 篇)",
+    if channel_cols[idx].button(
+        ch_label,
         key=f"channel_{ch_name}",
         type="primary" if is_active_ch else "secondary",
         use_container_width=True
@@ -165,21 +201,37 @@ for idx, ch_name in enumerate(channel_options):
         st.session_state.selected_subs = set()
         st.rerun()
 
+with c_score:
+    score_options = [8.5, 8.6, 8.7, 8.8, 8.9, 9.0, 9.2, 9.5]
+    min_score = st.selectbox(
+        "最低评分门槛",
+        options=score_options,
+        index=0,
+        format_func=lambda x: f"🎯 门槛 ≥ {x:.1f} 分",
+        label_visibility="collapsed"
+    )
+
+with c_search:
+    search_kw = st.text_input(
+        "关键词检索",
+        value="",
+        placeholder="🔍 搜索片名、公司、技术词、数据或打分依据...",
+        label_visibility="collapsed"
+    )
+
 current_topic = st.session_state.active_topic
 
-# ================= 6. 二级五宫格“可多选开关方框” (交互形态 B) =================
+# ================= 6. 第二行：【纯粹五宫格多选方框】（零废话标题、悬停看说明） =================
 if current_topic != "全站总览":
     current_subs_dict = TOPIC_SCHEMA[current_topic]["subs"]
     topic_news = [n for n in news_list if n.get("topic") == current_topic]
-
-    st.markdown("##### 🧩 子版块点选（支持同时点亮多个方框组合筛选，再次点击可取消选中）")
     sub_keys = list(current_subs_dict.keys())
     MAX_COLS_PER_ROW = 5
 
     box_items = [{
         "key": "__ALL__",
-        "title": f"📦 全部精选  ·  {len(topic_news)} 篇",
-        "desc": f"展示【{current_topic}】全部硬核报道",
+        "title": f"📦 全部精选 · {len(topic_news)}",
+        "desc": f"展示【{current_topic}】全部硬核报道（点击右侧子版块可多选组合过滤）",
         "is_active": (len(st.session_state.selected_subs) == 0)
     }]
 
@@ -188,8 +240,8 @@ if current_topic != "全站总览":
         cnt = sum(1 for n in topic_news if n.get("sub_topic") == sk)
         box_items.append({
             "key": sk,
-            "title": f"{info['icon']} {sk}  ·  {cnt} 篇",
-            "desc": info["desc"],
+            "title": f"{info['icon']} {sk} · {cnt}",
+            "desc": f"{info['desc']}（支持多选组合点亮，再次点击取消）",
             "is_active": (sk in st.session_state.selected_subs)
         })
 
@@ -198,10 +250,10 @@ if current_topic != "全站总览":
         cols = st.columns(MAX_COLS_PER_ROW)
         for idx, box in enumerate(row_slice):
             with cols[idx]:
-                btn_label = f"{box['title']}\n{box['desc']}"
                 if st.button(
-                    btn_label,
+                    box["title"],
                     key=f"box_{current_topic}_{box['key']}",
+                    help=box["desc"],
                     type="primary" if box["is_active"] else "secondary",
                     use_container_width=True
                 ):
@@ -218,16 +270,9 @@ if current_topic != "全站总览":
 else:
     topic_news = news_list
 
-# ================= 7. 辅助过滤栏（评分滑块 + 关键词检索） =================
-col_score, col_kw = st.columns([2, 5])
-with col_score:
-    min_score = st.slider("🎯 最低评分门槛", min_value=8.5, max_value=10.0, value=8.5, step=0.1)
-with col_kw:
-    search_kw = st.text_input("🔍 关键词检索（支持搜片名、公司名、技术词、数据或打分依据）", "")
-
 st.divider()
 
-# ================= 8. 新闻列表过滤与卡片渲染 (样式 1：面包屑路径式) =================
+# ================= 7. 新闻列表过滤与卡片渲染 (样式 1 面包屑 + UTC+8 时间) =================
 active_subs = st.session_state.selected_subs
 filtered = [
     n for n in topic_news
@@ -247,28 +292,27 @@ else:
     filter_tag_str = f"{TOPIC_SCHEMA[current_topic]['icon']} **{current_topic}** › {sub_str}"
 
 if not filtered:
-    st.info(f"当前筛选条件（{filter_tag_str}）下暂无符合条件的文章。如刚新增【影视文化】版块，请前往 GitHub Actions 手动触发一次运行即可拉取最新内容。")
+    st.info(f"当前筛选条件（{filter_tag_str}）下暂无符合条件的文章。")
 else:
-    st.markdown(f"当前视图：{filter_tag_str} 　|　 共匹配出 **{len(filtered)}** 篇硬核报道：")
+    st.caption(f"当前视图：{filter_tag_str} 　|　 共匹配 **{len(filtered)}** 篇硬核报道")
     for item in filtered:
         t_name = item.get("topic", "AI与硬科技")
         sub_name = item.get("sub_topic", "模型应用")
         sub_icon = TOPIC_SCHEMA.get(t_name, {}).get("subs", {}).get(sub_name, {}).get("icon", "🏷️")
+        pub_time_utc8 = to_utc8_str(item.get("pub_date", ""))
 
         with st.container(border=True):
             c_title, c_score = st.columns([5, 1])
             with c_title:
                 st.markdown(f"### [{item['title']}]({item['url']})")
-                # 样式 1：【面包屑路径式】一级 › 二级（保持原始发布时间展示）
                 st.caption(
                     f"`{t_name} › {sub_icon} {sub_name}` 　|　 "
                     f"📰 {item.get('source', '未知')} 　|　 "
-                    f"🕒 {item.get('pub_date', '')}"
+                    f"🕒 {pub_time_utc8}"
                 )
             with c_score:
                 st.metric(label="质量评分", value=f"{item['score']} / 10")
 
-            # 优先展示 AI 一字不改摘录的“核心数据/核心论断原句”，存量旧数据自动平滑回退显示“原文前导”
             key_quotes = item.get("key_quotes", "").strip()
             if key_quotes:
                 st.write(f"**📊 核心原句摘录：** “{key_quotes}”")
@@ -277,7 +321,6 @@ else:
 
             st.success(f"⚖️ **入选依据：** {item.get('reason', '')}  *(评审模型: `{item.get('model', '')}`)*")
 
-            # 页面内无广告纯净全文折叠阅读器（新抓取的文章均带有 body 字段）
             full_body = item.get("body", "").strip()
             if full_body:
                 with st.expander("📖 展开阅读无广告纯净全文"):
