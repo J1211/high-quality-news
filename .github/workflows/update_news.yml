@@ -2,19 +2,22 @@ name: Hourly High-Quality News Filter
 
 on:
   schedule:
-    # 每小时的第 15 分钟自动运行一次
-    - cron: '15 * * * *'
-  workflow_dispatch: # 允许你在 GitHub Actions 页面随时手动点击按钮立即运行
+    # 智能昼夜作息：北京时间 07:15 ~ 24:15 (即 UTC 23:15 及 00:15~16:15) 每小时运行一次；
+    # 北京时间凌晨 01:00 ~ 06:59 自动休眠，省额度且避开夜间低质水文
+    - cron: '15 0-16,23 * * *'
+  workflow_dispatch: # 支持随时在 GitHub Actions 页面手动触发
 
 permissions:
-  contents: write # 允许脚本把更新后的 json 数据提交回仓库
+  contents: write
 
 jobs:
   fetch-and-score:
     runs-on: ubuntu-latest
     steps:
-      - name: 1. 检出仓库代码
+      - name: 1. 检出仓库代码 (拉取最近2条历史以支持智能合并提交)
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
 
       - name: 2. 配置 Python 环境
         uses: actions/setup-python@v5
@@ -31,10 +34,20 @@ jobs:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: python fetch_and_score.py
 
-      - name: 5. 自动提交更新后的新闻数据回仓库
+      - name: 5. 自动提交数据并防止 Git 历史膨胀
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add high_quality_news.json seen_urls.json || true
-          git diff --staged --quiet || git commit -m "Auto-update high quality news [skip ci]"
-          git push
+          git add high_quality_news.json seen_urls.json status.json || true
+          if ! git diff --staged --quiet; then
+            LAST_AUTHOR=$(git log -1 --pretty=format:'%an')
+            if [ "$LAST_AUTHOR" = "github-actions[bot]" ]; then
+              # 若上一条提交也是机器人，则直接覆盖合并(--amend)，避免一年产生几千条垃圾提交记录
+              git commit --amend -m "Auto-update high quality news ($(date -u +'%Y-%m-%d %H:%M UTC')) [skip ci]"
+              git push --force
+            else
+              # 若上一条提交是你本人的代码修改，则新建一条提交，绝不覆盖你的修改记录
+              git commit -m "Auto-update high quality news ($(date -u +'%Y-%m-%d %H:%M UTC')) [skip ci]"
+              git push
+            fi
+          fi
