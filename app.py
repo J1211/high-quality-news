@@ -13,7 +13,7 @@ st.set_page_config(
 
 TZ_UTC8 = timezone(timedelta(hours=8))
 
-# ================= 1. 母子联动分类架构配置 =================
+# ================= 1. 母子联动分类架构配置 (支持未来无限新增大领域) =================
 TOPIC_SCHEMA = {
     "AI与硬科技": {
         "icon": "🤖",
@@ -33,6 +33,7 @@ TOPIC_SCHEMA = {
             "影视科技": {"icon": "🪄", "desc": "AI影视视效落地 / 虚拟制片 / 拍摄放映工业革新"},
         }
     }
+    # 未来拓展更多领域只需在此继续添加字典，UI会自动按每行最多5格流式折行！
 }
 
 DATA_FILE = "high_quality_news.json"
@@ -41,11 +42,9 @@ STATUS_FILE = "status.json"
 
 # ================= 2. 时间转 UTC+8 与存量智能归类工具 =================
 def to_utc8_str(raw_str):
-    """将 GMT / UTC 时间字符串统一转换为 YYYY-MM-DD HH:MM (UTC+8)"""
     if not raw_str:
         return ""
     s = raw_str.strip()
-    # 1. 解析 RSS 标准时间 (如: Thu, 29 Oct 2026 06:47:05 GMT)
     try:
         dt = parsedate_to_datetime(s)
         if dt.tzinfo is None:
@@ -53,7 +52,6 @@ def to_utc8_str(raw_str):
         return dt.astimezone(TZ_UTC8).strftime("%Y-%m-%d %H:%M (UTC+8)")
     except Exception:
         pass
-    # 2. 解析 status.json 时间 (如: 2026-11-04 06:48 UTC)
     for fmt in ("%Y-%m-%d %H:%M UTC", "%Y-%m-%d %H:%M"):
         try:
             dt = datetime.strptime(s, fmt).replace(tzinfo=timezone.utc)
@@ -117,21 +115,23 @@ def load_status():
         return None
 
 
-# ================= 3. 定制紧凑主控台与方框 CSS 样式 =================
+# ================= 3. 响应式 CSS（兼顾 PC 宽屏与手机端流式紧凑网格） =================
 st.markdown("""
 <style>
-/* 压缩页面顶部留白 */
+/* 压缩顶部空白 */
 .block-container {
-    padding-top: 2rem !important;
+    padding-top: 1.5rem !important;
+    padding-bottom: 2rem !important;
 }
-/* 按钮通用紧凑圆角样式 */
+/* 按钮方框通用样式 */
 div.stButton > button {
-    height: 42px !important;
-    padding: 0px 12px !important;
+    height: 40px !important;
+    padding: 0px 10px !important;
     border-radius: 8px !important;
-    transition: all 0.16s ease-in-out !important;
+    transition: all 0.15s ease-in-out !important;
+    white-space: nowrap !important;
 }
-/* 未选中态：微光深色边框 */
+/* 未选中态：微光边框 */
 div.stButton > button[kind="secondary"] {
     border: 1px solid rgba(250, 250, 250, 0.16) !important;
     background-color: rgba(255, 255, 255, 0.02) !important;
@@ -140,31 +140,55 @@ div.stButton > button[kind="secondary"]:hover {
     border-color: rgba(255, 75, 75, 0.6) !important;
     background-color: rgba(255, 75, 75, 0.06) !important;
 }
-/* 选中点亮态：高亮红框与微发光 */
+/* 选中态：高亮红框 */
 div.stButton > button[kind="primary"] {
     border: 1.5px solid #ff4b4b !important;
-    background-color: rgba(255, 75, 75, 0.15) !important;
+    background-color: rgba(255, 75, 75, 0.16) !important;
     color: #ffffff !important;
     font-weight: 600 !important;
     box-shadow: 0 0 10px rgba(255, 75, 75, 0.22) !important;
 }
+
+/* 📱 手机端（屏幕宽度 <= 640px）专属响应式优化：告别单列叠罗汉！ */
+@media (max-width: 640px) {
+    .block-container {
+        padding-top: 1rem !important;
+        padding-left: 0.8rem !important;
+        padding-right: 0.8rem !important;
+    }
+    /* 让按钮行在手机端保持每行 2~3 个流式并排，绝不退化成单列长条 */
+    div[data-testid="stHorizontalBlock"] {
+        flex-wrap: wrap !important;
+        gap: 0.35rem !important;
+    }
+    div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"] {
+        width: calc(33.33% - 0.35rem) !important;
+        flex: 1 1 calc(33.33% - 0.35rem) !important;
+        min-width: 102px !important;
+    }
+    div.stButton > button {
+        height: 36px !important;
+        padding: 0px 6px !important;
+        font-size: 0.82rem !important;
+    }
+    /* 手机端隐藏卡片右侧独立占行的巨型 Metric，直接看标题下方的评分徽章，省30%高度 */
+    div[data-testid="stMetric"] {
+        display: none !important;
+    }
+}
 </style>
 """, unsafe_allow_html=True)
 
-# ================= 4. 头部标题与 UTC+8 巡检状态栏 =================
-st.title("📡 高质量新闻筛选器 (Score ≥ 8.5)")
+# ================= 4. 头部标题与响应式折叠巡检状态 =================
+st.markdown("### 📡 高质量新闻筛选器 (Score ≥ 8.5)")
 
 status_info = load_status()
 if status_info:
     dot = "🟢 巡检正常" if status_info.get("healthy", True) else "🔴 巡检异常"
     run_time_utc8 = to_utc8_str(status_info.get("last_run_utc", ""))
     st.caption(
-        f"`{dot}` 　|　 **最近巡检：** {run_time_utc8} 　|　 "
-        f"**本轮漏斗：** 扫描 {status_info.get('scanned', 0)} ➔ "
-        f"拦截 {status_info.get('local_filtered', 0)} ➔ "
-        f"终审 {status_info.get('ai_evaluated', 0)} ➔ "
-        f"新增入选 **{status_info.get('accepted', 0)}** 篇 　|　 "
-        f"**引擎：** `{status_info.get('model', '')}`"
+        f"`{dot}` · 🕒 {run_time_utc8} · 本轮新增 **{status_info.get('accepted', 0)}** 篇 "
+        f"*(扫描{status_info.get('scanned', 0)} ➔ 拦截{status_info.get('local_filtered', 0)} ➔ 终审{status_info.get('ai_evaluated', 0)} · `{status_info.get('model', '')}`)*"
     )
 
 news_list = load_news()
@@ -174,54 +198,37 @@ if "active_topic" not in st.session_state:
 if "selected_subs" not in st.session_state:
     st.session_state.selected_subs = set()
 
-# ================= 5. 第一行：【主控台合一】（频道切换 + 评分门槛 + 搜索框同行对齐） =================
-c1, c2, c3, c_score, c_search = st.columns([1.25, 1.15, 1.15, 1.25, 2.7])
-
+# ================= 5. 第一层：【一级大频道流式网格】（支持未来无限扩容，手机端同行并排） =================
 channel_options = list(TOPIC_SCHEMA.keys()) + ["全站总览"]
-channel_cols = [c1, c2, c3]
+MAX_CH_PER_ROW = 5  # 未来超过5个大领域时自动折行
 
-for idx, ch_name in enumerate(channel_options):
-    if ch_name == "全站总览":
-        ch_count = len(news_list)
-        ch_icon = "🌐"
-        ch_label = f"{ch_icon} 全站 · {ch_count}"
-    else:
-        ch_count = sum(1 for n in news_list if n.get("topic") == ch_name)
-        ch_icon = TOPIC_SCHEMA[ch_name]["icon"]
-        ch_label = f"{ch_icon} {ch_name} · {ch_count}"
+for row_start in range(0, len(channel_options), MAX_CH_PER_ROW):
+    row_slice = channel_options[row_start : row_start + MAX_CH_PER_ROW]
+    # 当频道数较少时按实际数量分列，超过时按5列对齐
+    c_cols = st.columns(len(row_slice) if len(channel_options) <= 4 else MAX_CH_PER_ROW)
+    for idx, ch_name in enumerate(row_slice):
+        if ch_name == "全站总览":
+            ch_count = len(news_list)
+            ch_label = f"🌐 全站总览 · {ch_count}"
+        else:
+            ch_count = sum(1 for n in news_list if n.get("topic") == ch_name)
+            ch_icon = TOPIC_SCHEMA[ch_name]["icon"]
+            ch_label = f"{ch_icon} {ch_name} · {ch_count}"
 
-    is_active_ch = (st.session_state.active_topic == ch_name)
-    if channel_cols[idx].button(
-        ch_label,
-        key=f"channel_{ch_name}",
-        type="primary" if is_active_ch else "secondary",
-        use_container_width=True
-    ):
-        st.session_state.active_topic = ch_name
-        st.session_state.selected_subs = set()
-        st.rerun()
-
-with c_score:
-    score_options = [8.5, 8.6, 8.7, 8.8, 8.9, 9.0, 9.2, 9.5]
-    min_score = st.selectbox(
-        "最低评分门槛",
-        options=score_options,
-        index=0,
-        format_func=lambda x: f"🎯 门槛 ≥ {x:.1f} 分",
-        label_visibility="collapsed"
-    )
-
-with c_search:
-    search_kw = st.text_input(
-        "关键词检索",
-        value="",
-        placeholder="🔍 搜索片名、公司、技术词、数据或打分依据...",
-        label_visibility="collapsed"
-    )
+        is_active_ch = (st.session_state.active_topic == ch_name)
+        if c_cols[idx].button(
+            ch_label,
+            key=f"channel_{ch_name}",
+            type="primary" if is_active_ch else "secondary",
+            use_container_width=True
+        ):
+            st.session_state.active_topic = ch_name
+            st.session_state.selected_subs = set()
+            st.rerun()
 
 current_topic = st.session_state.active_topic
 
-# ================= 6. 第二行：【纯粹五宫格多选方框】（零废话标题、悬停看说明） =================
+# ================= 6. 第二层：【二级子版块五宫格多选方框】（PC一行5格，手机端自动每行2~3格） =================
 if current_topic != "全站总览":
     current_subs_dict = TOPIC_SCHEMA[current_topic]["subs"]
     topic_news = [n for n in news_list if n.get("topic") == current_topic]
@@ -230,7 +237,7 @@ if current_topic != "全站总览":
 
     box_items = [{
         "key": "__ALL__",
-        "title": f"📦 全部精选 · {len(topic_news)}",
+        "title": f"📦 全部 · {len(topic_news)}",
         "desc": f"展示【{current_topic}】全部硬核报道（点击右侧子版块可多选组合过滤）",
         "is_active": (len(st.session_state.selected_subs) == 0)
     }]
@@ -270,9 +277,16 @@ if current_topic != "全站总览":
 else:
     topic_news = news_list
 
+# ================= 7. 第三层：【回归经典滑块 + 关键词检索】（给滑块留足拖拽空间） =================
+col_score, col_kw = st.columns([2, 4])
+with col_score:
+    min_score = st.slider("🎯 最低评分门槛", min_value=8.5, max_value=10.0, value=8.5, step=0.1)
+with col_kw:
+    search_kw = st.text_input("🔍 关键词检索", value="", placeholder="搜片名、公司、技术词、数据或打分依据...")
+
 st.divider()
 
-# ================= 7. 新闻列表过滤与卡片渲染 (样式 1 面包屑 + UTC+8 时间) =================
+# ================= 8. 新闻列表过滤与卡片渲染 (PC/手机双端自适应卡片) =================
 active_subs = st.session_state.selected_subs
 filtered = [
     n for n in topic_news
@@ -300,18 +314,20 @@ else:
         sub_name = item.get("sub_topic", "模型应用")
         sub_icon = TOPIC_SCHEMA.get(t_name, {}).get("subs", {}).get(sub_name, {}).get("icon", "🏷️")
         pub_time_utc8 = to_utc8_str(item.get("pub_date", ""))
+        score_val = item.get("score", 8.5)
 
         with st.container(border=True):
             c_title, c_score = st.columns([5, 1])
             with c_title:
                 st.markdown(f"### [{item['title']}]({item['url']})")
+                # 信息栏同时内嵌 `🌟 评分`，手机端隐藏右侧大块 Metric 后依然一目了然
                 st.caption(
-                    f"`{t_name} › {sub_icon} {sub_name}` 　|　 "
+                    f"`🌟 {score_val}分`  `{t_name} › {sub_icon} {sub_name}` 　|　 "
                     f"📰 {item.get('source', '未知')} 　|　 "
                     f"🕒 {pub_time_utc8}"
                 )
             with c_score:
-                st.metric(label="质量评分", value=f"{item['score']} / 10")
+                st.metric(label="质量评分", value=f"{score_val} / 10")
 
             key_quotes = item.get("key_quotes", "").strip()
             if key_quotes:
