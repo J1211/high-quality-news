@@ -13,7 +13,9 @@ st.set_page_config(
 
 TZ_UTC8 = timezone(timedelta(hours=8))
 
-# ================= 1. 母子联动分类架构配置 (支持未来无限新增大领域) =================
+# ================= 1. 母子联动分类架构配置 =================
+# 注：当某频道的 "subs" 为空字典 {} 时，前端会自动隐藏第二排子版块方框（无子频道极简模式）
+# 未来若想拓展其他类别小说，只需在 "subs" 中填入 {"科幻小说": ..., "推理悬疑": ...} 即可瞬间开启子方框！
 TOPIC_SCHEMA = {
     "AI与硬科技": {
         "icon": "🤖",
@@ -32,8 +34,11 @@ TOPIC_SCHEMA = {
             "行业商业": {"icon": "💼", "desc": "流媒体与影企战略 / 制片成本 / 版权与商业模式"},
             "影视科技": {"icon": "🪄", "desc": "AI影视视效落地 / 虚拟制片 / 拍摄放映工业革新"},
         }
+    },
+    "科幻小说": {
+        "icon": "🪐",
+        "subs": {}  # 目前采用无子频道方式建立，点击后直接平铺展示
     }
-    # 未来拓展更多领域只需在此继续添加字典，UI会自动按每行最多5格流式折行！
 }
 
 DATA_FILE = "high_quality_news.json"
@@ -68,6 +73,10 @@ def infer_sub_topic(item):
         item["topic"] = topic
 
     valid_subs = TOPIC_SCHEMA[topic]["subs"].keys()
+    if not valid_subs:
+        # 无子频道的独立版块（如科幻小说），预埋同名 sub_topic 以便未来平滑扩容
+        return item.get("sub_topic") or topic
+
     existing_sub = item.get("sub_topic", "")
     if existing_sub in valid_subs:
         return existing_sub
@@ -118,12 +127,10 @@ def load_status():
 # ================= 3. 响应式 CSS（兼顾 PC 宽屏与手机端流式紧凑网格） =================
 st.markdown("""
 <style>
-/* 压缩顶部空白 */
 .block-container {
     padding-top: 1.5rem !important;
     padding-bottom: 2rem !important;
 }
-/* 按钮方框通用样式 */
 div.stButton > button {
     height: 40px !important;
     padding: 0px 10px !important;
@@ -131,7 +138,6 @@ div.stButton > button {
     transition: all 0.15s ease-in-out !important;
     white-space: nowrap !important;
 }
-/* 未选中态：微光边框 */
 div.stButton > button[kind="secondary"] {
     border: 1px solid rgba(250, 250, 250, 0.16) !important;
     background-color: rgba(255, 255, 255, 0.02) !important;
@@ -140,7 +146,6 @@ div.stButton > button[kind="secondary"]:hover {
     border-color: rgba(255, 75, 75, 0.6) !important;
     background-color: rgba(255, 75, 75, 0.06) !important;
 }
-/* 选中态：高亮红框 */
 div.stButton > button[kind="primary"] {
     border: 1.5px solid #ff4b4b !important;
     background-color: rgba(255, 75, 75, 0.16) !important;
@@ -149,14 +154,13 @@ div.stButton > button[kind="primary"] {
     box-shadow: 0 0 10px rgba(255, 75, 75, 0.22) !important;
 }
 
-/* 📱 手机端（屏幕宽度 <= 640px）专属响应式优化：告别单列叠罗汉！ */
+/* 📱 手机端（屏幕宽度 <= 640px）专属响应式流式网格 */
 @media (max-width: 640px) {
     .block-container {
         padding-top: 1rem !important;
         padding-left: 0.8rem !important;
         padding-right: 0.8rem !important;
     }
-    /* 让按钮行在手机端保持每行 2~3 个流式并排，绝不退化成单列长条 */
     div[data-testid="stHorizontalBlock"] {
         flex-wrap: wrap !important;
         gap: 0.35rem !important;
@@ -171,7 +175,6 @@ div.stButton > button[kind="primary"] {
         padding: 0px 6px !important;
         font-size: 0.82rem !important;
     }
-    /* 手机端隐藏卡片右侧独立占行的巨型 Metric，直接看标题下方的评分徽章，省30%高度 */
     div[data-testid="stMetric"] {
         display: none !important;
     }
@@ -179,7 +182,7 @@ div.stButton > button[kind="primary"] {
 </style>
 """, unsafe_allow_html=True)
 
-# ================= 4. 头部标题与响应式折叠巡检状态 =================
+# ================= 4. 头部标题与 UTC+8 巡检状态栏 =================
 st.markdown("### 📡 高质量新闻筛选器 (Score ≥ 8.5)")
 
 status_info = load_status()
@@ -198,14 +201,13 @@ if "active_topic" not in st.session_state:
 if "selected_subs" not in st.session_state:
     st.session_state.selected_subs = set()
 
-# ================= 5. 第一层：【一级大频道流式网格】（支持未来无限扩容，手机端同行并排） =================
+# ================= 5. 第一层：【一级大频道流式网格】 =================
 channel_options = list(TOPIC_SCHEMA.keys()) + ["全站总览"]
-MAX_CH_PER_ROW = 5  # 未来超过5个大领域时自动折行
+MAX_CH_PER_ROW = 5
 
 for row_start in range(0, len(channel_options), MAX_CH_PER_ROW):
     row_slice = channel_options[row_start : row_start + MAX_CH_PER_ROW]
-    # 当频道数较少时按实际数量分列，超过时按5列对齐
-    c_cols = st.columns(len(row_slice) if len(channel_options) <= 4 else MAX_CH_PER_ROW)
+    c_cols = st.columns(len(row_slice) if len(channel_options) <= 5 else MAX_CH_PER_ROW)
     for idx, ch_name in enumerate(row_slice):
         if ch_name == "全站总览":
             ch_count = len(news_list)
@@ -228,10 +230,16 @@ for row_start in range(0, len(channel_options), MAX_CH_PER_ROW):
 
 current_topic = st.session_state.active_topic
 
-# ================= 6. 第二层：【二级子版块五宫格多选方框】（PC一行5格，手机端自动每行2~3格） =================
-if current_topic != "全站总览":
-    current_subs_dict = TOPIC_SCHEMA[current_topic]["subs"]
+# ================= 6. 第二层：【二级子版块方框】（若该频道无子频道如“科幻小说”，则自动隐藏此层） =================
+if current_topic == "全站总览":
+    topic_news = news_list
+    has_sub_boxes = False
+else:
     topic_news = [n for n in news_list if n.get("topic") == current_topic]
+    current_subs_dict = TOPIC_SCHEMA[current_topic].get("subs", {})
+    has_sub_boxes = bool(current_subs_dict)
+
+if has_sub_boxes:
     sub_keys = list(current_subs_dict.keys())
     MAX_COLS_PER_ROW = 5
 
@@ -274,23 +282,21 @@ if current_topic != "全站总览":
                         if len(st.session_state.selected_subs) == len(sub_keys):
                             st.session_state.selected_subs = set()
                     st.rerun()
-else:
-    topic_news = news_list
 
-# ================= 7. 第三层：【回归经典滑块 + 关键词检索】（给滑块留足拖拽空间） =================
+# ================= 7. 第三层：【评分滑块 + 关键词检索】 =================
 col_score, col_kw = st.columns([2, 4])
 with col_score:
     min_score = st.slider("🎯 最低评分门槛", min_value=8.5, max_value=10.0, value=8.5, step=0.1)
 with col_kw:
-    search_kw = st.text_input("🔍 关键词检索", value="", placeholder="搜片名、公司、技术词、数据或打分依据...")
+    search_kw = st.text_input("🔍 关键词检索", value="", placeholder="搜书名、片名、作家、公司、技术词或打分依据...")
 
 st.divider()
 
-# ================= 8. 新闻列表过滤与卡片渲染 (PC/手机双端自适应卡片) =================
+# ================= 8. 新闻列表过滤与卡片渲染 =================
 active_subs = st.session_state.selected_subs
 filtered = [
     n for n in topic_news
-    if (current_topic == "全站总览" or len(active_subs) == 0 or n.get("sub_topic") in active_subs)
+    if (not has_sub_boxes or len(active_subs) == 0 or n.get("sub_topic") in active_subs)
     and float(n.get("score", 0)) >= min_score
     and (not search_kw or search_kw.lower() in (
         n.get("title", "") + n.get("snippet", "") + n.get("key_quotes", "") + n.get("reason", "")
@@ -299,6 +305,8 @@ filtered = [
 
 if current_topic == "全站总览":
     filter_tag_str = "🌐 **全站总览**"
+elif not has_sub_boxes:
+    filter_tag_str = f"{TOPIC_SCHEMA[current_topic]['icon']} **{current_topic}**"
 elif len(active_subs) == 0:
     filter_tag_str = f"{TOPIC_SCHEMA[current_topic]['icon']} **{current_topic} › 📦 全部精选**"
 else:
@@ -306,23 +314,29 @@ else:
     filter_tag_str = f"{TOPIC_SCHEMA[current_topic]['icon']} **{current_topic}** › {sub_str}"
 
 if not filtered:
-    st.info(f"当前筛选条件（{filter_tag_str}）下暂无符合条件的文章。")
+    st.info(f"当前筛选条件（{filter_tag_str}）下暂无符合条件的文章。如刚新增【科幻小说】频道，请前往 GitHub Actions 手动运行一次即可拉取过去7天的科幻精品。")
 else:
     st.caption(f"当前视图：{filter_tag_str} 　|　 共匹配 **{len(filtered)}** 篇硬核报道")
     for item in filtered:
         t_name = item.get("topic", "AI与硬科技")
-        sub_name = item.get("sub_topic", "模型应用")
-        sub_icon = TOPIC_SCHEMA.get(t_name, {}).get("subs", {}).get(sub_name, {}).get("icon", "🏷️")
+        t_schema = TOPIC_SCHEMA.get(t_name, TOPIC_SCHEMA["AI与硬科技"])
+        sub_name = item.get("sub_topic", "")
         pub_time_utc8 = to_utc8_str(item.get("pub_date", ""))
         score_val = item.get("score", 8.5)
+
+        # 若该频道有子版块则显示面包屑 `一级 › 二级`，若无子版块（如科幻小说）则直接显示 `🪐 科幻小说`
+        if t_schema.get("subs") and sub_name in t_schema["subs"]:
+            sub_icon = t_schema["subs"][sub_name]["icon"]
+            path_badge = f"`{t_name} › {sub_icon} {sub_name}`"
+        else:
+            path_badge = f"`{t_schema.get('icon', '🪐')} {t_name}`"
 
         with st.container(border=True):
             c_title, c_score = st.columns([5, 1])
             with c_title:
                 st.markdown(f"### [{item['title']}]({item['url']})")
-                # 信息栏同时内嵌 `🌟 评分`，手机端隐藏右侧大块 Metric 后依然一目了然
                 st.caption(
-                    f"`🌟 {score_val}分`  `{t_name} › {sub_icon} {sub_name}` 　|　 "
+                    f"`🌟 {score_val}分`  {path_badge} 　|　 "
                     f"📰 {item.get('source', '未知')} 　|　 "
                     f"🕒 {pub_time_utc8}"
                 )
