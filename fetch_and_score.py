@@ -13,7 +13,7 @@ from googlenewsdecoder import gnewsdecoder
 SCORE_THRESHOLD = 8.5       # 统一录取分数线（>= 8.5分保留）
 BATCH_SIZE = 8              # 每次打包 8 篇发给 AI
 MAX_PER_FEED = 4            # 每个 RSS 源最多提取 4 篇高优候选
-MAX_ARTICLES_PER_RUN = 20   # 每次定时任务总共最多送审 20 篇
+MAX_ARTICLES_PER_RUN = 24   # 每次定时任务总共最多送审 24 篇（最多3次API调用，极度安全）
 
 DATA_FILE = "high_quality_news.json"
 SEEN_FILE = "seen_urls.json"
@@ -22,43 +22,51 @@ STATUS_FILE = "status.json"
 VALID_SUB_TOPICS = {
     "AI与硬科技": {"算力硬件", "模型应用", "财报资本", "宏观政经"},
     "影视文化": {"深度影评", "新片动向", "行业商业", "影视科技"},
+    "科幻小说": {"科幻小说"},
 }
 
-# 主题与 RSS 源配置（AI与硬科技 + 影视文化 双版块并行）
+# 主题与 RSS 源配置（AI与硬科技 + 影视文化 + 科幻小说 三大频道并行）
 TOPICS = {
     "AI与硬科技": [
         # 科技源1：严肃财经与深度科技媒体定向源
         "https://news.google.com/rss/search?q=(AI+OR+人工智能+OR+芯片+OR+算力+OR+半导体+OR+大模型)+(财新+OR+第一财经+OR+21世纪+OR+界面+OR+路透+OR+彭博+OR+经济观察报)+when:1d&hl=zh-CN&gl=CN&ceid=CN:zh-Hans",
-        # 科技源2：网易新闻（163.com）硬科技报道（排除数码快讯转载）
+        # 科技源2：网易新闻（163.com）硬科技报道
         "https://news.google.com/rss/search?q=(AI+OR+芯片+OR+半导体+OR+算力+OR+大模型)+site:163.com+-快科技+-IT之家+-驱动之家+when:1d&hl=zh-CN&gl=CN&ceid=CN:zh-Hans",
         # 科技源3：全网硬科技核心事件源
         "https://news.google.com/rss/search?q=(AI芯片+OR+算力+OR+半导体+OR+晶圆+OR+HBM+OR+存储芯片)+(财报+OR+营收+OR+量产+OR+市占率+OR+良率+OR+资本开支)+-快科技+-IT之家+when:1d&hl=zh-CN&gl=CN&ceid=CN:zh-Hans"
     ],
     "影视文化": [
-        # 影视源1：深度影评、剧作分析与导演主创专访（源头屏蔽票房与娱乐八卦）
+        # 影视源1：深度影评、剧作分析与导演主创专访
         "https://news.google.com/rss/search?q=(影评+OR+豆瓣+OR+导演+OR+编剧+OR+专访+OR+电影节+OR+戛纳+OR+奥斯卡+OR+剧集)+(深度+OR+叙事+OR+镜头+OR+主创+OR+美学+OR+创作)+-票房+-破亿+-排片+-绯闻+-恋情+-穿搭+when:2d&hl=zh-CN&gl=CN&ceid=CN:zh-Hans",
         # 影视源2：国内外重磅新片/新剧动向与权威口碑前瞻
         "https://news.google.com/rss/search?q=(新片+OR+新剧+OR+定档+OR+首映+OR+美剧+OR+英剧+OR+韩剧+OR+Netflix+OR+HBO+OR+AppleTV+OR+院线)+(导演+OR+改编+OR+口碑+OR+烂番茄+OR+豆瓣+OR+电影节)+-票房+-破亿+-粉丝+-应援+-街拍+when:2d&hl=zh-CN&gl=CN&ceid=CN:zh-Hans",
-        # 影视源3：影视行业商业博弈与影视前沿科技（流媒体、制片成本、AI影视工业与虚拟制片）
+        # 影视源3：影视行业商业博弈与影视前沿科技
         "https://news.google.com/rss/search?q=(影视+OR+好莱坞+OR+流媒体+OR+奈飞+OR+迪士尼+OR+爱奇艺+OR+腾讯视频+OR+电影工业)+(AI+OR+虚拟制片+OR+视效+OR+特效+OR+制作成本+OR+版权+OR+财报+OR+战略)+-票房+-涨停+-概念股+when:2d&hl=zh-CN&gl=CN&ceid=CN:zh-Hans"
+    ],
+    "科幻小说": [
+        # 科幻源1（7天长周期）：新作出版、深度书评、科幻大奖（雨果奖/星云奖/银河奖）与海内外科幻作家专访
+        "https://news.google.com/rss/search?q=(科幻小说+OR+科幻文学+OR+科幻作家+OR+雨果奖+OR+星云奖+OR+银河奖+OR+科幻世界)+(书评+OR+新作+OR+出版+OR+专访+OR+刘慈欣+OR+特德姜+OR+陈楸帆+OR+郝景芳+OR+王晋康)+-爽文+-书荒+-免费阅读+-最新章节+when:7d&hl=zh-CN&gl=CN&ceid=CN:zh-Hans",
+        # 科幻源2（7天长周期）：硬科幻理论、世界观设定、科学幻想跨界对谈与严肃文学评论
+        "https://news.google.com/rss/search?q=(硬科幻+OR+科幻小说+OR+科幻文学+OR+未来事务管理局)+(叙事+OR+设定+OR+世界观+OR+宇宙+OR+哲学+OR+思想+OR+文学+OR+三联+OR+界面+OR+新京报+OR+澎湃+OR+豆瓣)+-网文+-系统流+-重生+-起点+-番茄小说+when:7d&hl=zh-CN&gl=CN&ceid=CN:zh-Hans"
     ]
 }
 
 # 信源白名单（抓取时自动排在队列最前面，优先享用配额）
 VIP_SOURCES = re.compile(
-    r"(财新|晚点|LatePost|第一财经|21世纪|界面|路透|彭博|Bloomberg|经济观察报|澎湃|毒眸|娱理|三联|新京报|虎嗅|36氪|芯东西)"
+    r"(财新|晚点|LatePost|第一财经|21世纪|界面|路透|彭博|Bloomberg|经济观察报|澎湃|毒眸|娱理|三联|新京报|虎嗅|36氪|芯东西|科幻世界|未来事务管理局)"
 )
 
 # 信源黑名单（命中直接丢弃）
 SOURCE_BLACKLIST = re.compile(
-    r"(百家号|营销号|股吧|彩票|算命|娱乐八卦|粉丝网|追星)"
+    r"(百家号|营销号|股吧|彩票|算命|娱乐八卦|粉丝网|追星|笔趣阁|起点中文|番茄小说)"
 )
 
-# 1. 标题黑名单：拦截科技标题党、引战爽文、影视八卦粉圈词、以及票房/排片播报
+# 1. 标题黑名单：同时拦截科技标题党、影视八卦/票房、以及网络爽文/书荒推荐/盗版连载
 TITLE_BLACKLIST = re.compile(
     r"(!|！|震惊|暴跌|崩盘|涨停|跌停|午评|收评|概念股|必看|彻底慌了|断崖式|ETF|掘金|龙头股|价值重估|满仓|飙升|"
     r"入选.*指数|斩获.*奖|荣获.*奖|掀桌|巧了|打脸|急了|亮剑|霸气|券商最新研判|早报（|"
-    r"票房|排片|破\d+亿|恋情|绯闻|离婚|出轨|街拍|红毯|艳压|少女感|冻龄|颜值|撕番|应援|生图|演技炸裂|看哭)"
+    r"票房|排片|破\d+亿|恋情|绯闻|离婚|出轨|街拍|红毯|艳压|少女感|冻龄|颜值|撕番|应援|生图|演技炸裂|看哭|"
+    r"书荒|爽文|系统流|无限流|末世囤货|重生|穿越|修仙|完本|免费阅读|最新章节|TXT下载|笔趣阁)"
 )
 
 # 2. 正文开头黑名单：拦截数码快讯与发布会口水通稿
@@ -80,33 +88,36 @@ MODEL_POOL = [
     {"provider": "groq",   "model": "openai/gpt-oss-20b"},
 ]
 
-# 双轨制 8.5分冷酷主编评分矩阵 + 原文核心原句摘录 Prompt
-SYSTEM_PROMPT = """你是一位极其严苛、客观的硬科技、商业与严肃影视文化总编。请对输入的新闻列表进行独立质量打分（满分10分，支持小数如8.5、9.0），归类子版块，并摘录原文核心原句。
+# 三轨制 8.5分冷酷主编评分矩阵（兼容硬科技、影视文化、严肃科幻小说）
+SYSTEM_PROMPT = """你是一位极其严苛、客观的硬科技、商业、影视文化与严肃科幻文学总编。请对输入的新闻列表进行独立质量打分（满分10分，支持小数如8.5、9.0），归类子版块，并摘录原文核心原句。
 
-【双轨制 8.5分高分核心标准】：
+【8.5分高分核心标准】：
 ▶ 轨道 A（适用于【AI与硬科技】全领域、以及【影视文化】中的行业商业/影视科技）：
 1. 实质性新事实增量（30%）：围绕新发生的具体商业/技术事件（财报发布、供应链突破、AI影视技术落地、流媒体战略调整、并购融资、政策落地），而非旧闻拼凑。
 2. 数据密度与横向基准（30%）：不仅有具体数字，还必须提供客观参照系（如市占率对比、同业财务/良率/成本对比、同比/环比核心指标）。
 3. 一手信源与叙事克制（40%）：源自官方财报、权威机构、核心供应链或独家披露；摆事实列数据，不煽情不吹捧。
 
 ▶ 轨道 B（适用于【影视文化】中的深度影评、新片动向）：
-1. 深度影评与主创专访（≥8.5分标准）：必须具备扎实的剧作文本细读（叙事结构、人物弧光、镜头调度/视听语言分析、导演作者性演变或时代社会议题剖析），逻辑严密、观点独立有深度；或为导演/编剧/制片人干货极密的一手幕后创作专访。
-2. 新片/新剧动向（≥8.5分标准）：围绕真正具有艺术或行业标杆意义的国内外院线新片/流媒体新剧（如三大电影节/奥斯卡动向、名导新作、高口碑剧集），提供详实的创作背景、主创脉络或权威媒体/场刊/豆瓣/烂番茄专业口碑参照。
+1. 深度影评与主创专访（≥8.5分标准）：具备扎实的剧作文本细读（叙事结构、人物弧光、镜头调度/视听语言分析、导演作者性演变或社会议题剖析），观点独立深刻；或为导演/编剧一手幕后创作专访。
+2. 新片/新剧动向（≥8.5分标准）：围绕具有艺术或行业标杆意义的国内外新片/新剧（如三大电影节/奥斯卡动向、名导新作、高口碑剧集），提供详实的创作背景、主创脉络或权威口碑参照。
+
+▶ 轨道 C（适用于【科幻小说】频道）：
+1. 深度科幻书评与新作出版（≥8.5分标准）：围绕海内外严肃科幻小说/硬科幻作品的深度书评（深入剖析作品的科学设定内核、世界观架构、叙事技法与哲学/社会思想深度）或重要科幻新作出版资讯。
+2. 科幻作家专访、权威奖项与跨界探讨（≥8.5分标准）：雨果奖/星云奖/银河奖等权威科幻奖项深度解读、知名科幻作家（如刘慈欣、特德·姜等）的一手专访对谈、或硬科幻理论与前沿科技/人文思想的跨界深度文章。
 
 【一票否决与封顶红线（严格执行！）】：
 - 【事件级去重铁律（打 0.0 分）】：若候选文章与《近期已发布新闻清单》或同批次其他文章属同一具体事件，**只保留信息最全面、最深刻的那 1 篇**，其余重复事件文章一律打 0.0 分，reason 写“同事件重复报道”。
-- 【票房播报一票否决（最高 5.0 分）】：读者明确不关心票房数据！凡是以院线票房数字播报、排片占比、周末票房榜、“票房破X亿”喜报为核心的文章，一律最高 5.0 分淘汰！
-- 【娱乐八卦/粉圈吹捧/注水剧情复述（打 0.0~5.0 分）】：明星恋情绯闻、红毯穿搭、粉圈控评（“演技炸裂、全员封神”）、片方无脑宣发通稿、或单纯按时间线复述剧情而无深度剧作分析的解说文，一律淘汰！
+- 【网文爽文推荐/书单营销/章节连载（打 0.0~4.0 分）】：凡是“熬夜必看的X本小说”、“书荒推荐”、网络爽文/修仙/系统流推书帖、或简单罗列书籍简介的营销软文，一律淘汰！
+- 【票房播报与娱乐八卦一票否决（最高 5.0 分）】：院线票房数字播报、排片占比、“票房破X亿”喜报、明星八卦绯闻、粉圈控评、注水剧情解说，一律淘汰！
 - 【自媒体引战体/单一中小个股增持吹票研报/厂商发布会PPT通稿/地方政绩稿（最高 7.5 分）】：一律不予通过！
 
-【子版块严格四选一规则（sub_topic 字段）】：
-- 若文章所属领域为 `AI与硬科技`，请严格从以下 4 个词中选 1 个：
-  "算力硬件" | "模型应用" | "财报资本" | "宏观政经"
-- 若文章所属领域为 `影视文化`，请严格从以下 4 个词中选 1 个：
-  "深度影评" | "新片动向" | "行业商业" | "影视科技"
+【子版块归类规则（sub_topic 字段）】：
+- 若所属领域为 `AI与硬科技`，严格四选一："算力硬件" | "模型应用" | "财报资本" | "宏观政经"
+- 若所属领域为 `影视文化`，严格四选一："深度影评" | "新片动向" | "行业商业" | "影视科技"
+- 若所属领域为 `科幻小说`，请固定填入："科幻小说"
 
 【原文核心原句摘录规则（key_quotes 字段）】：
-- 对于评分 >= 8.5 的文章，请直接从正文中**一字不改地摘抄 1~2 句最核心的数据原句或核心论断原话**（控制在 60~140 字以内，绝不要自己改写或总结！）。若评分 < 8.5，key_quotes 填空字符串 "" 即可。
+- 对于评分 >= 8.5 的文章，请直接从正文中**一字不改地摘抄 1~2 句最核心的数据原句或核心思想论断原话**（控制在 60~140 字以内，绝不要自己改写或总结！）。若评分 < 8.5，key_quotes 填空字符串 "" 即可。
 
 请严格输出 JSON 格式（不要输出任何多余文字），格式如下：
 {
@@ -114,7 +125,7 @@ SYSTEM_PROMPT = """你是一位极其严苛、客观的硬科技、商业与严�
     {
       "id": 0,
       "score": 9.0,
-      "sub_topic": "算力硬件",
+      "sub_topic": "科幻小说",
       "key_quotes": "正文原句摘录...",
       "reason": "简明扼要写出打分依据或淘汰原因"
     }
@@ -140,6 +151,8 @@ def make_hash(text):
     return hashlib.md5(text.encode("utf-8")).hexdigest()[:12]
 
 def fallback_sub_topic(topic, title, snippet, reason):
+    if topic == "科幻小说":
+        return "科幻小说"
     text = f"{title} {snippet} {reason}"
     if topic == "影视文化":
         if re.search(r"(AI|虚拟制片|特效|视效|LED棚|IMAX|杜比|后期|渲染|数字人|生成式|技术)", text):
@@ -274,7 +287,6 @@ def main():
     seen_ids = set(load_json(SEEN_FILE, []))
     saved_news = load_json(DATA_FILE, [])
 
-    # 为存量历史文章自动补齐 sub_topic 字段
     for item in saved_news:
         t_name = item.get("topic", "AI与硬科技")
         valid_set = VALID_SUB_TOPICS.get(t_name, VALID_SUB_TOPICS["AI与硬科技"])
@@ -288,11 +300,10 @@ def main():
     scanned_count = 0
     local_filtered_count = 0
 
-    print("🔍 Step 1: 开始按【AI与硬科技 + 影视文化】均衡配额拉取 RSS 并进行本地粗筛...")
+    print("🔍 Step 1: 开始按【AI与硬科技 + 影视文化 + 科幻小说】均衡配额拉取 RSS 并进行本地粗筛...")
     for topic, urls in TOPICS.items():
         for feed_idx, rss_url in enumerate(urls, 1):
             feed = feedparser.parse(rss_url)
-            # VIP_SOURCES 白名单信源优先排在前面，优先获得配额
             sorted_entries = sorted(
                 feed.entries,
                 key=lambda x: 0 if VIP_SOURCES.search(x.get("title", "")) else 1
@@ -320,21 +331,18 @@ def main():
 
                 scanned_count += 1
 
-                # 信源黑名单拦截
                 if SOURCE_BLACKLIST.search(source):
                     print(f"    [本地拦截-信源黑名单({source})] {title[:25]}...")
                     seen_ids.add(title_hash)
                     local_filtered_count += 1
                     continue
 
-                # 标题黑名单拦截
                 if TITLE_BLACKLIST.search(title):
                     print(f"    [本地拦截-标题黑名单] {title[:28]}...")
                     seen_ids.add(title_hash)
                     local_filtered_count += 1
                     continue
 
-                # 同事件标题近似度拦截
                 all_known_titles = recent_titles + [c["title"] for c in candidates]
                 if is_similar_title(title, all_known_titles):
                     print(f"    [本地拦截-同事件近似标题] {title[:28]}...")
@@ -408,7 +416,7 @@ def main():
                     "pub_date": art["pub_date"],
                     "snippet": art["snippet"],
                     "key_quotes": key_quotes,
-                    "body": art["body"],  # 保存无广告纯净正文供前端直接展开阅读
+                    "body": art["body"],
                     "score": score,
                     "reason": reason,
                     "model": used_model,
@@ -421,11 +429,9 @@ def main():
         if i + BATCH_SIZE < len(candidates):
             time.sleep(6)
 
-    # 保存文章数据与已读账本
     save_json(DATA_FILE, saved_news[:250])
     save_json(SEEN_FILE, list(seen_ids)[-2500:])
 
-    # 保存后台运行健康状态供前端顶部状态栏展示
     status_data = {
         "last_run_utc": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
         "scanned": scanned_count,
