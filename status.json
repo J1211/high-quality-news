@@ -1,9 +1,9 @@
 {
-  "last_run_utc": "2026-11-12 03:49 UTC",
-  "scanned": 30,
-  "local_filtered": 14,
+  "last_run_utc": "2026-11-14 10:26 UTC",
+  "scanned": 27,
+  "local_filtered": 11,
   "ai_evaluated": 16,
-  "accepted": 8,
+  "accepted": 11,
   "model": "gemini:gemini-3.5-flash-lite",
   "healthy": true
 }
