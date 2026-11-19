@@ -64,17 +64,17 @@ TOPIC_SCHEMA = {
     },
     "前沿科学": {
         "icon": "🧬",
-        "subs": {}  # 7天长周期冷门精品，无子版块直接平铺
+        "subs": {}
     },
     "科幻小说": {
         "icon": "🪐",
-        "subs": {}  # 7天长周期冷门精品，无子版块直接平铺
+        "subs": {}
     }
 }
 
 DATA_FILE = "high_quality_news.json"
 STATUS_FILE = "status.json"
-PAGE_SIZE = 25  # 首屏极速渲染条数，底部可点击加载更多
+PAGE_SIZE = 25
 
 
 # ================= 2. 辅助工具函数 =================
@@ -99,7 +99,6 @@ def to_utc8_str(raw_str):
 
 
 def make_unique_expander_label(base_label, unique_seed):
-    """通过附加不可见的零宽字符赋予每篇文章每个视图独立的组件ID，彻底修复切换子版块时展开状态串位的Bug"""
     h = int(hashlib.md5(unique_seed.encode("utf-8")).hexdigest()[:8], 16)
     zw_suffix = "".join("\u200b" if (h >> bit) & 1 else "\u200c" for bit in range(16))
     return base_label + zw_suffix
@@ -188,29 +187,29 @@ def load_status():
         return None
 
 
-# ================= 3. 响应式 CSS（左栏导航 + 右侧自适应子方框） =================
+# ================= 3. 响应式 CSS（修复右侧顶部方框被顶栏遮挡问题） =================
 st.markdown("""
 <style>
-.block-container {
-    padding-top: 1.5rem !important;
+/* 右侧主阅读区：预留 4.2rem 顶部安全间距，彻底避开 Streamlit 顶部固定栏遮挡 */
+.block-container,
+div[data-testid="stAppViewBlockContainer"] {
+    padding-top: 4.2rem !important;
     padding-bottom: 2rem !important;
 }
-/* 左侧边栏紧凑优化 */
+/* 左侧边栏：保持紧凑顶部间距 */
 section[data-testid="stSidebar"] .block-container {
     padding-top: 1.2rem !important;
+    padding-bottom: 1.5rem !important;
 }
 /* 按钮方框通用样式 */
 div.stButton > button {
-    height: 39px !important;
+    height: 40px !important;
     padding: 0px 10px !important;
     border-radius: 8px !important;
     transition: all 0.15s ease-in-out !important;
     white-space: nowrap !important;
 }
-/* 左栏门类按钮左对齐更易读 */
 section[data-testid="stSidebar"] div.stButton > button {
-    justify-content: flex-start !important;
-    padding-left: 14px !important;
     margin-bottom: 2px !important;
 }
 /* 未选中态：微光边框 */
@@ -231,10 +230,11 @@ div.stButton > button[kind="primary"] {
     box-shadow: 0 0 10px rgba(255, 75, 75, 0.22) !important;
 }
 
-/* 📱 手机端（屏幕宽度 <= 640px）右侧子方框保持每行 2~3 个流式并排 */
+/* 📱 手机端（屏幕宽度 <= 640px）右侧子方框保持每行 2~3 个流式并排，且顶部不被遮挡 */
 @media (max-width: 640px) {
-    .block-container {
-        padding-top: 1rem !important;
+    .block-container,
+    div[data-testid="stAppViewBlockContainer"] {
+        padding-top: 3.8rem !important;
         padding-left: 0.8rem !important;
         padding-right: 0.8rem !important;
     }
@@ -269,20 +269,19 @@ if "selected_subs" not in st.session_state:
 if "display_limit" not in st.session_state:
     st.session_state.display_limit = PAGE_SIZE
 
-# ================= 4. 左侧固定导航栏 (st.sidebar：门类切换 + 评分滑块 + 搜索 + 巡检状态) =================
+# ================= 4. 左侧固定导航栏 =================
 with st.sidebar:
     st.markdown("### 📡 硬核新闻监控")
 
-    # 1. 一级新闻门类竖排方框
     channel_options = list(TOPIC_SCHEMA.keys()) + ["全站总览"]
     for ch_name in channel_options:
         if ch_name == "全站总览":
             ch_count = len(news_list)
-            ch_label = f"🌐 全站总览  ({ch_count})"
+            ch_label = f"🌐 全站总览 ({ch_count})"
         else:
             ch_count = sum(1 for n in news_list if n.get("topic") == ch_name)
             ch_icon = TOPIC_SCHEMA[ch_name]["icon"]
-            ch_label = f"{ch_icon} {ch_name}  ({ch_count})"
+            ch_label = f"{ch_icon} {ch_name} ({ch_count})"
 
         is_active_ch = (st.session_state.active_topic == ch_name)
         if st.button(
@@ -298,11 +297,9 @@ with st.sidebar:
 
     st.divider()
 
-    # 2. 评分门槛滑块与关键词搜索框（常驻左栏，随手可调）
     min_score = st.slider("🎯 最低评分门槛", min_value=8.5, max_value=10.0, value=8.5, step=0.1)
     search_kw = st.text_input("🔍 关键词检索", value="", placeholder="搜公司、技术、作品、数据...")
 
-    # 3. 底部后台巡检状态
     if status_info:
         st.divider()
         dot = "🟢 巡检正常" if status_info.get("healthy", True) else "🔴 巡检异常"
@@ -315,7 +312,7 @@ with st.sidebar:
             f"🤖 `{status_info.get('model', '')}`"
         )
 
-# ================= 5. 右侧主阅读区：顶部子版块方框（无悬停提示） =================
+# ================= 5. 右侧主阅读区：顶部子版块方框 =================
 current_topic = st.session_state.active_topic
 
 if current_topic == "全站总览":
@@ -350,7 +347,6 @@ if has_sub_boxes:
         cols = st.columns(MAX_COLS_PER_ROW)
         for idx, box in enumerate(row_slice):
             with cols[idx]:
-                # 已取消 help 悬停气泡提示
                 if st.button(
                     box["title"],
                     key=f"box_{current_topic}_{box['key']}",
@@ -393,9 +389,8 @@ else:
 st.caption(f"当前视图：{filter_tag_str} 　|　 共匹配 **{len(filtered)}** 篇硬核报道")
 
 if not filtered:
-    st.info(f"当前筛选条件（{filter_tag_str}）下暂无符合条件的文章。如刚新增门类，请前往 GitHub Actions 手动运行一次即可拉取最新内容。")
+    st.info(f"当前筛选条件（{filter_tag_str}）下暂无符合条件的文章。")
 else:
-    # 首屏极速渲染前 display_limit 篇
     visible_items = filtered[:st.session_state.display_limit]
     view_state_key = f"{current_topic}_{','.join(sorted(list(active_subs)))}_{min_score}_{search_kw}"
 
@@ -434,13 +429,11 @@ else:
 
             full_body = item.get("body", "").strip()
             if full_body:
-                # 绑定文章专属唯一隐形指纹 + 当前视图状态，切换子目录时自动收起，绝不串位
                 unique_seed = f"{item.get('url', '')}_{item.get('title', '')}_{view_state_key}"
                 exp_label = make_unique_expander_label("📖 展开阅读无广告纯净全文", unique_seed)
                 with st.expander(exp_label):
                     st.markdown(full_body.replace("\n", "\n\n"))
 
-    # 底部“加载更多”按钮（保护大量文章时的秒开性能）
     if len(filtered) > st.session_state.display_limit:
         remaining = len(filtered) - st.session_state.display_limit
         if st.button(f"⏬ 加载更多历史文章（还有 {remaining} 篇）", use_container_width=True):
