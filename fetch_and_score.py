@@ -10,71 +10,79 @@ from datetime import datetime, timezone
 from googlenewsdecoder import gnewsdecoder
 
 # ================= 1. 核心配置区 =================
-SCORE_THRESHOLD = 8.5       # 统一录取分数线（>= 8.5分保留）
-BATCH_SIZE = 8              # 每次打包 8 篇发给 AI
-MAX_PER_FEED = 4            # 每个 RSS 源最多提取 4 篇高优候选
-MAX_ARTICLES_PER_RUN = 24   # 每次定时任务总共最多送审 24 篇（最多3次API调用，极度安全）
+SCORE_THRESHOLD = 8.5         # 统一录取分数线（>= 8.5分保留）
+BATCH_SIZE = 8                # 每次打包 8 篇发给 AI
+MAX_PER_FEED = 3              # 每个 RSS 源单次最多提取 3 篇候选
+MAX_ARTICLES_PER_RUN = 24     # 每次定时任务总共最多送审 24 篇（跨门类发牌式轮询抽取，最多3次API调用）
+MAX_SAVED_PER_TOPIC = 50      # 每个门类独立保留最新 50 篇（保护冷门门类永远不会被高频门类冲掉！）
+MAX_BODY_CHARS = 3500         # 保存正文最大字符数（控体积保速度）
 
 DATA_FILE = "high_quality_news.json"
 SEEN_FILE = "seen_urls.json"
 STATUS_FILE = "status.json"
 
 VALID_SUB_TOPICS = {
-    "AI与硬科技": {"算力硬件", "模型应用", "财报资本", "宏观政经"},
-    "影视文化": {"深度影评", "新片动向", "行业商业", "影视科技"},
-    "科幻小说": {"科幻小说"},
+    "AI与硬科技": ["算力硬件", "模型应用", "财报资本", "宏观政经"],
+    "宏观与金融": ["央行宏观", "股债汇商", "巨头并购", "金融风险"],
+    "国际与地缘": ["贸易关税", "法案管制", "能源矿产", "国际政局"],
+    "新能源与制造": ["智驾车企", "电力储能", "航天低空", "出海制造"],
+    "影视文化": ["深度影评", "新片动向", "行业商业", "影视科技"],
+    "前沿科学": ["前沿科学"],
+    "科幻小说": ["科幻小说"],
 }
 
-# 主题与 RSS 源配置（AI与硬科技 + 影视文化 + 科幻小说 三大频道并行）
+# 7 大新闻门类 RSS 源配置
 TOPICS = {
     "AI与硬科技": [
-        # 科技源1：严肃财经与深度科技媒体定向源
         "https://news.google.com/rss/search?q=(AI+OR+人工智能+OR+芯片+OR+算力+OR+半导体+OR+大模型)+(财新+OR+第一财经+OR+21世纪+OR+界面+OR+路透+OR+彭博+OR+经济观察报)+when:1d&hl=zh-CN&gl=CN&ceid=CN:zh-Hans",
-        # 科技源2：网易新闻（163.com）硬科技报道
         "https://news.google.com/rss/search?q=(AI+OR+芯片+OR+半导体+OR+算力+OR+大模型)+site:163.com+-快科技+-IT之家+-驱动之家+when:1d&hl=zh-CN&gl=CN&ceid=CN:zh-Hans",
-        # 科技源3：全网硬科技核心事件源
         "https://news.google.com/rss/search?q=(AI芯片+OR+算力+OR+半导体+OR+晶圆+OR+HBM+OR+存储芯片)+(财报+OR+营收+OR+量产+OR+市占率+OR+良率+OR+资本开支)+-快科技+-IT之家+when:1d&hl=zh-CN&gl=CN&ceid=CN:zh-Hans"
     ],
+    "宏观与金融": [
+        "https://news.google.com/rss/search?q=(美联储+OR+央行+OR+利率+OR+通胀+OR+CPI+OR+PMI+OR+社融+OR+财政+OR+国债)+(财新+OR+第一财经+OR+21世纪+OR+路透+OR+彭博+OR+华尔街)+-午评+-收评+when:1d&hl=zh-CN&gl=CN&ceid=CN:zh-Hans",
+        "https://news.google.com/rss/search?q=(美债+OR+汇率+OR+黄金+OR+原油+OR+大宗商品+OR+主权基金+OR+并购+OR+财报)+(高盛+OR+摩根+OR+彭博+OR+路透+OR+财新+OR+第一财经)+-涨停+-概念股+when:1d&hl=zh-CN&gl=CN&ceid=CN:zh-Hans"
+    ],
+    "国际与地缘": [
+        "https://news.google.com/rss/search?q=(关税+OR+贸易+OR+出口管制+OR+实体清单+OR+制裁+OR+反垄断+OR+法案)+(路透+OR+彭博+OR+联合早报+OR+财新+OR+第一财经+OR+新华社)+-掀桌+-彻底慌了+when:1d&hl=zh-CN&gl=CN&ceid=CN:zh-Hans",
+        "https://news.google.com/rss/search?q=(地缘+OR+供应链+OR+关键矿产+OR+稀土+OR+航运+OR+能源+OR+外交+OR+欧盟+OR+东盟)+(路透+OR+彭博+OR+联合早报+OR+财新+OR+界面)+-爽文+-打脸+when:1d&hl=zh-CN&gl=CN&ceid=CN:zh-Hans"
+    ],
+    "新能源与制造": [
+        "https://news.google.com/rss/search?q=(智能驾驶+OR+自动驾驶+OR+新能源车+OR+固态电池+OR+储能+OR+电网+OR+核电)+(财报+OR+市占率+OR+量产+OR+出海+OR+产能+OR+晚点+OR+财新+OR+第一财经)+-快科技+when:1d&hl=zh-CN&gl=CN&ceid=CN:zh-Hans",
+        "https://news.google.com/rss/search?q=(商业航天+OR+卫星+OR+火箭+OR+SpaceX+OR+低空经济+OR+机器人+OR+出海建厂)+(量产+OR+发射+OR+订单+OR+营收+OR+供应链)+-概念股+-涨停+when:2d&hl=zh-CN&gl=CN&ceid=CN:zh-Hans"
+    ],
     "影视文化": [
-        # 影视源1：深度影评、剧作分析与导演主创专访
-        "https://news.google.com/rss/search?q=(影评+OR+豆瓣+OR+导演+OR+编剧+OR+专访+OR+电影节+OR+戛纳+OR+奥斯卡+OR+剧集)+(深度+OR+叙事+OR+镜头+OR+主创+OR+美学+OR+创作)+-票房+-破亿+-排片+-绯闻+-恋情+-穿搭+when:2d&hl=zh-CN&gl=CN&ceid=CN:zh-Hans",
-        # 影视源2：国内外重磅新片/新剧动向与权威口碑前瞻
-        "https://news.google.com/rss/search?q=(新片+OR+新剧+OR+定档+OR+首映+OR+美剧+OR+英剧+OR+韩剧+OR+Netflix+OR+HBO+OR+AppleTV+OR+院线)+(导演+OR+改编+OR+口碑+OR+烂番茄+OR+豆瓣+OR+电影节)+-票房+-破亿+-粉丝+-应援+-街拍+when:2d&hl=zh-CN&gl=CN&ceid=CN:zh-Hans",
-        # 影视源3：影视行业商业博弈与影视前沿科技
-        "https://news.google.com/rss/search?q=(影视+OR+好莱坞+OR+流媒体+OR+奈飞+OR+迪士尼+OR+爱奇艺+OR+腾讯视频+OR+电影工业)+(AI+OR+虚拟制片+OR+视效+OR+特效+OR+制作成本+OR+版权+OR+财报+OR+战略)+-票房+-涨停+-概念股+when:2d&hl=zh-CN&gl=CN&ceid=CN:zh-Hans"
+        "https://news.google.com/rss/search?q=(影评+OR+豆瓣+OR+导演+OR+编剧+OR+专访+OR+电影节+OR+戛纳+OR+奥斯卡+OR+剧集)+(深度+OR+叙事+OR+镜头+OR+主创+OR+美学+OR+创作)+-票房+-破亿+-排片+-绯闻+-恋情+when:2d&hl=zh-CN&gl=CN&ceid=CN:zh-Hans",
+        "https://news.google.com/rss/search?q=(新片+OR+新剧+OR+定档+OR+首映+OR+美剧+OR+英剧+OR+Netflix+OR+HBO+OR+流媒体+OR+好莱坞)+(导演+OR+改编+OR+口碑+OR+虚拟制片+OR+AI+OR+制作成本+OR+战略)+-票房+-粉丝+-街拍+when:2d&hl=zh-CN&gl=CN&ceid=CN:zh-Hans"
+    ],
+    "前沿科学": [
+        "https://news.google.com/rss/search?q=(Nature+OR+Science+OR+自然杂志+OR+科学杂志+OR+中科院+OR+韦伯望远镜+OR+深空探测+OR+天体物理)+(突破+OR+论文+OR+发现+OR+实验+OR+观测)+-养生+-震惊+when:7d&hl=zh-CN&gl=CN&ceid=CN:zh-Hans",
+        "https://news.google.com/rss/search?q=(基因编辑+OR+脑机接口+OR+神经科学+OR+临床试验+OR+创新药+OR+可控核聚变+OR+量子计算)+(突破+OR+论文+OR+临床+OR+数据+OR+科学家+OR+专访)+-概念股+-涨停+when:7d&hl=zh-CN&gl=CN&ceid=CN:zh-Hans"
     ],
     "科幻小说": [
-        # 科幻源1（7天长周期）：新作出版、深度书评、科幻大奖（雨果奖/星云奖/银河奖）与海内外科幻作家专访
-        "https://news.google.com/rss/search?q=(科幻小说+OR+科幻文学+OR+科幻作家+OR+雨果奖+OR+星云奖+OR+银河奖+OR+科幻世界)+(书评+OR+新作+OR+出版+OR+专访+OR+刘慈欣+OR+特德姜+OR+陈楸帆+OR+郝景芳+OR+王晋康)+-爽文+-书荒+-免费阅读+-最新章节+when:7d&hl=zh-CN&gl=CN&ceid=CN:zh-Hans",
-        # 科幻源2（7天长周期）：硬科幻理论、世界观设定、科学幻想跨界对谈与严肃文学评论
+        "https://news.google.com/rss/search?q=(科幻小说+OR+科幻文学+OR+科幻作家+OR+雨果奖+OR+星云奖+OR+银河奖+OR+科幻世界)+(书评+OR+新作+OR+出版+OR+专访+OR+刘慈欣+OR+特德姜+OR+陈楸帆+OR+郝景芳)+-爽文+-书荒+-免费阅读+-最新章节+when:7d&hl=zh-CN&gl=CN&ceid=CN:zh-Hans",
         "https://news.google.com/rss/search?q=(硬科幻+OR+科幻小说+OR+科幻文学+OR+未来事务管理局)+(叙事+OR+设定+OR+世界观+OR+宇宙+OR+哲学+OR+思想+OR+文学+OR+三联+OR+界面+OR+新京报+OR+澎湃+OR+豆瓣)+-网文+-系统流+-重生+-起点+-番茄小说+when:7d&hl=zh-CN&gl=CN&ceid=CN:zh-Hans"
     ]
 }
 
-# 信源白名单（抓取时自动排在队列最前面，优先享用配额）
 VIP_SOURCES = re.compile(
-    r"(财新|晚点|LatePost|第一财经|21世纪|界面|路透|彭博|Bloomberg|经济观察报|澎湃|毒眸|娱理|三联|新京报|虎嗅|36氪|芯东西|科幻世界|未来事务管理局)"
+    r"(财新|晚点|LatePost|第一财经|21世纪|界面|路透|彭博|Bloomberg|联合早报|经济观察报|澎湃|毒眸|娱理|三联|新京报|虎嗅|36氪|芯东西|科幻世界|未来事务管理局)"
 )
 
-# 信源黑名单（命中直接丢弃）
 SOURCE_BLACKLIST = re.compile(
     r"(百家号|营销号|股吧|彩票|算命|娱乐八卦|粉丝网|追星|笔趣阁|起点中文|番茄小说)"
 )
 
-# 1. 标题黑名单：同时拦截科技标题党、影视八卦/票房、以及网络爽文/书荒推荐/盗版连载
 TITLE_BLACKLIST = re.compile(
     r"(!|！|震惊|暴跌|崩盘|涨停|跌停|午评|收评|概念股|必看|彻底慌了|断崖式|ETF|掘金|龙头股|价值重估|满仓|飙升|"
-    r"入选.*指数|斩获.*奖|荣获.*奖|掀桌|巧了|打脸|急了|亮剑|霸气|券商最新研判|早报（|"
+    r"入选.*指数|斩获.*奖|荣获.*奖|掀桌|巧了|打脸|急了|亮剑|霸气|赢麻了|券商最新研判|早报（|"
     r"票房|排片|破\d+亿|恋情|绯闻|离婚|出轨|街拍|红毯|艳压|少女感|冻龄|颜值|撕番|应援|生图|演技炸裂|看哭|"
     r"书荒|爽文|系统流|无限流|末世囤货|重生|穿越|修仙|完本|免费阅读|最新章节|TXT下载|笔趣阁)"
 )
 
-# 2. 正文开头黑名单：拦截数码快讯与发布会口水通稿
 HEAD_BLACKLIST = re.compile(
     r"(快科技\s*\d+月\d+日|驱动之家|站长之家|太平洋科技|CNMO|IT之家.*现场消息|在今天的发布会上)"
 )
 
-# 3. 正文末尾黑名单：拦截文末夹带私货的 ETF/股票营销软文与单股增持评级
 TAIL_BLACKLIST = re.compile(
     r"(基金有风险|投资需谨慎|风险提示：本文|不构成投资建议|ETF联接|代码：\d{6}|关注【|扫码领|投资评级：增持|投资评级：买入|维持“增持”|维持“买入”)"
 )
@@ -88,36 +96,31 @@ MODEL_POOL = [
     {"provider": "groq",   "model": "openai/gpt-oss-20b"},
 ]
 
-# 三轨制 8.5分冷酷主编评分矩阵（兼容硬科技、影视文化、严肃科幻小说）
-SYSTEM_PROMPT = """你是一位极其严苛、客观的硬科技、商业、影视文化与严肃科幻文学总编。请对输入的新闻列表进行独立质量打分（满分10分，支持小数如8.5、9.0），归类子版块，并摘录原文核心原句。
+SYSTEM_PROMPT = """你是一位极其严苛、客观的跨领域总编（覆盖硬科技、宏观金融、国际政经、新能源制造、严肃影视、前沿科学与科幻文学）。请对输入的新闻列表进行独立质量打分（满分10分，支持小数如8.5、9.0），按每篇文章指定的合法选项归类 `sub_topic`，并摘录原文核心原句。
 
 【8.5分高分核心标准】：
-▶ 轨道 A（适用于【AI与硬科技】全领域、以及【影视文化】中的行业商业/影视科技）：
-1. 实质性新事实增量（30%）：围绕新发生的具体商业/技术事件（财报发布、供应链突破、AI影视技术落地、流媒体战略调整、并购融资、政策落地），而非旧闻拼凑。
-2. 数据密度与横向基准（30%）：不仅有具体数字，还必须提供客观参照系（如市占率对比、同业财务/良率/成本对比、同比/环比核心指标）。
-3. 一手信源与叙事克制（40%）：源自官方财报、权威机构、核心供应链或独家披露；摆事实列数据，不煽情不吹捧。
+▶ 轨道 A（适用于【AI与硬科技】、【宏观与金融】、【国际与地缘】、【新能源与制造】、以及【影视文化】的商业/科技）：
+1. 实质性新事实增量（30%）：围绕新发生的具体商业/技术/政经事件（财报、央行决议、宏观统计指标、具体法案/关税细则、产能突破、重大并购），而非旧闻拼凑或空洞社论。
+2. 数据密度与横向基准（30%）：不仅有具体数字，还必须提供客观参照系（同比/环比/预期差、市占率对比、同业财务/良率/成本对比、具体税率或金额）。
+3. 一手信源与叙事克制（40%）：源自官方统计局/央行/财报、权威机构（路透、彭博、财新、IDC等）或核心供应链披露；克制中立，绝不煽情。
 
-▶ 轨道 B（适用于【影视文化】中的深度影评、新片动向）：
-1. 深度影评与主创专访（≥8.5分标准）：具备扎实的剧作文本细读（叙事结构、人物弧光、镜头调度/视听语言分析、导演作者性演变或社会议题剖析），观点独立深刻；或为导演/编剧一手幕后创作专访。
-2. 新片/新剧动向（≥8.5分标准）：围绕具有艺术或行业标杆意义的国内外新片/新剧（如三大电影节/奥斯卡动向、名导新作、高口碑剧集），提供详实的创作背景、主创脉络或权威口碑参照。
+▶ 轨道 B（适用于【前沿科学】）：
+1. 源自顶级学术期刊（Nature/Science/Cell/NEJM等）、权威科研机构或临床试验一手数据，清晰阐述科学机理、实验量化结果与真实突破边界，严禁夸大疗效或伪科学。
 
-▶ 轨道 C（适用于【科幻小说】频道）：
-1. 深度科幻书评与新作出版（≥8.5分标准）：围绕海内外严肃科幻小说/硬科幻作品的深度书评（深入剖析作品的科学设定内核、世界观架构、叙事技法与哲学/社会思想深度）或重要科幻新作出版资讯。
-2. 科幻作家专访、权威奖项与跨界探讨（≥8.5分标准）：雨果奖/星云奖/银河奖等权威科幻奖项深度解读、知名科幻作家（如刘慈欣、特德·姜等）的一手专访对谈、或硬科幻理论与前沿科技/人文思想的跨界深度文章。
+▶ 轨道 C（适用于【影视文化】的深度影评/新片动向、以及【科幻小说】）：
+1. 必须具备扎实的文本细读（剧作/小说叙事结构、世界观与科学设定内核、视听美学或社会哲学剖析）、或主创/科幻作家干货极密的一手专访、或国际权威电影节/科幻大奖（雨果/星云/银河奖）深度解读。
 
 【一票否决与封顶红线（严格执行！）】：
 - 【事件级去重铁律（打 0.0 分）】：若候选文章与《近期已发布新闻清单》或同批次其他文章属同一具体事件，**只保留信息最全面、最深刻的那 1 篇**，其余重复事件文章一律打 0.0 分，reason 写“同事件重复报道”。
-- 【网文爽文推荐/书单营销/章节连载（打 0.0~4.0 分）】：凡是“熬夜必看的X本小说”、“书荒推荐”、网络爽文/修仙/系统流推书帖、或简单罗列书籍简介的营销软文，一律淘汰！
-- 【票房播报与娱乐八卦一票否决（最高 5.0 分）】：院线票房数字播报、排片占比、“票房破X亿”喜报、明星八卦绯闻、粉圈控评、注水剧情解说，一律淘汰！
-- 【自媒体引战体/单一中小个股增持吹票研报/厂商发布会PPT通稿/地方政绩稿（最高 7.5 分）】：一律不予通过！
+- 【自媒体情绪爽文/军事地缘引战文（最高 4.0 分）】：国际、政治、科技新闻中凡带有“彻底慌了、掀桌、打脸、赢麻了、霸气反击”等自媒体情绪宣泄色彩的，一律淘汰！
+- 【股市每日盘面播报/单股吹票研报/厂商发布会PPT通稿（最高 7.5 分）】：A股午评收评、板块异动快讯、针对单一中小个股的“买入/增持”推荐稿、照抄厂商发布会PPT的单方宣传稿，一律淘汰！
+- 【票房播报/娱乐八卦/网文书荒推荐（最高 4.0 分）】：院线票房与排片播报、明星八卦粉圈控评、注水剧情复述、网络爽文推书帖，一律淘汰！
 
-【子版块归类规则（sub_topic 字段）】：
-- 若所属领域为 `AI与硬科技`，严格四选一："算力硬件" | "模型应用" | "财报资本" | "宏观政经"
-- 若所属领域为 `影视文化`，严格四选一："深度影评" | "新片动向" | "行业商业" | "影视科技"
-- 若所属领域为 `科幻小说`，请固定填入："科幻小说"
+【子版块归类铁律（sub_topic 字段）】：
+- 每篇候选文章头部均标注了它唯一允许使用的 `合法子版块选项`，请严格从中选择 1 个原样填入 `sub_topic`！
 
 【原文核心原句摘录规则（key_quotes 字段）】：
-- 对于评分 >= 8.5 的文章，请直接从正文中**一字不改地摘抄 1~2 句最核心的数据原句或核心思想论断原话**（控制在 60~140 字以内，绝不要自己改写或总结！）。若评分 < 8.5，key_quotes 填空字符串 "" 即可。
+- 对于评分 >= 8.5 的文章，请直接从正文中**一字不改地摘抄 1~2 句最核心的数据原句或核心论断原话**（控制在 60~140 字以内，绝不要改写或总结！）。若评分 < 8.5，key_quotes 填 ""。
 
 请严格输出 JSON 格式（不要输出任何多余文字），格式如下：
 {
@@ -125,7 +128,7 @@ SYSTEM_PROMPT = """你是一位极其严苛、客观的硬科技、商业、影�
     {
       "id": 0,
       "score": 9.0,
-      "sub_topic": "科幻小说",
+      "sub_topic": "央行宏观",
       "key_quotes": "正文原句摘录...",
       "reason": "简明扼要写出打分依据或淘汰原因"
     }
@@ -133,7 +136,7 @@ SYSTEM_PROMPT = """你是一位极其严苛、客观的硬科技、商业、影�
 }"""
 
 
-# ================= 2. 辅助与分类回填工具函数 =================
+# ================= 2. 辅助工具函数 =================
 def load_json(filepath, default):
     if os.path.exists(filepath):
         try:
@@ -151,10 +154,44 @@ def make_hash(text):
     return hashlib.md5(text.encode("utf-8")).hexdigest()[:12]
 
 def fallback_sub_topic(topic, title, snippet, reason):
-    if topic == "科幻小说":
-        return "科幻小说"
+    valid_list = VALID_SUB_TOPICS.get(topic, ["模型应用"])
+    if len(valid_list) == 1:
+        return valid_list[0]
+
     text = f"{title} {snippet} {reason}"
-    if topic == "影视文化":
+    if topic == "AI与硬科技":
+        if re.search(r"(进出口|海关总署|数据局|美联储|利率|央行|自主可控|乌兰察布|冷焦虑|出口管制|关税|国家标准)", text):
+            return "宏观政经"
+        if re.search(r"(财报|三季报|季报|Q3|Q4|营收|净利|利润|毛利率|IPO|招股书|估值|并购|收购|持仓|张坤|次贷|现金流|回购|分红|市盈率|增持|主力资金|闯关创业板|资本开支)", text):
+            return "财报资本"
+        if re.search(r"(芯片|半导体|晶圆|台积电|CoWoS|封装|HBM|内存|DRAM|存储|闪存|光模块|光互联|液冷|买电|电力设备|EDA|氮化镓|星闪|手机出货|端侧SoC|征程7|服务器)", text):
+            return "算力硬件"
+        return "模型应用"
+    elif topic == "宏观与金融":
+        if re.search(r"(违约|暴雷|次贷|利差|CDS|危机|破产|做空|泡沫|抛售|风险)", text):
+            return "金融风险"
+        if re.search(r"(财报|并购|收购|IPO|持仓|巴菲特|摩根|高盛|营收|净利|私募|主权基金)", text):
+            return "巨头并购"
+        if re.search(r"(美债|黄金|原油|汇率|人民币|美元|日元|大宗商品|铜价|国债|股市|指数)", text):
+            return "股债汇商"
+        return "央行宏观"
+    elif topic == "国际与地缘":
+        if re.search(r"(关税|贸易|进出口|顺差|逆差|世贸|倾销|自贸)", text):
+            return "贸易关税"
+        if re.search(r"(制裁|实体清单|出口管制|法案|禁令|审查|合规|反垄断)", text):
+            return "法案管制"
+        if re.search(r"(石油|天然气|稀土|锂矿|航运|红海|运河|矿产|供应链|粮食)", text):
+            return "能源矿产"
+        return "国际政局"
+    elif topic == "新能源与制造":
+        if re.search(r"(航天|火箭|卫星|星链|SpaceX|低空|eVTOL|无人机|商业航天)", text):
+            return "航天低空"
+        if re.search(r"(固态电池|储能|电网|光伏|风电|核电|氢能|锂电|宁德时代|充电)", text):
+            return "电力储能"
+        if re.search(r"(出海|建厂|海外工厂|墨西哥|东南亚|欧洲建厂|供应链转移|外贸制造)", text):
+            return "出海制造"
+        return "智驾车企"
+    elif topic == "影视文化":
         if re.search(r"(AI|虚拟制片|特效|视效|LED棚|IMAX|杜比|后期|渲染|数字人|生成式|技术)", text):
             return "影视科技"
         if re.search(r"(财报|营收|利润|订阅|会员|奈飞|Netflix|迪士尼|爱奇艺|腾讯视频|出品|成本|版权|并购|罢工|商业)", text):
@@ -162,14 +199,19 @@ def fallback_sub_topic(topic, title, snippet, reason):
         if re.search(r"(定档|预告|首映|开机|杀青|立项|片单|戛纳|威尼斯|柏林|奥斯卡|艾美奖|新片|新剧|开播)", text):
             return "新片动向"
         return "深度影评"
-    else:
-        if re.search(r"(进出口|海关总署|数据局|美联储|利率|央行|自主可控|乌兰察布|冷焦虑|出口管制|掀桌|关税|国家标准)", text):
-            return "宏观政经"
-        if re.search(r"(财报|三季报|季报|Q3|Q4|营收|净利|利润|毛利率|IPO|招股书|估值|并购|收购|持仓|张坤|次贷|现金流|回购|分红|市盈率|增持|主力资金|闯关创业板|资本开支)", text):
-            return "财报资本"
-        if re.search(r"(芯片|半导体|晶圆|台积电|CoWoS|封装|HBM|内存|DRAM|存储|闪存|光模块|光互联|液冷|买电|电力设备|EDA|氮化镓|星闪|手机出货|端侧SoC|征程7|服务器)", text):
-            return "算力硬件"
-        return "模型应用"
+
+    return valid_list[0]
+
+def enforce_per_topic_quota(news_list, max_per_topic=MAX_SAVED_PER_TOPIC):
+    """分门类独立蓄水池：每个门类独立保留最新 max_per_topic 篇，保护冷门频道不被高频新闻冲刷掉"""
+    counts = {}
+    kept = []
+    for item in news_list:
+        t = item.get("topic", "AI与硬科技")
+        counts[t] = counts.get(t, 0) + 1
+        if counts[t] <= max_per_topic:
+            kept.append(item)
+    return kept
 
 def is_similar_title(new_title, existing_titles, threshold=0.42):
     tokens_new = set(re.findall(r"[\u4e00-\u9fa5]|[a-zA-Z0-9]+", new_title.lower()))
@@ -212,7 +254,7 @@ def call_llm_with_fallback(batch_articles, recent_accepted_titles):
 
     history_block = "无"
     if recent_accepted_titles:
-        history_block = "\n".join([f"- {t}" for t in recent_accepted_titles[:15]])
+        history_block = "\n".join([f"- {t}" for t in recent_accepted_titles[:20]])
 
     article_blocks = []
     for idx, art in enumerate(batch_articles):
@@ -221,8 +263,13 @@ def call_llm_with_fallback(batch_articles, recent_accepted_titles):
             sliced_body = body[:850] + "\n...[中间省略]...\n" + body[-350:]
         else:
             sliced_body = body
+        allowed_subs = " | ".join(VALID_SUB_TOPICS.get(art["topic"], ["模型应用"]))
         article_blocks.append(
-            f"【候选文章 ID: {idx}】\n所属领域：{art['topic']}\n标题：{art['title']}\n来源：{art['source']}\n正文切片：\n{sliced_body}\n"
+            f"【候选文章 ID: {idx}】\n"
+            f"所属门类：{art['topic']} （合法子版块选项：[{allowed_subs}]）\n"
+            f"标题：{art['title']}\n"
+            f"来源：{art['source']}\n"
+            f"正文切片：\n{sliced_body}\n"
         )
 
     user_prompt = (
@@ -289,18 +336,19 @@ def main():
 
     for item in saved_news:
         t_name = item.get("topic", "AI与硬科技")
-        valid_set = VALID_SUB_TOPICS.get(t_name, VALID_SUB_TOPICS["AI与硬科技"])
+        valid_set = set(VALID_SUB_TOPICS.get(t_name, VALID_SUB_TOPICS["AI与硬科技"]))
         if item.get("sub_topic") not in valid_set:
             item["sub_topic"] = fallback_sub_topic(
                 t_name, item.get("title", ""), item.get("snippet", ""), item.get("reason", "")
             )
 
-    recent_titles = [item.get("title", "") for item in saved_news[:30]]
-    candidates = []
+    recent_titles = [item.get("title", "") for item in saved_news[:35]]
+    topic_buckets = {t: [] for t in TOPICS}
+    all_collected_titles = list(recent_titles)
     scanned_count = 0
     local_filtered_count = 0
 
-    print("🔍 Step 1: 开始按【AI与硬科技 + 影视文化 + 科幻小说】均衡配额拉取 RSS 并进行本地粗筛...")
+    print("🔍 Step 1: 开始扫描 7 大新闻门类 RSS 源并进行本地粗筛...")
     for topic, urls in TOPICS.items():
         for feed_idx, rss_url in enumerate(urls, 1):
             feed = feedparser.parse(rss_url)
@@ -309,10 +357,10 @@ def main():
                 key=lambda x: 0 if VIP_SOURCES.search(x.get("title", "")) else 1
             )
             feed_count = 0
-            print(f"  📡 正在扫描 [{topic}] 源 #{feed_idx} (共 {len(sorted_entries)} 条条目，VIP信源已提权)...")
+            print(f"  📡 扫描 [{topic}] 源 #{feed_idx} (共 {len(sorted_entries)} 条)...")
 
             for entry in sorted_entries:
-                if feed_count >= MAX_PER_FEED or len(candidates) >= MAX_ARTICLES_PER_RUN:
+                if feed_count >= MAX_PER_FEED:
                     break
 
                 raw_title = entry.get("title", "").strip()
@@ -332,20 +380,16 @@ def main():
                 scanned_count += 1
 
                 if SOURCE_BLACKLIST.search(source):
-                    print(f"    [本地拦截-信源黑名单({source})] {title[:25]}...")
                     seen_ids.add(title_hash)
                     local_filtered_count += 1
                     continue
 
                 if TITLE_BLACKLIST.search(title):
-                    print(f"    [本地拦截-标题黑名单] {title[:28]}...")
                     seen_ids.add(title_hash)
                     local_filtered_count += 1
                     continue
 
-                all_known_titles = recent_titles + [c["title"] for c in candidates]
-                if is_similar_title(title, all_known_titles):
-                    print(f"    [本地拦截-同事件近似标题] {title[:28]}...")
+                if is_similar_title(title, all_collected_titles):
                     seen_ids.add(title_hash)
                     local_filtered_count += 1
                     continue
@@ -354,33 +398,42 @@ def main():
                 seen_ids.add(title_hash)
 
                 if len(body) < 450:
-                    print(f"    [本地拦截-正文过短({len(body)}字)] {title[:25]}...")
                     local_filtered_count += 1
                     continue
 
                 if HEAD_BLACKLIST.search(body[:120]):
-                    print(f"    [本地拦截-快讯/发布会通稿] {title[:25]}...")
                     local_filtered_count += 1
                     continue
 
                 if TAIL_BLACKLIST.search(body[-350:]):
-                    print(f"    [本地拦截-文末软文/荐股评级] {title[:25]}...")
                     local_filtered_count += 1
                     continue
 
-                candidates.append({
+                all_collected_titles.append(title)
+                topic_buckets[topic].append({
                     "id_hash": title_hash,
                     "topic": topic,
                     "title": title,
                     "source": source,
                     "url": real_url,
                     "pub_date": pub_date,
-                    "body": body,
+                    "body": body[:MAX_BODY_CHARS],
                     "snippet": body[:140].replace("\n", " ") + "..."
                 })
                 feed_count += 1
 
-    print(f"📦 Step 2: 本地严筛完成，共选出 {len(candidates)} 篇高潜力候选文章进入 AI 终审。")
+    # 发牌式跨门类轮询抽样（Round-Robin），保证 7 个门类绝对公平，不被排前面的门类吃光名额
+    candidates = []
+    while len(candidates) < MAX_ARTICLES_PER_RUN:
+        added_any = False
+        for t in TOPICS:
+            if topic_buckets[t] and len(candidates) < MAX_ARTICLES_PER_RUN:
+                candidates.append(topic_buckets[t].pop(0))
+                added_any = True
+        if not added_any:
+            break
+
+    print(f"📦 Step 2: 跨门类均衡抽样完成，共选出 {len(candidates)} 篇候选文章进入 AI 终审。")
 
     newly_accepted = 0
     last_used_model = "无需调用 (本轮无新候选)"
@@ -401,7 +454,7 @@ def main():
             key_quotes = (res.get("key_quotes") or "").strip()
             t_name = art["topic"]
             sub_topic = (res.get("sub_topic") or "").strip()
-            if sub_topic not in VALID_SUB_TOPICS.get(t_name, set()):
+            if sub_topic not in set(VALID_SUB_TOPICS.get(t_name, [])):
                 sub_topic = fallback_sub_topic(t_name, art["title"], art["snippet"], reason)
 
             if score >= SCORE_THRESHOLD:
@@ -429,8 +482,10 @@ def main():
         if i + BATCH_SIZE < len(candidates):
             time.sleep(6)
 
-    save_json(DATA_FILE, saved_news[:250])
-    save_json(SEEN_FILE, list(seen_ids)[-2500:])
+    # 按分门类独立蓄水池保存（每个门类各自保留最新 50 篇）
+    saved_news = enforce_per_topic_quota(saved_news, MAX_SAVED_PER_TOPIC)
+    save_json(DATA_FILE, saved_news)
+    save_json(SEEN_FILE, list(seen_ids)[-3500:])
 
     status_data = {
         "last_run_utc": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
