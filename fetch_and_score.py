@@ -3,23 +3,31 @@ import re
 import json
 import time
 import hashlib
+import urllib.parse
 import requests
 import feedparser
 import trafilatura
 from datetime import datetime, timezone
 from googlenewsdecoder import gnewsdecoder
 
-# ================= 1. 核心配置区 =================
-SCORE_THRESHOLD = 8.5         # 统一录取分数线（>= 8.5分保留）
+# ================= 1. 原有 7 大深度门类核心配置区 =================
+SCORE_THRESHOLD = 8.5         # 7大深度门类录取线（>= 8.5分保留）
 BATCH_SIZE = 8                # 每次打包 8 篇发给 AI
 MAX_PER_FEED = 3              # 每个 RSS 源单次最多提取 3 篇候选
-MAX_ARTICLES_PER_RUN = 24     # 每次定时任务总共最多送审 24 篇（跨门类发牌式轮询抽取，最多3次API调用）
-MAX_SAVED_PER_TOPIC = 50      # 每个门类独立保留最新 50 篇（保护冷门门类永远不会被高频门类冲掉！）
-MAX_BODY_CHARS = 3500         # 保存正文最大字符数（控体积保速度）
+MAX_ARTICLES_PER_RUN = 24     # 7大深度门类单次最多送审 24 篇
+MAX_SAVED_PER_TOPIC = 50      # 每个深度门类独立保留最新 50 篇
+MAX_BODY_CHARS = 3500         # 保存正文最大字符数
 
 DATA_FILE = "high_quality_news.json"
 SEEN_FILE = "seen_urls.json"
 STATUS_FILE = "status.json"
+
+# 热点风向标独立存储文件（与原有7大门类完全物理隔离）
+TRENDING_FILE = "trending_news.json"
+TRENDING_SNAPSHOT_FILE = "trending_snapshot.json"
+TRENDING_TTL_SECONDS = 48 * 3600  # 热点 48 小时自动过期代谢
+MAX_TRENDING_SAVED = 35           # 热点库最多保留 35 条
+MAX_TRENDING_CANDIDATES = 8       # 每次巡检最多送审 8 个飙升热点（仅需 1 次 API 调用）
 
 VALID_SUB_TOPICS = {
     "AI与硬科技": ["算力硬件", "模型应用", "财报资本", "宏观政经"],
@@ -31,7 +39,7 @@ VALID_SUB_TOPICS = {
     "科幻小说": ["科幻小说"],
 }
 
-# 7 大新闻门类 RSS 源配置
+# 7 大深度门类 RSS 源配置（保持原样）
 TOPICS = {
     "AI与硬科技": [
         "https://news.google.com/rss/search?q=(AI+OR+人工智能+OR+芯片+OR+算力+OR+半导体+OR+大模型)+(财新+OR+第一财经+OR+21世纪+OR+界面+OR+路透+OR+彭博+OR+经济观察报)+when:1d&hl=zh-CN&gl=CN&ceid=CN:zh-Hans",
@@ -64,8 +72,18 @@ TOPICS = {
     ]
 }
 
+# 梯度1：流派3（国内外权威华文媒体焦点簇与短时突发共振源）
+TRENDING_MEDIA_FEEDS = [
+    # 国内焦点聚合簇
+    ("国内热点", "https://news.google.com/rss?hl=zh-CN&gl=CN&ceid=CN:zh-Hans"),
+    # 国际华文权威媒体焦点簇（新加坡/港台/外媒中文网对全球突发大事的共振报道）
+    ("全球风向", "https://news.google.com/rss?hl=zh-CN&gl=SG&ceid=SG:zh-Hans"),
+    # 近 3 小时国内外权威严肃媒体突发快讯共振流
+    ("突发共振", "https://news.google.com/rss/search?q=(突发+OR+通报+OR+紧急+OR+最新+OR+回应+OR+调查+OR+宣布)+(路透+OR+彭博+OR+联合早报+OR+澎湃+OR+财新+OR+第一财经+OR+新京报+OR+界面+OR+新华社+OR+央视)+when:3h&hl=zh-CN&gl=CN&ceid=CN:zh-Hans")
+]
+
 VIP_SOURCES = re.compile(
-    r"(财新|晚点|LatePost|第一财经|21世纪|界面|路透|彭博|Bloomberg|联合早报|经济观察报|澎湃|毒眸|娱理|三联|新京报|虎嗅|36氪|芯东西|科幻世界|未来事务管理局)"
+    r"(财新|晚点|LatePost|第一财经|21世纪|界面|路透|彭博|Bloomberg|联合早报|经济观察报|澎湃|新京报|央视|新华社|毒眸|娱理|三联|虎嗅|36氪|芯东西|科幻世界|未来事务管理局|BBC|日经|韩联社)"
 )
 
 SOURCE_BLACKLIST = re.compile(
@@ -77,6 +95,11 @@ TITLE_BLACKLIST = re.compile(
     r"入选.*指数|斩获.*奖|荣获.*奖|掀桌|巧了|打脸|急了|亮剑|霸气|赢麻了|券商最新研判|早报（|"
     r"票房|排片|破\d+亿|恋情|绯闻|离婚|出轨|街拍|红毯|艳压|少女感|冻龄|颜值|撕番|应援|生图|演技炸裂|看哭|"
     r"书荒|爽文|系统流|无限流|末世囤货|重生|穿越|修仙|完本|免费阅读|最新章节|TXT下载|笔趣阁)"
+)
+
+# 热点风向专用纯八卦过滤黑名单（允许社会民生突发，但剔除纯娱乐明星私生活与网红买榜）
+TRENDING_GOSSIP_BLACKLIST = re.compile(
+    r"(恋情|绯闻|出轨|街拍|红毯|艳压|少女感|冻龄|颜值|撕番|应援|生图|演技炸裂|综艺路透|壁纸|头像|星座运势|带货榜)"
 )
 
 HEAD_BLACKLIST = re.compile(
@@ -96,6 +119,7 @@ MODEL_POOL = [
     {"provider": "groq",   "model": "openai/gpt-oss-20b"},
 ]
 
+# 7大深度门类 System Prompt（保持原样）
 SYSTEM_PROMPT = """你是一位极其严苛、客观的跨领域总编（覆盖硬科技、宏观金融、国际政经、新能源制造、严肃影视、前沿科学与科幻文学）。请对输入的新闻列表进行独立质量打分（满分10分，支持小数如8.5、9.0），按每篇文章指定的合法选项归类 `sub_topic`，并摘录原文核心原句。
 
 【8.5分高分核心标准】：
@@ -131,6 +155,28 @@ SYSTEM_PROMPT = """你是一位极其严苛、客观的跨领域总编（覆盖�
       "sub_topic": "央行宏观",
       "key_quotes": "正文原句摘录...",
       "reason": "简明扼要写出打分依据或淘汰原因"
+    }
+  ]
+}"""
+
+# 热点风向标专用 Prompt（不限领域，聚焦突发公共价值与飙升风向解读）
+TRENDING_SYSTEM_PROMPT = """你是一位敏锐的全网突发热点与公共舆情总编。以下是通过“平台热榜1小时极速飙升算法”与“国内外权威媒体短时密集共振算法”捕捉到的候选热点事件及其配套报道。
+请在不限定领域的前提下（社会民生、突发事故、法治案件、国内外政经突发、商业黑天鹅、科技文体破圈大事均予以收纳），对每个候选热点进行公共价值与真实性把关（满分10分，>= 8.0 分予以收录）。
+
+【收录与淘汰标准】：
+1. 【广泛接纳真实突发（>= 8.0 分）】：凡属于真实发生的国内外重大突发事件、官方重要通报、引发广泛公众讨论的社会民生/法治/政策/商业热点，且配套报道事实清晰、信源正规，均应给予 8.2 ~ 9.8 分（根据事件公共影响力与飙升强度打分）。
+2. 【同事件去重铁律（打 0.0 分）】：若候选热点与《过去48小时已收录热点清单》或同批次其他候选属同一事件，且**并无重大新事实反转或新官方通报进展**，一律打 0.0 分淘汰！但若有重大新进展（如从“事故发生”到“官方发布问责通报”），则予以高分放行。
+3. 【纯娱乐明星八卦/网红买榜/软广一票否决（最高 4.0 分）】：纯粹的娱乐明星私生活绯闻、粉圈控评、网红炒作、毫无公共价值的低俗猎奇或营销带货，一律打 4.0 分以下淘汰！
+
+请严格输出 JSON 格式（不要输出任何多余文字），格式如下：
+{
+  "results": [
+    {
+      "id": 0,
+      "score": 9.0,
+      "region_tag": "国内热点",
+      "key_quotes": "从正文中一字不改摘录1~2句最核心的事实或通报原话（60~130字）",
+      "reason": "简明扼要解读该事件为何在短时间内引爆关注及当前核心看点（40~80字）"
     }
   ]
 }"""
@@ -203,7 +249,6 @@ def fallback_sub_topic(topic, title, snippet, reason):
     return valid_list[0]
 
 def enforce_per_topic_quota(news_list, max_per_topic=MAX_SAVED_PER_TOPIC):
-    """分门类独立蓄水池：每个门类独立保留最新 max_per_topic 篇，保护冷门频道不被高频新闻冲刷掉"""
     counts = {}
     kept = []
     for item in news_list:
@@ -213,9 +258,9 @@ def enforce_per_topic_quota(news_list, max_per_topic=MAX_SAVED_PER_TOPIC):
             kept.append(item)
     return kept
 
-def is_similar_title(new_title, existing_titles, threshold=0.42):
+def is_similar_title(new_title, existing_titles, threshold=0.40):
     tokens_new = set(re.findall(r"[\u4e00-\u9fa5]|[a-zA-Z0-9]+", new_title.lower()))
-    if len(tokens_new) < 4:
+    if len(tokens_new) < 3:
         return False
     for old_title in existing_titles:
         tokens_old = set(re.findall(r"[\u4e00-\u9fa5]|[a-zA-Z0-9]+", old_title.lower()))
@@ -247,11 +292,63 @@ def decode_and_extract(gnews_url):
     return real_url, ""
 
 
-# ================= 3. 多模型轮询调用函数 =================
-def call_llm_with_fallback(batch_articles, recent_accepted_titles):
+# ================= 3. 多模型轮询通用调用函数 =================
+def call_llm_raw(system_prompt_text, user_prompt_text):
     gemini_key = os.environ.get("GEMINI_API_KEY", "").strip()
     groq_key = os.environ.get("GROQ_API_KEY", "").strip()
 
+    for candidate in MODEL_POOL:
+        provider = candidate["provider"]
+        model_name = candidate["model"]
+
+        if provider == "gemini" and not gemini_key:
+            continue
+        if provider == "groq" and not groq_key:
+            continue
+
+        if provider == "gemini":
+            url = "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions"
+            api_key = gemini_key
+        else:
+            url = "https://api.groq.com/openai/v1/chat/completions"
+            api_key = groq_key
+
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        }
+        payload = {
+            "model": model_name,
+            "messages": [
+                {"role": "system", "content": system_prompt_text},
+                {"role": "user", "content": user_prompt_text}
+            ],
+            "temperature": 0.1,
+            "response_format": {"type": "json_object"}
+        }
+
+        try:
+            print(f"🤖 尝试调用 [{provider.upper()}] {model_name}...")
+            resp = requests.post(url, headers=headers, json=payload, timeout=50)
+
+            if resp.status_code == 200:
+                content = resp.json()["choices"][0]["message"]["content"]
+                content = re.sub(r"^```json\s*|\s*```$", "", content.strip())
+                parsed = json.loads(content)
+                print(f"✅ [{model_name}] 评审成功！")
+                return parsed.get("results", []), f"{provider}:{model_name}"
+            else:
+                print(f"⚠️ [{model_name}] 状态码 {resp.status_code}: {resp.text[:100]} -> 切换下一个模型...")
+                time.sleep(1)
+        except Exception as e:
+            print(f"⚠️ [{model_name}] 调用异常: {e} -> 切换下一个模型...")
+            time.sleep(1)
+
+    print("❌ 所有可用模型均调用失败，请检查 API Key。")
+    return [], "none"
+
+
+def call_llm_with_fallback(batch_articles, recent_accepted_titles):
     history_block = "无"
     if recent_accepted_titles:
         history_block = "\n".join([f"- {t}" for t in recent_accepted_titles[:20]])
@@ -277,59 +374,364 @@ def call_llm_with_fallback(batch_articles, recent_accepted_titles):
         f"====================\n\n"
         + "\n====================\n".join(article_blocks)
     )
+    return call_llm_raw(SYSTEM_PROMPT, user_prompt)
 
-    for candidate in MODEL_POOL:
-        provider = candidate["provider"]
-        model_name = candidate["model"]
 
-        if provider == "gemini" and not gemini_key:
+# ================= 4. 独立模块：【🔥 热点风向标】混合双擎采集与评估流水线 =================
+def fetch_platform_hotlists():
+    """流派 2：采集百度实时热搜与今日头条热榜公开接口"""
+    items = []
+    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
+
+    # 1. 百度实时热搜榜 API
+    try:
+        r = requests.get("https://top.baidu.com/api/board?platform=wise&tab=realtime", headers=headers, timeout=10)
+        if r.status_code == 200:
+            cards = r.json().get("data", {}).get("cards", [])
+            if cards:
+                content_list = cards[0].get("content", [])
+                if content_list and isinstance(content_list[0], dict) and "content" in content_list[0]:
+                    content_list = content_list[0]["content"]
+                for rank_idx, entry in enumerate(content_list[:30], 1):
+                    word = (entry.get("word") or entry.get("query") or "").strip()
+                    if not word:
+                        continue
+                    hot_val = int(re.sub(r"\D", "", str(entry.get("hotScore", "0"))) or 0)
+                    tag_code = str(entry.get("hotTag", ""))
+                    # 百度 hotTag: 1=新, 3=热, 4=沸, 5=爆
+                    tag_map = {"1": "新", "4": "沸", "5": "爆"}
+                    tag = tag_map.get(tag_code, "")
+                    items.append({
+                        "title": word,
+                        "rank": rank_idx,
+                        "hot_val": hot_val,
+                        "tag": tag,
+                        "platform": "百度热搜"
+                    })
+    except Exception as e:
+        print(f"  [百度热榜跳过] {e}")
+
+    # 2. 今日头条实时热榜 API
+    try:
+        r = requests.get("https://www.toutiao.com/hot-event/hot-board/?origin=toutiao_pc", headers=headers, timeout=10)
+        if r.status_code == 200:
+            data_list = r.json().get("data", [])
+            for rank_idx, entry in enumerate(data_list[:30], 1):
+                word = (entry.get("Title") or "").strip()
+                if not word:
+                    continue
+                hot_val = int(re.sub(r"\D", "", str(entry.get("HotValue", "0"))) or 0)
+                label_raw = str(entry.get("Label", "")).strip()
+                tag = label_raw if label_raw in ("新", "沸", "爆") else ""
+                items.append({
+                    "title": word,
+                    "rank": rank_idx,
+                    "hot_val": hot_val,
+                    "tag": tag,
+                    "platform": "头条热榜"
+                })
+    except Exception as e:
+        print(f"  [头条热榜跳过] {e}")
+
+    return items
+
+
+def find_authoritative_article_for_keyword(keyword):
+    """为热榜飙升词条自动检索并提取一篇正规主流媒体的报道全文"""
+    q = urllib.parse.quote(keyword)
+    rss_url = f"https://news.google.com/rss/search?q={q}+when:1d&hl=zh-CN&gl=CN&ceid=CN:zh-Hans"
+    try:
+        feed = feedparser.parse(rss_url)
+        sorted_entries = sorted(
+            feed.entries[:8],
+            key=lambda x: 0 if VIP_SOURCES.search(x.get("title", "")) else 1
+        )
+        for entry in sorted_entries[:3]:
+            raw_title = entry.get("title", "").strip()
+            source = "主流媒体"
+            title = raw_title
+            if " - " in raw_title:
+                parts = raw_title.rsplit(" - ", 1)
+                title, source = parts[0].strip(), parts[1].strip()
+            if SOURCE_BLACKLIST.search(source):
+                continue
+            real_url, body = decode_and_extract(entry.get("link", ""))
+            if len(body) >= 320:
+                return {
+                    "title": title,
+                    "source": source,
+                    "url": real_url,
+                    "pub_date": entry.get("published", datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M")),
+                    "body": body[:MAX_BODY_CHARS],
+                    "snippet": body[:140].replace("\n", " ") + "..."
+                }
+    except Exception as e:
+        print(f"  [热词配文异常] {e}")
+    return None
+
+
+def run_trending_pipeline():
+    """独立运行【🔥 热点风向标】混合双擎流水线（try-except 隔离保护，绝不影响原本7大板块）"""
+    print("\n🔥 Step 3: 启动【热点风向标】混合双擎（1h热榜斜率 + 国内外权威媒体共振）...")
+    now_ts = int(time.time())
+
+    # 1. 加载并清理超过 48 小时的旧热点（自动新陈代谢）
+    saved_trending = load_json(TRENDING_FILE, [])
+    active_trending = [
+        item for item in saved_trending
+        if (now_ts - int(item.get("first_erupted_ts", now_ts))) <= TRENDING_TTL_SECONDS
+    ]
+    existing_trending_titles = [item.get("title", "") for item in active_trending] + [
+        item.get("hot_keyword", "") for item in active_trending if item.get("hot_keyword")
+    ]
+
+    # 2. 加载上一小时热榜快照并清理超过 24 小时的过期快照记录
+    snapshot = load_json(TRENDING_SNAPSHOT_FILE, {})
+    snapshot = {
+        k: v for k, v in snapshot.items()
+        if (now_ts - int(v.get("first_seen_ts", now_ts))) <= 24 * 3600
+    }
+
+    surging_pool = []
+
+    # --- 引擎 B：计算平台热榜 1 小时飙升斜率 ---
+    hotlist_items = fetch_platform_hotlists()
+    for item in hotlist_items:
+        kw = item["title"]
+        if TRENDING_GOSSIP_BLACKLIST.search(kw):
             continue
-        if provider == "groq" and not groq_key:
-            continue
 
-        if provider == "gemini":
-            url = "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions"
-            api_key = gemini_key
+        norm_key = make_hash(re.sub(r"\W+", "", kw)[:14])
+        rank = item["rank"]
+        hot_val = item["hot_val"]
+        tag = item["tag"]
+        platform = item["platform"]
+
+        velocity_badge = ""
+        priority = 0
+
+        if norm_key not in snapshot:
+            # 首次进入快照账本
+            snapshot[norm_key] = {
+                "title": kw,
+                "first_seen_ts": now_ts,
+                "last_rank": rank,
+                "hot_val": hot_val,
+                "platform": platform
+            }
+            if rank <= 15 or tag in ("沸", "爆", "新"):
+                tag_str = f" [{tag}]" if tag else ""
+                velocity_badge = f"🚀 1h新晋空降 {platform}第{rank}{tag_str}"
+                priority = 95 - rank + (15 if tag in ("沸", "爆") else 5)
         else:
-            url = "https://api.groq.com/openai/v1/chat/completions"
-            api_key = groq_key
+            prev = snapshot[norm_key]
+            age_hours = (now_ts - int(prev.get("first_seen_ts", now_ts))) / 3600.0
+            prev_rank = int(prev.get("last_rank", rank))
+            prev_hot = int(prev.get("hot_val", hot_val))
 
-        headers = {
-            "Authorization": f"Bearer {api_key}",
-            "Content-Type": "application/json"
-        }
-        payload = {
-            "model": model_name,
-            "messages": [
-                {"role": "system", "content": SYSTEM_PROMPT},
-                {"role": "user", "content": user_prompt}
-            ],
-            "temperature": 0.1,
-            "response_format": {"type": "json_object"}
-        }
+            # 更新当前排名与热度
+            prev["last_rank"] = rank
+            prev["hot_val"] = max(hot_val, prev_hot)
 
+            # 在榜超过 6 小时的老话题视为存量退潮期，跳过
+            if age_hours > 6.0:
+                continue
+
+            rank_jump = prev_rank - rank
+            heat_growth = ((hot_val - prev_hot) / max(prev_hot, 1)) * 100 if prev_hot > 0 else 0
+
+            if rank_jump >= 8:
+                velocity_badge = f"🚀 1h飙升 {rank_jump} 位 (冲至{platform}第{rank})"
+                priority = 75 + rank_jump
+            elif heat_growth >= 40 and rank <= 20:
+                velocity_badge = f"📈 1h热度暴涨 +{int(heat_growth)}% ({platform}第{rank})"
+                priority = 70 + min(int(heat_growth / 4), 25)
+
+        if not velocity_badge:
+            continue
+
+        if is_similar_title(kw, existing_trending_titles, threshold=0.45):
+            continue
+
+        # 检查是否与池中已有其他平台词条形成“跨榜共振”
+        merged = False
+        for existing in surging_pool:
+            if is_similar_title(kw, [existing["hot_keyword"]], threshold=0.38):
+                if platform not in existing["platforms"]:
+                    existing["platforms"].append(platform)
+                    existing["resonance_badge"] = f"📡 {'·'.join(existing['platforms'])} 双榜共振"
+                    existing["priority"] += 30
+                merged = True
+                break
+
+        if not merged:
+            surging_pool.append({
+                "hot_keyword": kw,
+                "velocity_badge": velocity_badge,
+                "resonance_badge": f"📡 {platform} 实时热榜",
+                "platforms": [platform],
+                "region_tag": "国内热点",
+                "priority": priority,
+                "article": None
+            })
+
+    # --- 引擎 A：采集国内外华文权威媒体焦点簇共振（流派 3，梯度 1） ---
+    for region_label, feed_url in TRENDING_MEDIA_FEEDS:
         try:
-            print(f"🤖 尝试调用 [{provider.upper()}] {model_name} 评审 {len(batch_articles)} 篇文章...")
-            resp = requests.post(url, headers=headers, json=payload, timeout=50)
+            feed = feedparser.parse(feed_url)
+            for entry in feed.entries[:12]:
+                raw_title = entry.get("title", "").strip()
+                if not raw_title or TRENDING_GOSSIP_BLACKLIST.search(raw_title):
+                    continue
 
-            if resp.status_code == 200:
-                content = resp.json()["choices"][0]["message"]["content"]
-                content = re.sub(r"^```json\s*|\s*```$", "", content.strip())
-                parsed = json.loads(content)
-                print(f"✅ [{model_name}] 评审成功！")
-                return parsed.get("results", []), f"{provider}:{model_name}"
-            else:
-                print(f"⚠️ [{model_name}] 状态码 {resp.status_code}: {resp.text[:100]} -> 切换下一个模型...")
-                time.sleep(1)
+                source = "主流媒体"
+                title = raw_title
+                if " - " in raw_title:
+                    parts = raw_title.rsplit(" - ", 1)
+                    title, source = parts[0].strip(), parts[1].strip()
+
+                if is_similar_title(title, existing_trending_titles, threshold=0.42):
+                    continue
+
+                # 解析 Google News 焦点簇内同时跟进报道该事件的独立媒体名单
+                summary_html = entry.get("summary", "")
+                cluster_outlets = []
+                for m_name in re.findall(r"<font[^>]*>(.*?)</font>", summary_html):
+                    clean_m = re.sub(r"<[^>]+>", "", m_name).strip()
+                    if clean_m and clean_m not in cluster_outlets:
+                        cluster_outlets.append(clean_m)
+
+                media_count = max(len(cluster_outlets), 1)
+                # 焦点簇至少有 3 家媒体同时报道，或来自近3小时权威突发流且命中 VIP 媒体
+                if media_count < 3 and not (region_label == "突发共振" and VIP_SOURCES.search(source)):
+                    continue
+
+                # 检查是否与热榜飙升池中的话题形成“热榜+主流媒体”跨界共振
+                merged = False
+                for existing in surging_pool:
+                    if is_similar_title(title, [existing["hot_keyword"]], threshold=0.36):
+                        existing["resonance_badge"] = f"📡 {'·'.join(existing['platforms'])} 与 {media_count}家主流媒体共振"
+                        existing["priority"] += 35
+                        merged = True
+                        break
+
+                if not merged:
+                    sample_outlets = "·".join(cluster_outlets[:3]) if cluster_outlets else source
+                    res_badge = (
+                        f"📡 {sample_outlets}等 {media_count} 家媒体密集聚焦"
+                        if media_count >= 3 else f"📡 权威媒体突发聚焦 ({source})"
+                    )
+                    vel_badge = "🔥 短时多源爆发" if media_count >= 4 else "⚡ 突发焦点速递"
+                    surging_pool.append({
+                        "hot_keyword": title,
+                        "velocity_badge": vel_badge,
+                        "resonance_badge": res_badge,
+                        "platforms": [source],
+                        "region_tag": "全球风向" if region_label == "全球风向" else "国内热点",
+                        "priority": 72 + media_count * 5,
+                        "entry_link": entry.get("link", ""),
+                        "entry_pub": entry.get("published", datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M")),
+                        "entry_source": source,
+                        "article": None
+                    })
         except Exception as e:
-            print(f"⚠️ [{model_name}] 调用异常: {e} -> 切换下一个模型...")
-            time.sleep(1)
+            print(f"  [媒体焦点簇跳过] {e}")
 
-    print("❌ 所有可用模型均调用失败，请检查 API Key。")
-    return [], "none"
+    # 按爆发优先级排序，取前 MAX_TRENDING_CANDIDATES 个匹配权威正文并送 AI 终审
+    surging_pool.sort(key=lambda x: x["priority"], reverse=True)
+
+    ready_candidates = []
+    for cand in surging_pool:
+        if len(ready_candidates) >= MAX_TRENDING_CANDIDATES:
+            break
+
+        if cand.get("entry_link"):
+            real_url, body = decode_and_extract(cand["entry_link"])
+            if len(body) >= 320:
+                cand["article"] = {
+                    "title": cand["hot_keyword"],
+                    "source": cand["entry_source"],
+                    "url": real_url,
+                    "pub_date": cand["entry_pub"],
+                    "body": body[:MAX_BODY_CHARS],
+                    "snippet": body[:140].replace("\n", " ") + "..."
+                }
+        else:
+            art = find_authoritative_article_for_keyword(cand["hot_keyword"])
+            if art:
+                cand["article"] = art
+
+        if cand["article"]:
+            # 再次确保配出的文章标题不与已有库重复
+            if not is_similar_title(cand["article"]["title"], existing_trending_titles, threshold=0.42):
+                ready_candidates.append(cand)
+                existing_trending_titles.append(cand["article"]["title"])
+
+    print(f"⚡ 热点双擎共锁定 {len(ready_candidates)} 个高爆发候选事件进入 AI 热点把关...")
+
+    if ready_candidates:
+        history_str = "\n".join([f"- {t}" for t in existing_trending_titles[:25]]) or "无"
+        blocks = []
+        for idx, c in enumerate(ready_candidates):
+            art = c["article"]
+            body = art["body"]
+            sliced = body[:850] + "\n...\n" + body[-300:] if len(body) > 1150 else body
+            blocks.append(
+                f"【候选热点 ID: {idx}】\n"
+                f"飙升信号：{c['velocity_badge']} | {c['resonance_badge']}\n"
+                f"默认区域属性：{c['region_tag']}\n"
+                f"配套报道标题：{art['title']} (来源：{art['source']})\n"
+                f"报道正文切片：\n{sliced}\n"
+            )
+        user_prompt = (
+            f"《过去48小时已收录热点清单（若无重大新事实进展请打 0.0 分去重）》：\n{history_str}\n\n"
+            f"====================\n\n" + "\n====================\n".join(blocks)
+        )
+
+        results, used_model = call_llm_raw(TRENDING_SYSTEM_PROMPT, user_prompt)
+        res_map = {item.get("id"): item for item in results if isinstance(item, dict)}
+
+        added_trending = 0
+        for idx, c in enumerate(ready_candidates):
+            r = res_map.get(idx)
+            if not r:
+                continue
+            score = float(r.get("score", 0))
+            if score >= 8.0:
+                art = c["article"]
+                region_tag = (r.get("region_tag") or c["region_tag"]).strip()
+                key_quotes = (r.get("key_quotes") or "").strip()
+                reason = (r.get("reason") or "").strip()
+                print(f"  🔥 [热点收录! {score}分 | {c['velocity_badge']}] {art['title']} ({art['source']})")
+                active_trending.insert(0, {
+                    "hot_keyword": c["hot_keyword"],
+                    "title": art["title"],
+                    "source": art["source"],
+                    "url": art["url"],
+                    "pub_date": art["pub_date"],
+                    "snippet": art["snippet"],
+                    "key_quotes": key_quotes,
+                    "body": art["body"],
+                    "score": score,
+                    "reason": reason,
+                    "velocity_badge": c["velocity_badge"],
+                    "resonance_badge": c["resonance_badge"],
+                    "region_tag": region_tag,
+                    "model": used_model,
+                    "first_erupted_ts": now_ts,
+                    "fetched_at": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+                })
+                added_trending += 1
+            else:
+                print(f"  🗑️ [热点剔除 {score}分] {c['hot_keyword'][:24]}...")
+
+        print(f"✅ 热点风向标更新完毕：本轮新增 {added_trending} 条飙升热点（当前48h库内共 {len(active_trending[:MAX_TRENDING_SAVED])} 条）。")
+
+    save_json(TRENDING_FILE, active_trending[:MAX_TRENDING_SAVED])
+    save_json(TRENDING_SNAPSHOT_FILE, snapshot)
 
 
-# ================= 4. 主流水线 =================
+# ================= 5. 主流水线 =================
 def main():
     seen_ids = set(load_json(SEEN_FILE, []))
     saved_news = load_json(DATA_FILE, [])
@@ -348,7 +750,7 @@ def main():
     scanned_count = 0
     local_filtered_count = 0
 
-    print("🔍 Step 1: 开始扫描 7 大新闻门类 RSS 源并进行本地粗筛...")
+    print("🔍 Step 1: 开始扫描 7 大深度门类 RSS 源并进行本地粗筛...")
     for topic, urls in TOPICS.items():
         for feed_idx, rss_url in enumerate(urls, 1):
             feed = feedparser.parse(rss_url)
@@ -422,7 +824,7 @@ def main():
                 })
                 feed_count += 1
 
-    # 发牌式跨门类轮询抽样（Round-Robin），保证 7 个门类绝对公平，不被排前面的门类吃光名额
+    # 发牌式跨门类轮询抽样（Round-Robin）
     candidates = []
     while len(candidates) < MAX_ARTICLES_PER_RUN:
         added_any = False
@@ -433,7 +835,7 @@ def main():
         if not added_any:
             break
 
-    print(f"📦 Step 2: 跨门类均衡抽样完成，共选出 {len(candidates)} 篇候选文章进入 AI 终审。")
+    print(f"📦 Step 2: 7 大深度门类均衡抽样完成，共选出 {len(candidates)} 篇候选文章进入 AI 终审。")
 
     newly_accepted = 0
     last_used_model = "无需调用 (本轮无新候选)"
@@ -482,10 +884,15 @@ def main():
         if i + BATCH_SIZE < len(candidates):
             time.sleep(6)
 
-    # 按分门类独立蓄水池保存（每个门类各自保留最新 50 篇）
     saved_news = enforce_per_topic_quota(saved_news, MAX_SAVED_PER_TOPIC)
     save_json(DATA_FILE, saved_news)
     save_json(SEEN_FILE, list(seen_ids)[-3500:])
+
+    # 独立运行【热点风向标】流水线（异常隔离保护）
+    try:
+        run_trending_pipeline()
+    except Exception as e:
+        print(f"⚠️ [热点风向标流水线异常，不影响主板块]: {e}")
 
     status_data = {
         "last_run_utc": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
@@ -497,7 +904,7 @@ def main():
         "healthy": (last_used_model != "none")
     }
     save_json(STATUS_FILE, status_data)
-    print(f"🎉 运行结束！本次新增 {newly_accepted} 篇高质量（>={SCORE_THRESHOLD}分）新闻。")
+    print(f"🎉 全部任务运行结束！深度板块新增 {newly_accepted} 篇。")
 
 if __name__ == "__main__":
     main()
