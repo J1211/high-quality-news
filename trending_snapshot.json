@@ -1,632 +1,1374 @@
 {
-  "ea0648ae5a44": {
-    "title": "中俄美元首和平宣言",
-    "first_seen_ts": 1795141448,
-    "last_rank": 1,
-    "hot_val": 40782657,
-    "platform": "百度热搜"
-  },
-  "f6f9073fec22": {
-    "title": "中俄美元首会晤",
-    "first_seen_ts": 1795141448,
-    "last_rank": 2,
-    "hot_val": 0,
-    "platform": "百度热搜"
-  },
-  "263fac8cce57": {
-    "title": "王毅给深圳办会打100分",
-    "first_seen_ts": 1795141448,
-    "last_rank": 4,
-    "hot_val": 36901674,
-    "platform": "百度热搜"
-  },
-  "4d717afa70a4": {
-    "title": "30年 第一次叫“倡议”",
-    "first_seen_ts": 1795141448,
-    "last_rank": 4,
-    "hot_val": 0,
-    "platform": "百度热搜"
-  },
-  "ca47194beff3": {
-    "title": "特朗普返美途中发文：一次伟大的访问",
-    "first_seen_ts": 1795141448,
-    "last_rank": 7,
-    "hot_val": 0,
-    "platform": "百度热搜"
-  },
-  "13cfcd64c1e7": {
-    "title": "彭丽媛邀请“夫人团”打卡深圳",
-    "first_seen_ts": 1795141448,
-    "last_rank": 3,
-    "hot_val": 0,
-    "platform": "百度热搜"
-  },
-  "cc74860d282c": {
-    "title": "起床后这4件事易引发心梗",
-    "first_seen_ts": 1795141448,
-    "last_rank": 9,
-    "hot_val": 0,
-    "platform": "百度热搜"
-  },
-  "c086ab221729": {
-    "title": "苏林抵达昆明 现场响起云南民歌",
-    "first_seen_ts": 1795141448,
-    "last_rank": 8,
-    "hot_val": 0,
-    "platform": "百度热搜"
-  },
-  "ee01ce72e839": {
-    "title": "中国支持成立新联盟",
-    "first_seen_ts": 1795141448,
-    "last_rank": 9,
-    "hot_val": 0,
-    "platform": "百度热搜"
-  },
-  "f9743786cca1": {
-    "title": "熟鸡蛋放口袋半年变“玻璃球”",
-    "first_seen_ts": 1795141448,
-    "last_rank": 21,
-    "hot_val": 0,
-    "platform": "百度热搜"
-  },
-  "2f026f372dc4": {
-    "title": "环球时报：高市是时候收回错误言论了",
-    "first_seen_ts": 1795141448,
-    "last_rank": 8,
-    "hot_val": 0,
-    "platform": "百度热搜"
-  },
-  "973600e2f5a4": {
-    "title": "解锁食物背后的健康真相",
-    "first_seen_ts": 1795141448,
-    "last_rank": 12,
-    "hot_val": 0,
-    "platform": "百度热搜"
-  },
-  "36c82a105a0e": {
-    "title": "伊能静一眼看破所有嘉宾",
-    "first_seen_ts": 1795141448,
-    "last_rank": 13,
-    "hot_val": 0,
-    "platform": "百度热搜"
-  },
-  "f4c0559c20d1": {
-    "title": "马斯克从深圳飞到上海",
-    "first_seen_ts": 1795141448,
-    "last_rank": 23,
-    "hot_val": 0,
-    "platform": "百度热搜"
-  },
-  "4a21866616a9": {
-    "title": "特朗普又没拉窗帘",
-    "first_seen_ts": 1795141448,
-    "last_rank": 15,
-    "hot_val": 0,
-    "platform": "百度热搜"
-  },
-  "06613fa1cc6b": {
-    "title": "名创优品越卖越贵",
-    "first_seen_ts": 1795141448,
-    "last_rank": 16,
-    "hot_val": 0,
-    "platform": "百度热搜"
-  },
-  "c52493758c72": {
-    "title": "APEC在台湾刷屏了",
-    "first_seen_ts": 1795141448,
-    "last_rank": 17,
-    "hot_val": 0,
-    "platform": "百度热搜"
-  },
-  "9c087d3807fe": {
-    "title": "10元快剪“暴打”设计总监背后是什么",
-    "first_seen_ts": 1795141448,
-    "last_rank": 18,
-    "hot_val": 0,
-    "platform": "百度热搜"
-  },
-  "886e621ebc43": {
-    "title": "东京万人集会抗议高市政权政策",
-    "first_seen_ts": 1795141448,
-    "last_rank": 16,
-    "hot_val": 9099840,
-    "platform": "百度热搜"
-  },
-  "b6705bdac610": {
-    "title": "特朗普给中俄美元首会晤打12分",
-    "first_seen_ts": 1795141448,
-    "last_rank": 5,
-    "hot_val": 0,
-    "platform": "百度热搜"
-  },
-  "d497847dfb5b": {
-    "title": "冬天最好的养生是多睡觉",
-    "first_seen_ts": 1795141448,
-    "last_rank": 16,
-    "hot_val": 0,
-    "platform": "百度热搜"
-  },
-  "621a00a2bea6": {
-    "title": "普京：超10万俄罗斯民众在学中文",
-    "first_seen_ts": 1795141448,
-    "last_rank": 19,
-    "hot_val": 0,
-    "platform": "百度热搜"
-  },
-  "282eca49335c": {
-    "title": "贾国龙再换赛道 10个月关店176家",
-    "first_seen_ts": 1795141448,
-    "last_rank": 23,
-    "hot_val": 0,
-    "platform": "百度热搜"
-  },
-  "293d506d5a99": {
-    "title": "泰国总理和夫人夜游深圳吃潮汕砂锅粥",
-    "first_seen_ts": 1795141448,
-    "last_rank": 6,
-    "hot_val": 0,
-    "platform": "百度热搜"
-  },
-  "80172470bb10": {
-    "title": "马斯克在空军一号看中美元首互动",
-    "first_seen_ts": 1795141448,
-    "last_rank": 25,
-    "hot_val": 0,
-    "platform": "百度热搜"
-  },
-  "02b111ad4672": {
-    "title": "U17世界杯中国队今日迎首战",
-    "first_seen_ts": 1795141448,
-    "last_rank": 26,
-    "hot_val": 0,
-    "platform": "百度热搜"
-  },
-  "3c82c3cb5f19": {
-    "title": "金价再创新低",
-    "first_seen_ts": 1795141448,
-    "last_rank": 27,
-    "hot_val": 0,
-    "platform": "百度热搜"
-  },
-  "945ee1f0d945": {
-    "title": "旧羽绒服自制羽绒被",
-    "first_seen_ts": 1795141448,
-    "last_rank": 27,
-    "hot_val": 0,
-    "platform": "百度热搜"
-  },
-  "051f6844d1a6": {
-    "title": "大宗商品全军覆没 全球股市步履蹒跚",
-    "first_seen_ts": 1795141448,
-    "last_rank": 28,
-    "hot_val": 0,
-    "platform": "百度热搜"
-  },
-  "19c24af02eff": {
-    "title": "OpenAI印证了梁文锋的“预言”",
-    "first_seen_ts": 1795141448,
-    "last_rank": 30,
-    "hot_val": 0,
-    "platform": "百度热搜"
-  },
-  "887d505409c1": {
-    "title": "亚太同心 共话合作新愿景",
-    "first_seen_ts": 1795141448,
-    "last_rank": 3,
-    "hot_val": 33390015,
-    "platform": "头条热榜"
-  },
-  "1e2b70cefea1": {
-    "title": "韩国总统夫人被舞狮英歌舞圈粉",
-    "first_seen_ts": 1795141448,
-    "last_rank": 8,
-    "hot_val": 30212535,
-    "platform": "头条热榜"
-  },
-  "3deaa440b329": {
-    "title": "马斯克从深圳飞到了上海",
-    "first_seen_ts": 1795141448,
-    "last_rank": 7,
-    "hot_val": 27337432,
-    "platform": "头条热榜"
-  },
-  "60f9ae72e85a": {
-    "title": "李在明发文感谢中国热情接待",
-    "first_seen_ts": 1795141448,
-    "last_rank": 6,
-    "hot_val": 24735932,
-    "platform": "头条热榜"
-  },
-  "837a7a2b05eb": {
-    "title": "金店老板说金价已经到底了",
-    "first_seen_ts": 1795141448,
-    "last_rank": 17,
-    "hot_val": 22381997,
-    "platform": "头条热榜"
-  },
-  "2f12ec2a6f83": {
-    "title": "游客在三亚海边捡到百斤重金枪鱼",
-    "first_seen_ts": 1795141448,
-    "last_rank": 8,
-    "hot_val": 20252068,
-    "platform": "头条热榜"
-  },
-  "41cfb07d5de8": {
-    "title": "一湾红树林 向亚太讲述“共生”之道",
-    "first_seen_ts": 1795141448,
-    "last_rank": 9,
-    "hot_val": 18324829,
-    "platform": "头条热榜"
-  },
-  "868267da6e82": {
-    "title": "现货黄金一周连破四大关口",
-    "first_seen_ts": 1795141448,
-    "last_rank": 13,
-    "hot_val": 16580991,
-    "platform": "头条热榜"
-  },
-  "f3a2e000b4d2": {
-    "title": "酸甜苦辣咸五味辟谣图鉴",
-    "first_seen_ts": 1795141448,
-    "last_rank": 11,
-    "hot_val": 15003101,
-    "platform": "头条热榜"
-  },
-  "a47d28f8ffbf": {
-    "title": "老人学会网购后下单15吨薯条喂猪",
-    "first_seen_ts": 1795141448,
-    "last_rank": 12,
-    "hot_val": 13575367,
-    "platform": "头条热榜"
-  },
-  "8183d2fa6808": {
-    "title": "《多喜一家人》为何差评不断",
-    "first_seen_ts": 1795141448,
-    "last_rank": 22,
-    "hot_val": 12283500,
-    "platform": "头条热榜"
-  },
-  "ca611fbd4ec4": {
-    "title": "特朗普说美国不支持“台独”",
-    "first_seen_ts": 1795141448,
-    "last_rank": 14,
-    "hot_val": 11114570,
-    "platform": "头条热榜"
-  },
-  "5124dcbd8822": {
-    "title": "广东何以成为“通达之地”",
-    "first_seen_ts": 1795141448,
-    "last_rank": 15,
-    "hot_val": 10056879,
-    "platform": "头条热榜"
-  },
-  "0c42923d8fc5": {
-    "title": "为何波司登高端羽绒服销售遇冷",
-    "first_seen_ts": 1795141448,
-    "last_rank": 17,
-    "hot_val": 8233876,
-    "platform": "头条热榜"
-  },
-  "28a4fdb40d9a": {
-    "title": "零跑回应几箱啤酒把后备箱压露底",
-    "first_seen_ts": 1795141448,
-    "last_rank": 18,
-    "hot_val": 7450319,
-    "platform": "头条热榜"
-  },
-  "c09eef5290e6": {
-    "title": "中方回应高市早苗礼宾安排",
-    "first_seen_ts": 1795141448,
-    "last_rank": 19,
-    "hot_val": 6741327,
-    "platform": "头条热榜"
-  },
-  "935b588e2575": {
-    "title": "一副AI眼镜背后藏着“半个亚太”",
-    "first_seen_ts": 1795141448,
-    "last_rank": 20,
-    "hot_val": 6099805,
-    "platform": "头条热榜"
-  },
-  "39a97e7f9a2b": {
-    "title": "普京回应克里米亚大桥遭袭",
-    "first_seen_ts": 1795141448,
-    "last_rank": 24,
-    "hot_val": 5519332,
-    "platform": "头条热榜"
-  },
-  "d80d0f74b93c": {
-    "title": "现货黄金跌破3600美元",
-    "first_seen_ts": 1795141448,
-    "last_rank": 23,
-    "hot_val": 4994098,
-    "platform": "头条热榜"
-  },
-  "fa046055a163": {
-    "title": "三大指数大幅低开",
-    "first_seen_ts": 1795141448,
-    "last_rank": 23,
-    "hot_val": 4518847,
-    "platform": "头条热榜"
-  },
-  "c17e59c4b5e7": {
-    "title": "妈妈呼喊女儿被骂不准外地人随便叫",
-    "first_seen_ts": 1795141448,
-    "last_rank": 24,
-    "hot_val": 4088822,
-    "platform": "头条热榜"
-  },
-  "a4a7f6bdf7d0": {
-    "title": "台胞：APEC让世界看见新时代的深圳",
-    "first_seen_ts": 1795141448,
-    "last_rank": 25,
-    "hot_val": 3699719,
-    "platform": "头条热榜"
-  },
-  "495a9e8a227a": {
-    "title": "中国管制盾构机出口印度作何感想",
-    "first_seen_ts": 1795141448,
-    "last_rank": 26,
-    "hot_val": 3347644,
-    "platform": "头条热榜"
-  },
-  "813209da862b": {
-    "title": "中国机器人刷屏海外社交平台",
-    "first_seen_ts": 1795141448,
-    "last_rank": 27,
-    "hot_val": 3029073,
-    "platform": "头条热榜"
-  },
-  "3dbddd1bfe30": {
-    "title": "华强北变身APEC“民间会场”",
-    "first_seen_ts": 1795141448,
-    "last_rank": 28,
-    "hot_val": 2740819,
-    "platform": "头条热榜"
-  },
-  "137ae42d8b0c": {
-    "title": "姚安娜摆摊卖瓷器被游客砍价",
-    "first_seen_ts": 1795141448,
-    "last_rank": 29,
-    "hot_val": 2479995,
-    "platform": "头条热榜"
-  },
-  "402cbbcacd65": {
-    "title": "年轻人还要攒小金豆吗",
-    "first_seen_ts": 1795141448,
-    "last_rank": 30,
-    "hot_val": 2243993,
-    "platform": "头条热榜"
-  },
-  "63860640a4fb": {
-    "title": "大国外交的“深圳时刻”",
-    "first_seen_ts": 1795147215,
+  "d3052396c669": {
+    "title": "“像大鹏一样展翅高飞、鹏程万里”",
+    "first_seen_ts": 1795234256,
     "last_rank": 1,
     "hot_val": 0,
     "platform": "百度热搜"
   },
-  "d917deafd424": {
-    "title": "亚太经合组织互联互通蓝图",
-    "first_seen_ts": 1795147215,
+  "4b9a91aa3b3c": {
+    "title": "特朗普：看看人家深圳再看看我们",
+    "first_seen_ts": 1795234256,
+    "last_rank": 2,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "717a5edabf58": {
+    "title": "星二代扎堆出道 观众在担心什么",
+    "first_seen_ts": 1795234256,
+    "last_rank": 3,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "fecc7c9d092a": {
+    "title": "世界首个、蝉联榜首！多领域捷报频传",
+    "first_seen_ts": 1795234256,
     "last_rank": 4,
     "hot_val": 0,
     "platform": "百度热搜"
   },
-  "b6f0f8ecf131": {
-    "title": "当一天深圳人",
-    "first_seen_ts": 1795147215,
+  "9c6d114960b7": {
+    "title": "工商银行、建设银行等示警金市风险",
+    "first_seen_ts": 1795234256,
+    "last_rank": 5,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "fbf05983d11d": {
+    "title": "麻阳县委书记：我很少加班和晚上开会",
+    "first_seen_ts": 1795234256,
+    "last_rank": 6,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "c610f39e4d2c": {
+    "title": "特朗普称不支持“台独”引岛内震动",
+    "first_seen_ts": 1795234256,
+    "last_rank": 2,
+    "hot_val": 18740260,
+    "platform": "百度热搜"
+  },
+  "9d2d5341b27a": {
+    "title": "AI短剧《丑狐》爆火",
+    "first_seen_ts": 1795234256,
+    "last_rank": 8,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "d0779d3c26bc": {
+    "title": "深圳人又开始原装出街了",
+    "first_seen_ts": 1795234256,
+    "last_rank": 9,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "378382923cd9": {
+    "title": "一家人遛弯误入剧组还上了央视",
+    "first_seen_ts": 1795234256,
     "last_rank": 10,
     "hot_val": 0,
     "platform": "百度热搜"
   },
-  "0a506191b361": {
-    "title": "《GTA6》主角还没用上全面屏手机",
-    "first_seen_ts": 1795147215,
+  "f79bf9b1a91d": {
+    "title": "高市搭讪特朗普被无视 日本网民：丢人",
+    "first_seen_ts": 1795234256,
     "last_rank": 11,
     "hot_val": 0,
     "platform": "百度热搜"
   },
-  "0d6fb0cbfecf": {
-    "title": "20多天婴儿被喂白开水中毒肾损伤",
-    "first_seen_ts": 1795147215,
+  "d55504ddaf5b": {
+    "title": "《辟谣箴言》系列漫画",
+    "first_seen_ts": 1795234256,
+    "last_rank": 12,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "9a3bf99ed599": {
+    "title": "华尔街上演“黑色星期五”",
+    "first_seen_ts": 1795234256,
     "last_rank": 13,
     "hot_val": 0,
     "platform": "百度热搜"
   },
-  "cc740430a9ce": {
-    "title": "西湖边64平米两居室13.9万元起拍",
-    "first_seen_ts": 1795147215,
+  "3e2b3cf8d050": {
+    "title": "孙芮自曝已结婚怀孕",
+    "first_seen_ts": 1795234256,
     "last_rank": 14,
     "hot_val": 0,
     "platform": "百度热搜"
   },
-  "e6e3b6a62779": {
-    "title": "新娘跟妆日薪四五千",
-    "first_seen_ts": 1795147215,
+  "0ad9b1103dfd": {
+    "title": "明天订婚请188人喝奶茶？多人上当",
+    "first_seen_ts": 1795234256,
     "last_rank": 15,
     "hot_val": 0,
     "platform": "百度热搜"
   },
-  "260fbe72faad": {
-    "title": "零AI纯手搓的3A大作玩一个少一个",
-    "first_seen_ts": 1795147215,
+  "1fed95dd9571": {
+    "title": "腾讯姚顺雨团队回答关于混元任何问题",
+    "first_seen_ts": 1795234256,
+    "last_rank": 16,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "cdf650803590": {
+    "title": "主人去世20天 小猫每天守墓旁",
+    "first_seen_ts": 1795234256,
+    "last_rank": 18,
+    "hot_val": 2536218,
+    "platform": "百度热搜"
+  },
+  "aeef9bff0fe2": {
+    "title": "美股崩跌 纳指今年涨幅全部蒸发",
+    "first_seen_ts": 1795234256,
     "last_rank": 18,
     "hot_val": 0,
     "platform": "百度热搜"
   },
-  "50f32e0d7046": {
-    "title": "厉娜发的流水印章盖在马赛克上",
-    "first_seen_ts": 1795147215,
+  "d0e21bd93444": {
+    "title": "AI疑证明黎曼猜想 数学家高兴不起来",
+    "first_seen_ts": 1795234256,
+    "last_rank": 19,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "1d0b78a7cc2e": {
+    "title": "多地医院实现“一号管到底”",
+    "first_seen_ts": 1795234256,
     "last_rank": 20,
     "hot_val": 0,
     "platform": "百度热搜"
   },
-  "3f70654fb1bd": {
-    "title": "泰国总理夫妇逛深圳飙粤语",
-    "first_seen_ts": 1795147215,
+  "54622b9c2c7a": {
+    "title": "黎曼猜想真被AI证明了吗",
+    "first_seen_ts": 1795234256,
+    "last_rank": 21,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "b84272f84d0b": {
+    "title": "英伟达市值掉了一个亚马逊",
+    "first_seen_ts": 1795234256,
     "last_rank": 22,
     "hot_val": 0,
     "platform": "百度热搜"
   },
-  "ed55285cbe54": {
-    "title": "全国多地延长婚假",
-    "first_seen_ts": 1795147215,
+  "a38b6ac301ee": {
+    "title": "王菲窦靖童李嫣合唱《爱笑的天使》",
+    "first_seen_ts": 1795234256,
+    "last_rank": 23,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "c66e9ee978c4": {
+    "title": "睡觉穿袜子有助入睡 但5类人不建议",
+    "first_seen_ts": 1795234256,
+    "last_rank": 9,
+    "hot_val": 512568,
+    "platform": "百度热搜"
+  },
+  "1ead8022f6c5": {
+    "title": "APEC欢迎晚宴大厨透露蒸鱼秘诀",
+    "first_seen_ts": 1795234256,
+    "last_rank": 25,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "52d6ea40a08c": {
+    "title": "“大空头”减持英伟达看跌期权",
+    "first_seen_ts": 1795234256,
+    "last_rank": 26,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "43fff059ba5c": {
+    "title": "男子收到自己“不雅照”并被威胁",
+    "first_seen_ts": 1795234256,
+    "last_rank": 27,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "22be3afd72ad": {
+    "title": "贾国龙开始卖火锅了",
+    "first_seen_ts": 1795234256,
+    "last_rank": 28,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "4af7d033bd40": {
+    "title": "终于理解李白为啥走到哪都写诗了",
+    "first_seen_ts": 1795234256,
+    "last_rank": 29,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "7b23a321c110": {
+    "title": "降雨、暴雪、大风 新一轮冷空气来了",
+    "first_seen_ts": 1795234256,
+    "last_rank": 30,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "45cf8579b1f4": {
+    "title": "胖东来原址开的新商场几乎倒闭",
+    "first_seen_ts": 1795234256,
+    "last_rank": 1,
+    "hot_val": 27957183,
+    "platform": "头条热榜"
+  },
+  "6f2c191b6bdd": {
+    "title": "高市搭讪特朗普被无视 日网民：丢人",
+    "first_seen_ts": 1795234256,
+    "last_rank": 5,
+    "hot_val": 25296705,
+    "platform": "头条热榜"
+  },
+  "f48b6d167908": {
+    "title": "APEC参会来宾眼中的“奇迹之城”",
+    "first_seen_ts": 1795234256,
+    "last_rank": 3,
+    "hot_val": 22889405,
+    "platform": "头条热榜"
+  },
+  "b1f8ac3f6817": {
+    "title": "魏德尔：大国谈判桌上已没有欧洲",
+    "first_seen_ts": 1795234256,
+    "last_rank": 4,
+    "hot_val": 20711190,
+    "platform": "头条热榜"
+  },
+  "0b140b3d689f": {
+    "title": "金价下跌 现在买金镯子还是再等等",
+    "first_seen_ts": 1795234256,
+    "last_rank": 6,
+    "hot_val": 16956888,
+    "platform": "头条热榜"
+  },
+  "d4779e7f3074": {
+    "title": "魏建军去许昌考察学习胖东来",
+    "first_seen_ts": 1795234256,
+    "last_rank": 7,
+    "hot_val": 15343227,
+    "platform": "头条热榜"
+  },
+  "cb4c52539061": {
+    "title": "特朗普被问普京是美国的好朋友吗",
+    "first_seen_ts": 1795234256,
+    "last_rank": 8,
+    "hot_val": 13883126,
+    "platform": "头条热榜"
+  },
+  "8912447708e8": {
+    "title": "高市早苗对台湾问题躲闪作答",
+    "first_seen_ts": 1795234256,
+    "last_rank": 10,
+    "hot_val": 11366542,
+    "platform": "头条热榜"
+  },
+  "2c685f414691": {
+    "title": "湖南株洲一仓库突发大火？不实",
+    "first_seen_ts": 1795234256,
+    "last_rank": 11,
+    "hot_val": 10284873,
+    "platform": "头条热榜"
+  },
+  "c813daf4b7fa": {
+    "title": "关节炎膏药和止痛药不可“加量”使用",
+    "first_seen_ts": 1795234256,
+    "last_rank": 12,
+    "hot_val": 9306137,
+    "platform": "头条热榜"
+  },
+  "aec899151619": {
+    "title": "特朗普称赞深圳城市建设",
+    "first_seen_ts": 1795234256,
+    "last_rank": 13,
+    "hot_val": 8420541,
+    "platform": "头条热榜"
+  },
+  "f95423775a4e": {
+    "title": "哈登爆砍51分 骑士战胜步行者",
+    "first_seen_ts": 1795234256,
+    "last_rank": 14,
+    "hot_val": 7619221,
+    "platform": "头条热榜"
+  },
+  "3eff0c7f56f0": {
+    "title": "全球市场遭遇黑色星期五",
+    "first_seen_ts": 1795234256,
+    "last_rank": 15,
+    "hot_val": 6894156,
+    "platform": "头条热榜"
+  },
+  "d0207ed0d6ec": {
+    "title": "特朗普：中俄美元首会晤史无前例",
+    "first_seen_ts": 1795234256,
+    "last_rank": 16,
+    "hot_val": 6238090,
+    "platform": "头条热榜"
+  },
+  "1a975c5a93e4": {
+    "title": "特朗普：美自选举以来损失4万亿美元",
+    "first_seen_ts": 1795234256,
+    "last_rank": 17,
+    "hot_val": 5644458,
+    "platform": "头条热榜"
+  },
+  "b826fd5214b5": {
+    "title": "APEC“故宫红”围巾溯源",
+    "first_seen_ts": 1795234256,
+    "last_rank": 18,
+    "hot_val": 5107316,
+    "platform": "头条热榜"
+  },
+  "6971850fe8f7": {
+    "title": "金饰克价继续下跌 老凤祥单日跌34元",
+    "first_seen_ts": 1795234256,
+    "last_rank": 20,
+    "hot_val": 4181517,
+    "platform": "头条热榜"
+  },
+  "3814b830aba7": {
+    "title": "干洗羽绒服是在“毁衣服”吗",
+    "first_seen_ts": 1795234256,
+    "last_rank": 21,
+    "hot_val": 3783593,
+    "platform": "头条热榜"
+  },
+  "55c9317f0a8e": {
+    "title": "扎哈罗娃感谢中国",
+    "first_seen_ts": 1795234256,
+    "last_rank": 23,
+    "hot_val": 3097744,
+    "platform": "头条热榜"
+  },
+  "3c139fc42cde": {
+    "title": "孙芮官宣结婚怀孕",
+    "first_seen_ts": 1795234256,
+    "last_rank": 24,
+    "hot_val": 2802954,
+    "platform": "头条热榜"
+  },
+  "e59a9a11c492": {
+    "title": "金价还能撑多久",
+    "first_seen_ts": 1795234256,
+    "last_rank": 28,
+    "hot_val": 1878876,
+    "platform": "头条热榜"
+  },
+  "0578e57832ed": {
+    "title": "郑煤集团发生4.07亿重大损失",
+    "first_seen_ts": 1795234256,
+    "last_rank": 29,
+    "hot_val": 1700078,
+    "platform": "头条热榜"
+  },
+  "21f1a793d97d": {
+    "title": "习近平主席的深圳APEC时间",
+    "first_seen_ts": 1795265170,
+    "last_rank": 1,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "9a7c3717cabc": {
+    "title": "墨西哥总统的中方女保镖在外网火了",
+    "first_seen_ts": 1795265170,
+    "last_rank": 2,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "3eb42efe318f": {
+    "title": "多地政务窗口提示工作需使用手机",
+    "first_seen_ts": 1795265170,
+    "last_rank": 28,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "d83f870ee696": {
+    "title": "“深圳展望”为何成APEC新的里程碑",
+    "first_seen_ts": 1795265170,
+    "last_rank": 4,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "b308cd0eee8d": {
+    "title": "曝中方女保镖徐瑾曾战胜5名日本冠军",
+    "first_seen_ts": 1795265170,
     "last_rank": 24,
     "hot_val": 0,
     "platform": "百度热搜"
   },
-  "151694edfd8f": {
-    "title": "伊能静 最强互联网嘴替",
-    "first_seen_ts": 1795147215,
-    "last_rank": 25,
-    "hot_val": 0,
-    "platform": "百度热搜"
-  },
-  "439e9f69cd5d": {
-    "title": "吧友手搓GTA6地图还带秘籍",
-    "first_seen_ts": 1795147215,
-    "last_rank": 26,
-    "hot_val": 0,
-    "platform": "百度热搜"
-  },
-  "846087bf0bd3": {
-    "title": "曝张楠与谢欣将从字节跳动离职",
-    "first_seen_ts": 1795147215,
-    "last_rank": 29,
-    "hot_val": 0,
-    "platform": "百度热搜"
-  },
-  "c1c39aac4d04": {
-    "title": "GTA6全载具整理",
-    "first_seen_ts": 1795147215,
-    "last_rank": 30,
-    "hot_val": 0,
-    "platform": "百度热搜"
-  },
-  "cbbdaff82872": {
-    "title": "普京：中俄美元首会晤前所未有",
-    "first_seen_ts": 1795147215,
-    "last_rank": 2,
-    "hot_val": 34748830,
-    "platform": "头条热榜"
-  },
-  "7932a719e7cb": {
-    "title": "APEC新机遇年轻人如何接接接",
-    "first_seen_ts": 1795147215,
-    "last_rank": 3,
-    "hot_val": 31442042,
-    "platform": "头条热榜"
-  },
-  "d98dfb19f1cf": {
-    "title": "外国人在华强北买疯了",
-    "first_seen_ts": 1795147215,
-    "last_rank": 5,
-    "hot_val": 25742566,
-    "platform": "头条热榜"
-  },
-  "39392f76ed0c": {
-    "title": "唐湘龙：岛内政治人物都应来深圳看看",
-    "first_seen_ts": 1795147215,
+  "40a138c04cfe": {
+    "title": "花2万存脐带血12年后发现公司已注销",
+    "first_seen_ts": 1795265170,
     "last_rank": 6,
-    "hot_val": 23292837,
-    "platform": "头条热榜"
+    "hot_val": 0,
+    "platform": "百度热搜"
   },
-  "3bfe44a66041": {
-    "title": "光影绘湾区 璀璨深圳夜",
-    "first_seen_ts": 1795147215,
-    "last_rank": 9,
-    "hot_val": 17255758,
-    "platform": "头条热榜"
+  "c5dabcc48444": {
+    "title": "青海德令哈地震",
+    "first_seen_ts": 1795265170,
+    "last_rank": 7,
+    "hot_val": 0,
+    "platform": "百度热搜"
   },
-  "c810f3f18fcb": {
-    "title": "杨瀚森2分1板 开拓者送雄鹿12连败",
-    "first_seen_ts": 1795147215,
-    "last_rank": 10,
-    "hot_val": 15613656,
-    "platform": "头条热榜"
-  },
-  "ead7050869c9": {
-    "title": "“全球最大医院”原党委书记被双开",
-    "first_seen_ts": 1795147215,
-    "last_rank": 14,
-    "hot_val": 10466146,
-    "platform": "头条热榜"
-  },
-  "bdf31b85932a": {
-    "title": "台媒主持人深圳采访被市民感动",
-    "first_seen_ts": 1795147215,
-    "last_rank": 15,
-    "hot_val": 9470161,
-    "platform": "头条热榜"
-  },
-  "4ccb48bb470b": {
-    "title": "特朗普和普京会晤时开了个玩笑",
-    "first_seen_ts": 1795147215,
-    "last_rank": 18,
-    "hot_val": 7015667,
-    "platform": "头条热榜"
-  },
-  "d17efd3ea542": {
-    "title": "华强北为何一天能接8000外商",
-    "first_seen_ts": 1795147215,
+  "0ff0a40e2a78": {
+    "title": "黄景瑜腿绞泰国拳王",
+    "first_seen_ts": 1795265170,
     "last_rank": 19,
-    "hot_val": 6348038,
-    "platform": "头条热榜"
+    "hot_val": 1506458,
+    "platform": "百度热搜"
   },
-  "c16446a22498": {
-    "title": "Anthropic上市造就七位千亿富豪",
-    "first_seen_ts": 1795147215,
-    "last_rank": 20,
-    "hot_val": 5743943,
-    "platform": "头条热榜"
+  "e2d2ce28d7b3": {
+    "title": "老人手机落田间 小奶狗叼回家",
+    "first_seen_ts": 1795265170,
+    "last_rank": 9,
+    "hot_val": 0,
+    "platform": "百度热搜"
   },
-  "f72362f02b86": {
-    "title": "曝胖东来走后大楼租金暴跌没人接盘",
-    "first_seen_ts": 1795147215,
+  "ef75d82f5557": {
+    "title": "郎平谈执教美国女排",
+    "first_seen_ts": 1795265170,
+    "last_rank": 10,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "b847b20e51af": {
+    "title": "西宁等地震感强烈",
+    "first_seen_ts": 1795265170,
+    "last_rank": 11,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "2248a8eb98c2": {
+    "title": "“北京22名老师赴贵阳沉默”不实",
+    "first_seen_ts": 1795265170,
+    "last_rank": 12,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "e4de9091563f": {
+    "title": "杨超越董思成喉结吻",
+    "first_seen_ts": 1795265170,
+    "last_rank": 13,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "07ff8677c367": {
+    "title": "多家品牌宣布下调金饰克价",
+    "first_seen_ts": 1795265170,
+    "last_rank": 14,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "6b36206eff4e": {
+    "title": "刘嘉玲晒生日蛋糕舍不得吃",
+    "first_seen_ts": 1795265170,
+    "last_rank": 15,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "0c718e6025d4": {
+    "title": "小伙用竹子手搓自行车 售价8000元起",
+    "first_seen_ts": 1795265170,
+    "last_rank": 16,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "62869b1c3402": {
+    "title": "05后小伙休学打游戏一年赚超200万",
+    "first_seen_ts": 1795265170,
+    "last_rank": 17,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "73ae24728165": {
+    "title": "网友扫共享单车半小时15元",
+    "first_seen_ts": 1795265170,
+    "last_rank": 17,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "92a5f6b3e681": {
+    "title": "张雪骑摩托车刚出门就摔倒",
+    "first_seen_ts": 1795265170,
+    "last_rank": 19,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "4ebbe461b245": {
+    "title": "APEC晚宴每个厨师团队负责一道菜",
+    "first_seen_ts": 1795265170,
+    "last_rank": 16,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "c48ec141359b": {
+    "title": "爸爸拔管抱走生病孩子失联 已被找回",
+    "first_seen_ts": 1795265170,
     "last_rank": 21,
-    "hot_val": 5197334,
-    "platform": "头条热榜"
+    "hot_val": 0,
+    "platform": "百度热搜"
   },
-  "bf21e71d36df": {
-    "title": "特朗普：请中国继续保持强大",
-    "first_seen_ts": 1795147215,
-    "last_rank": 25,
-    "hot_val": 3483877,
-    "platform": "头条热榜"
+  "91f0be07178d": {
+    "title": "荔枝冰酒全线员工加班加点加工资",
+    "first_seen_ts": 1795265170,
+    "last_rank": 22,
+    "hot_val": 0,
+    "platform": "百度热搜"
   },
-  "d3efd8219919": {
-    "title": "年轻人为何不爱买名牌包爱买冲锋衣",
-    "first_seen_ts": 1795147215,
-    "last_rank": 26,
-    "hot_val": 3152342,
-    "platform": "头条热榜"
+  "e63964f0622a": {
+    "title": "亲妈不让女儿上学 自称示范在家教育",
+    "first_seen_ts": 1795265170,
+    "last_rank": 23,
+    "hot_val": 0,
+    "platform": "百度热搜"
   },
-  "a9a581267bbf": {
-    "title": "深圳市民街头偶遇多国政要",
-    "first_seen_ts": 1795147215,
-    "last_rank": 27,
-    "hot_val": 2852357,
-    "platform": "头条热榜"
-  },
-  "135232f2ec86": {
-    "title": "APEC晚宴荔枝冰酒全线售罄",
-    "first_seen_ts": 1795147215,
-    "last_rank": 28,
-    "hot_val": 2580919,
-    "platform": "头条热榜"
-  },
-  "ec84f43c8c40": {
-    "title": "中使馆驳斥法国节目“中国间谍”言论",
-    "first_seen_ts": 1795147215,
-    "last_rank": 29,
-    "hot_val": 2335312,
-    "platform": "头条热榜"
-  },
-  "6f1b2fd96b38": {
-    "title": "王菲窦靖童李嫣将合作发歌",
-    "first_seen_ts": 1795147215,
+  "628664459b81": {
+    "title": "APEC纪念品爆单",
+    "first_seen_ts": 1795265170,
     "last_rank": 30,
-    "hot_val": 2113078,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "b875d1643042": {
+    "title": "沈腾在表演奖项上一夜翻红",
+    "first_seen_ts": 1795265170,
+    "last_rank": 25,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "be3744517737": {
+    "title": "长安大学通报14日面试13日出结果",
+    "first_seen_ts": 1795265170,
+    "last_rank": 26,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "238937a26e34": {
+    "title": "谁还能分清大王菲中王菲小王菲",
+    "first_seen_ts": 1795265170,
+    "last_rank": 27,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "f226ab372289": {
+    "title": "男子曾用八千赚百万 如今负债千万",
+    "first_seen_ts": 1795265170,
+    "last_rank": 6,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "04dc757947e4": {
+    "title": "老人学会网购后 下单3万斤薯条喂猪",
+    "first_seen_ts": 1795265170,
+    "last_rank": 29,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "08ce5cc08882": {
+    "title": "男子抄底黄金3天亏14万",
+    "first_seen_ts": 1795265170,
+    "last_rank": 30,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "63ba11947645": {
+    "title": "全球PCB供应告急",
+    "first_seen_ts": 1795265170,
+    "last_rank": 16,
+    "hot_val": 5527644,
+    "platform": "头条热榜"
+  },
+  "53cf890f352f": {
+    "title": "APEC“中国年”取得哪些成果",
+    "first_seen_ts": 1795265170,
+    "last_rank": 3,
+    "hot_val": 4525652,
+    "platform": "头条热榜"
+  },
+  "1614147f936a": {
+    "title": "菲总统夸赞中方选曲温暖贴心",
+    "first_seen_ts": 1795265170,
+    "last_rank": 5,
+    "hot_val": 4094979,
+    "platform": "头条热榜"
+  },
+  "13bfe75bb8b0": {
+    "title": "俄乌袭桥战升级",
+    "first_seen_ts": 1795265170,
+    "last_rank": 25,
+    "hot_val": 3705291,
+    "platform": "头条热榜"
+  },
+  "ec3544cc7721": {
+    "title": "大兴安岭“猫冬”用漏盆下河捞鱼",
+    "first_seen_ts": 1795265170,
+    "last_rank": 20,
+    "hot_val": 3352685,
+    "platform": "头条热榜"
+  },
+  "96d55f10e871": {
+    "title": "建议大家不要一直穿同一双鞋",
+    "first_seen_ts": 1795265170,
+    "last_rank": 7,
+    "hot_val": 3033635,
+    "platform": "头条热榜"
+  },
+  "6930f3f9ccd8": {
+    "title": "深圳全妆惊艳全网",
+    "first_seen_ts": 1795265170,
+    "last_rank": 8,
+    "hot_val": 2744947,
+    "platform": "头条热榜"
+  },
+  "96356a117c88": {
+    "title": "武大靖执教首金",
+    "first_seen_ts": 1795265170,
+    "last_rank": 9,
+    "hot_val": 2483730,
+    "platform": "头条热榜"
+  },
+  "a3bb7fdb42f3": {
+    "title": "工厂生产爆米花场面像放排炮",
+    "first_seen_ts": 1795265170,
+    "last_rank": 10,
+    "hot_val": 2247372,
+    "platform": "头条热榜"
+  },
+  "0d3fc9668157": {
+    "title": "车澈离婚后狂瘦68斤",
+    "first_seen_ts": 1795265170,
+    "last_rank": 13,
+    "hot_val": 2033506,
+    "platform": "头条热榜"
+  },
+  "0190d4b9b033": {
+    "title": "顺丰被暂停参加全军采购活动有何影响",
+    "first_seen_ts": 1795265170,
+    "last_rank": 14,
+    "hot_val": 1839993,
+    "platform": "头条热榜"
+  },
+  "47fd2fc99f70": {
+    "title": "女子编造免费采摘甘蔗谣言被行拘",
+    "first_seen_ts": 1795265170,
+    "last_rank": 13,
+    "hot_val": 1664894,
+    "platform": "头条热榜"
+  },
+  "7598a5f95405": {
+    "title": "顺丰速运被暂停参加全军采购活动",
+    "first_seen_ts": 1795265170,
+    "last_rank": 11,
+    "hot_val": 1363100,
+    "platform": "头条热榜"
+  },
+  "6661d9563774": {
+    "title": "青海德令哈5.6级地震",
+    "first_seen_ts": 1795265170,
+    "last_rank": 16,
+    "hot_val": 1233384,
+    "platform": "头条热榜"
+  },
+  "879d8f23ded5": {
+    "title": "孩子爱玩手机 妈妈心里堵得慌",
+    "first_seen_ts": 1795265170,
+    "last_rank": 17,
+    "hot_val": 1116012,
+    "platform": "头条热榜"
+  },
+  "536dc7913c93": {
+    "title": "台学者：大陆根本不需要动武",
+    "first_seen_ts": 1795265170,
+    "last_rank": 18,
+    "hot_val": 1009809,
+    "platform": "头条热榜"
+  },
+  "3aaf824c7126": {
+    "title": "汽柴油预计下调0.35元/升-0.42元/升",
+    "first_seen_ts": 1795265170,
+    "last_rank": 19,
+    "hot_val": 913713,
+    "platform": "头条热榜"
+  },
+  "ef934682ac4d": {
+    "title": "山东确定2026年度养老金计发基数",
+    "first_seen_ts": 1795265170,
+    "last_rank": 24,
+    "hot_val": 826762,
+    "platform": "头条热榜"
+  },
+  "6daeeeb3aa24": {
+    "title": "招商银行提示贵金属市场风险",
+    "first_seen_ts": 1795265170,
+    "last_rank": 21,
+    "hot_val": 748085,
+    "platform": "头条热榜"
+  },
+  "dc2826612336": {
+    "title": "小雪节气来临 两类人要格外当心",
+    "first_seen_ts": 1795265170,
+    "last_rank": 11,
+    "hot_val": 676895,
+    "platform": "头条热榜"
+  },
+  "e8170811a461": {
+    "title": "扁桃体反复发炎该不该割",
+    "first_seen_ts": 1795265170,
+    "last_rank": 23,
+    "hot_val": 612480,
+    "platform": "头条热榜"
+  },
+  "e9971f9ad609": {
+    "title": "普京对乌克兰军人喊话",
+    "first_seen_ts": 1795265170,
+    "last_rank": 24,
+    "hot_val": 554195,
+    "platform": "头条热榜"
+  },
+  "cb554c96484d": {
+    "title": "我们应该如何报道深圳",
+    "first_seen_ts": 1795265170,
+    "last_rank": 26,
+    "hot_val": 453736,
+    "platform": "头条热榜"
+  },
+  "f989c33e0074": {
+    "title": "河南培育钻石1克拉千元",
+    "first_seen_ts": 1795265170,
+    "last_rank": 27,
+    "hot_val": 410557,
+    "platform": "头条热榜"
+  },
+  "3bf796dd03d7": {
+    "title": "还40年房贷和租40年房怎么选",
+    "first_seen_ts": 1795265170,
+    "last_rank": 4,
+    "hot_val": 845083,
+    "platform": "头条热榜"
+  },
+  "ffbf7f2a7d0d": {
+    "title": "美再度收紧中国芯片海外代工有何影响",
+    "first_seen_ts": 1795265170,
+    "last_rank": 30,
+    "hot_val": 304148,
+    "platform": "头条热榜"
+  },
+  "a0b9ac5507ba": {
+    "title": "看五十年的中国就来深圳",
+    "first_seen_ts": 1795291808,
+    "last_rank": 1,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "7a15d5837650": {
+    "title": "羽绒服生意变天了",
+    "first_seen_ts": 1795291808,
+    "last_rank": 2,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "42b56005247f": {
+    "title": "多家银行发债按下“暂停键”",
+    "first_seen_ts": 1795291808,
+    "last_rank": 3,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "b596971afd85": {
+    "title": "青海地震 附近居民：感觉房子在晃",
+    "first_seen_ts": 1795291808,
+    "last_rank": 7,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "4ab5a7c5248b": {
+    "title": "《两京十五日》成毅演技",
+    "first_seen_ts": 1795291808,
+    "last_rank": 8,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "72857ac8ab41": {
+    "title": "念数字被录人脸背上贷款",
+    "first_seen_ts": 1795291808,
+    "last_rank": 9,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "cdd44cefbd17": {
+    "title": "王祖蓝46岁已经用上老花镜了",
+    "first_seen_ts": 1795291808,
+    "last_rank": 10,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "2c8f4f711076": {
+    "title": "曝窦唯四婚四娃",
+    "first_seen_ts": 1795291808,
+    "last_rank": 13,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "3bd6a0f4fb13": {
+    "title": "女生刷到“另一个自己”鉴定是亲姐妹",
+    "first_seen_ts": 1795291808,
+    "last_rank": 14,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "ba028da02aea": {
+    "title": "最高检：对性侵害未成年人零容忍",
+    "first_seen_ts": 1795291808,
+    "last_rank": 15,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "75056ab5528a": {
+    "title": "80后小伙放弃高薪工作到大凉山支教",
+    "first_seen_ts": 1795291808,
+    "last_rank": 18,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "d88b2fb4b3d2": {
+    "title": "老外们在华强北疯狂下单",
+    "first_seen_ts": 1795291808,
+    "last_rank": 19,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "7cebccc67b79": {
+    "title": "为降AI疑似率把论文改到小学作文水平",
+    "first_seen_ts": 1795291808,
+    "last_rank": 20,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "1425ec2cb6fa": {
+    "title": "红果短剧使用时长超抖音",
+    "first_seen_ts": 1795291808,
+    "last_rank": 22,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "d23194627682": {
+    "title": "《爱笑的天使》和李嫣荡秋千的男孩近况",
+    "first_seen_ts": 1795291808,
+    "last_rank": 23,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "e0204fbf708d": {
+    "title": "买冲锋衣值得为“无氟”多花钱吗",
+    "first_seen_ts": 1795291808,
+    "last_rank": 25,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "4976677d4b1f": {
+    "title": "韩国查实高考作弊举报一次奖1亿韩元",
+    "first_seen_ts": 1795291808,
+    "last_rank": 26,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "5c22f7d1438e": {
+    "title": "彭昱畅被AI融脸",
+    "first_seen_ts": 1795291808,
+    "last_rank": 27,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "514b6c8e9309": {
+    "title": "美国人为什么开始反对AI了",
+    "first_seen_ts": 1795291808,
+    "last_rank": 1,
+    "hot_val": 1140743,
+    "platform": "头条热榜"
+  },
+  "807d8da97e0c": {
+    "title": "演员张国强为何突然霸屏",
+    "first_seen_ts": 1795291808,
+    "last_rank": 21,
+    "hot_val": 691895,
+    "platform": "头条热榜"
+  },
+  "b64d26f06904": {
+    "title": "决定长寿的3件关键事是什么",
+    "first_seen_ts": 1795291808,
+    "last_rank": 8,
+    "hot_val": 566476,
+    "platform": "头条热榜"
+  },
+  "4efc3ffec1da": {
+    "title": "老人娶小35岁女子 三次起诉家人",
+    "first_seen_ts": 1795291808,
+    "last_rank": 10,
+    "hot_val": 463791,
+    "platform": "头条热榜"
+  },
+  "820b3e8e93f7": {
+    "title": "这些“神仙岗位”都是假的",
+    "first_seen_ts": 1795291808,
+    "last_rank": 12,
+    "hot_val": 379720,
+    "platform": "头条热榜"
+  },
+  "a3ad05a5e396": {
+    "title": "血压在这一区间的人要尽早干预",
+    "first_seen_ts": 1795291808,
+    "last_rank": 15,
+    "hot_val": 281303,
+    "platform": "头条热榜"
+  },
+  "37daf84dff28": {
+    "title": "鲁比奥会参选下届美国总统吗",
+    "first_seen_ts": 1795291808,
+    "last_rank": 17,
+    "hot_val": 230312,
+    "platform": "头条热榜"
+  },
+  "a701eb6c950c": {
+    "title": "杨天真晒零下十度雪地泳装照",
+    "first_seen_ts": 1795291808,
+    "last_rank": 24,
+    "hot_val": 154382,
+    "platform": "头条热榜"
+  },
+  "48f740eac3cc": {
+    "title": "国标麻将榜一大姐1年打了20多场比赛",
+    "first_seen_ts": 1795291808,
+    "last_rank": 22,
+    "hot_val": 139691,
+    "platform": "头条热榜"
+  },
+  "60fb8f1b7589": {
+    "title": "越南急着向中国取经的根源是什么",
+    "first_seen_ts": 1795291808,
+    "last_rank": 23,
+    "hot_val": 126397,
+    "platform": "头条热榜"
+  },
+  "1cc3ebb04eed": {
+    "title": "特朗普在深圳跳了YMCA",
+    "first_seen_ts": 1795291808,
+    "last_rank": 26,
+    "hot_val": 93637,
+    "platform": "头条热榜"
+  },
+  "2728eb7c1171": {
+    "title": "特朗普一句话搅乱硅谷AI企业出海生意",
+    "first_seen_ts": 1795291808,
+    "last_rank": 27,
+    "hot_val": 84727,
+    "platform": "头条热榜"
+  },
+  "e7460ba4f137": {
+    "title": "伊朗称击中一架F-16战机",
+    "first_seen_ts": 1795291808,
+    "last_rank": 28,
+    "hot_val": 76664,
+    "platform": "头条热榜"
+  },
+  "3ee221f4036d": {
+    "title": "外国人眼里的深圳长什么样",
+    "first_seen_ts": 1795291808,
+    "last_rank": 29,
+    "hot_val": 69368,
+    "platform": "头条热榜"
+  },
+  "6ad43f21b817": {
+    "title": "高市的粉丝外交为何拍到钢板上",
+    "first_seen_ts": 1795291808,
+    "last_rank": 30,
+    "hot_val": 62767,
+    "platform": "头条热榜"
+  },
+  "1209bad174f8": {
+    "title": "为推动亚太合作行稳致远指明方向",
+    "first_seen_ts": 1795317109,
+    "last_rank": 1,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "b823c70b4128": {
+    "title": "金价跌势凌厉 多家银行发紧急提示",
+    "first_seen_ts": 1795317109,
+    "last_rank": 2,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "a422c4253b79": {
+    "title": "“不知道她没满14岁”不能成挡箭牌",
+    "first_seen_ts": 1795317109,
+    "last_rank": 3,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "88437fdfebcb": {
+    "title": "APEC“中国年”留下这些珍贵瞬间",
+    "first_seen_ts": 1795317109,
+    "last_rank": 4,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "e9813473ad32": {
+    "title": "山东有村子推行去世到安葬不超24小时",
+    "first_seen_ts": 1795317109,
+    "last_rank": 5,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "69e92e50f939": {
+    "title": "墨西哥大毒枭“矮子伊西德罗”被抓",
+    "first_seen_ts": 1795317109,
+    "last_rank": 6,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "7722f1e59152": {
+    "title": "特朗普回应深圳乘车时不拉窗帘",
+    "first_seen_ts": 1795317109,
+    "last_rank": 2,
+    "hot_val": 952772,
+    "platform": "百度热搜"
+  },
+  "ddf7fb3e9c99": {
+    "title": "小雪养生 做好这几件事很重要",
+    "first_seen_ts": 1795317109,
+    "last_rank": 8,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "f544a95fe9bf": {
+    "title": "纽约市长踢足球时受重伤",
+    "first_seen_ts": 1795317109,
+    "last_rank": 9,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "565c7bc0faa1": {
+    "title": "斐济雨季无雨 土地裂缝能塞进一只手",
+    "first_seen_ts": 1795317109,
+    "last_rank": 10,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "886b715bce3a": {
+    "title": "全网求接“好莱坞锦鲤”的事业运",
+    "first_seen_ts": 1795317109,
+    "last_rank": 11,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "cee9ef7ad36d": {
+    "title": "多让孩子啃苹果不能替代正畸治疗",
+    "first_seen_ts": 1795317109,
+    "last_rank": 12,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "fb1b88f5aa02": {
+    "title": "机构认证：Claude证明黎曼猜想无误",
+    "first_seen_ts": 1795317109,
+    "last_rank": 13,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "ecaa2f91a1f5": {
+    "title": "邓煜谈AI证明黎曼猜想：25万页不可读",
+    "first_seen_ts": 1795317109,
+    "last_rank": 14,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "1898174614a1": {
+    "title": "金饰克价年内大跌超650元",
+    "first_seen_ts": 1795317109,
+    "last_rank": 15,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "7131a4a527da": {
+    "title": "今日小雪",
+    "first_seen_ts": 1795317109,
+    "last_rank": 1,
+    "hot_val": 1052976,
+    "platform": "百度热搜"
+  },
+  "f3b42d2b0e27": {
+    "title": "余文乐自曝躯体化严重到不能开车",
+    "first_seen_ts": 1795317109,
+    "last_rank": 12,
+    "hot_val": 350505,
+    "platform": "百度热搜"
+  },
+  "8759ccf4a29f": {
+    "title": "央视揭秘网络女主播真实生态",
+    "first_seen_ts": 1795317109,
+    "last_rank": 18,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "80d46ae32d1e": {
+    "title": "3.6亿人次参与！万亿元大市场大爆发",
+    "first_seen_ts": 1795317109,
+    "last_rank": 19,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "b331fedf4838": {
+    "title": "特朗普：将与伊朗达成一项永久性协议",
+    "first_seen_ts": 1795317109,
+    "last_rank": 20,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "e661be295997": {
+    "title": "原价129万一针的药 为啥能进基本医保",
+    "first_seen_ts": 1795317109,
+    "last_rank": 21,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "5fad4408aeff": {
+    "title": "男子强奸女友获刑出狱复合后将其杀害",
+    "first_seen_ts": 1795317109,
+    "last_rank": 22,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "6f5caaa7c2fe": {
+    "title": "月牙泉“胖”回来了",
+    "first_seen_ts": 1795317109,
+    "last_rank": 23,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "08d65c89b898": {
+    "title": "特朗普晒和普京深圳会晤照片",
+    "first_seen_ts": 1795317109,
+    "last_rank": 24,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "32c0164393c8": {
+    "title": "墨西哥总统迷上八段锦！返程时还在练",
+    "first_seen_ts": 1795317109,
+    "last_rank": 25,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "e78e502f19cc": {
+    "title": "林忆莲演唱会一句话没说先唱两小时",
+    "first_seen_ts": 1795317109,
+    "last_rank": 26,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "f96961f42239": {
+    "title": "韩国涉嫌作弊满分考生遗书公开",
+    "first_seen_ts": 1795317109,
+    "last_rank": 27,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "bbd4dc0d743b": {
+    "title": "韩国高考出中国历史题 9成考生答错",
+    "first_seen_ts": 1795317109,
+    "last_rank": 28,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "875d8ce117ba": {
+    "title": "郭晶晶有新身份",
+    "first_seen_ts": 1795317109,
+    "last_rank": 29,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "9eeeb4f69ff8": {
+    "title": "日媒逐帧解析特朗普无视高市：耻辱",
+    "first_seen_ts": 1795317109,
+    "last_rank": 30,
+    "hot_val": 0,
+    "platform": "百度热搜"
+  },
+  "9f794186e9b8": {
+    "title": "重大工程有序推进 助力经济民生发展",
+    "first_seen_ts": 1795317109,
+    "last_rank": 3,
+    "hot_val": 862104,
+    "platform": "头条热榜"
+  },
+  "430659549703": {
+    "title": "女博士卧底6个月当主播仍有心理阴影",
+    "first_seen_ts": 1795317109,
+    "last_rank": 4,
+    "hot_val": 780064,
+    "platform": "头条热榜"
+  },
+  "b75a9680220c": {
+    "title": "特朗普回应普京是朋友",
+    "first_seen_ts": 1795317109,
+    "last_rank": 5,
+    "hot_val": 705831,
+    "platform": "头条热榜"
+  },
+  "54e8f0bd06dc": {
+    "title": "特朗普称将与伊朗达成永久性协议",
+    "first_seen_ts": 1795317109,
+    "last_rank": 6,
+    "hot_val": 638662,
+    "platform": "头条热榜"
+  },
+  "684c92ddeeb7": {
+    "title": "张雪骑机车没上赛道就摔车",
+    "first_seen_ts": 1795317109,
+    "last_rank": 7,
+    "hot_val": 577885,
+    "platform": "头条热榜"
+  },
+  "c52027e61b88": {
+    "title": "波兰称两枚俄导弹击中波领土",
+    "first_seen_ts": 1795317109,
+    "last_rank": 8,
+    "hot_val": 522892,
+    "platform": "头条热榜"
+  },
+  "1238d5240156": {
+    "title": "“空砍群”又迎一位历史第一人",
+    "first_seen_ts": 1795317109,
+    "last_rank": 9,
+    "hot_val": 473132,
+    "platform": "头条热榜"
+  },
+  "08d55e0fe94d": {
+    "title": "山东一地推行一日丧",
+    "first_seen_ts": 1795317109,
+    "last_rank": 10,
+    "hot_val": 428108,
+    "platform": "头条热榜"
+  },
+  "f0c2c5f0700f": {
+    "title": "多啃苹果牙齿能变整齐？假的",
+    "first_seen_ts": 1795317109,
+    "last_rank": 11,
+    "hot_val": 387368,
+    "platform": "头条热榜"
+  },
+  "826d3eaff18e": {
+    "title": "57岁窦唯被曝四婚",
+    "first_seen_ts": 1795317109,
+    "last_rank": 13,
+    "hot_val": 317150,
+    "platform": "头条热榜"
+  },
+  "04cf1daba4e2": {
+    "title": "韩德君遭技术代表马立军呵斥",
+    "first_seen_ts": 1795317109,
+    "last_rank": 14,
+    "hot_val": 286969,
+    "platform": "头条热榜"
+  },
+  "f7dc08d7892e": {
+    "title": "男演员角色适配度有多重要",
+    "first_seen_ts": 1795317109,
+    "last_rank": 15,
+    "hot_val": 259660,
+    "platform": "头条热榜"
+  },
+  "0d690b7d422e": {
+    "title": "张水华黄石马拉松破PB夺冠",
+    "first_seen_ts": 1795317109,
+    "last_rank": 16,
+    "hot_val": 234950,
+    "platform": "头条热榜"
+  },
+  "a4f278c1eb4d": {
+    "title": "记者直击克里米亚大桥连续遭袭",
+    "first_seen_ts": 1795317109,
+    "last_rank": 17,
+    "hot_val": 212592,
+    "platform": "头条热榜"
+  },
+  "749c3637258e": {
+    "title": "特朗普：中国的活力令人惊叹",
+    "first_seen_ts": 1795317109,
+    "last_rank": 18,
+    "hot_val": 192361,
+    "platform": "头条热榜"
+  },
+  "2cc2310a3a15": {
+    "title": "多国领导人接连感谢中国点赞深圳",
+    "first_seen_ts": 1795317109,
+    "last_rank": 19,
+    "hot_val": 174055,
+    "platform": "头条热榜"
+  },
+  "de3eeb15150e": {
+    "title": "《两京十五日》口碑两极分化",
+    "first_seen_ts": 1795317109,
+    "last_rank": 20,
+    "hot_val": 157492,
+    "platform": "头条热榜"
+  },
+  "bf5c3ba23703": {
+    "title": "特朗普施压停战泽连斯基急了",
+    "first_seen_ts": 1795317109,
+    "last_rank": 22,
+    "hot_val": 128943,
+    "platform": "头条热榜"
+  },
+  "0b9a134e1fcd": {
+    "title": "江南人如何过小雪",
+    "first_seen_ts": 1795317109,
+    "last_rank": 23,
+    "hot_val": 116673,
+    "platform": "头条热榜"
+  },
+  "89930d275457": {
+    "title": "墨西哥总统迷上八段锦",
+    "first_seen_ts": 1795317109,
+    "last_rank": 25,
+    "hot_val": 95523,
+    "platform": "头条热榜"
+  },
+  "e8a01648c19e": {
+    "title": "墨西哥抓获大毒枭矮子伊西德罗",
+    "first_seen_ts": 1795317109,
+    "last_rank": 26,
+    "hot_val": 86433,
+    "platform": "头条热榜"
+  },
+  "69eba429e3e0": {
+    "title": "西甲积分榜",
+    "first_seen_ts": 1795317109,
+    "last_rank": 27,
+    "hot_val": 78208,
+    "platform": "头条热榜"
+  },
+  "1b0470ee00ae": {
+    "title": "神二十三乘组的太空“迎新清单”",
+    "first_seen_ts": 1795317109,
+    "last_rank": 28,
+    "hot_val": 70765,
+    "platform": "头条热榜"
+  },
+  "e82b0864e470": {
+    "title": "贝莱德：黄金是AI时代分散投资选择",
+    "first_seen_ts": 1795317109,
+    "last_rank": 29,
+    "hot_val": 64031,
+    "platform": "头条热榜"
+  },
+  "2c0c4b3355b0": {
+    "title": "名嘴谈詹姆斯本赛季三分球命中率低",
+    "first_seen_ts": 1795317109,
+    "last_rank": 30,
+    "hot_val": 57938,
     "platform": "头条热榜"
   }
 }
