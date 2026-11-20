@@ -1,6 +1,7 @@
 import json
 import os
 import re
+import time
 import hashlib
 from datetime import datetime, timezone, timedelta
 from email.utils import parsedate_to_datetime
@@ -15,7 +16,7 @@ st.set_page_config(
 
 TZ_UTC8 = timezone(timedelta(hours=8))
 
-# ================= 1. 7 大门类母子联动架构配置 =================
+# ================= 1. 7 大深度门类母子联动架构配置（保持原样） =================
 TOPIC_SCHEMA = {
     "AI与硬科技": {
         "icon": "🤖",
@@ -73,8 +74,10 @@ TOPIC_SCHEMA = {
 }
 
 DATA_FILE = "high_quality_news.json"
+TRENDING_FILE = "trending_news.json"
 STATUS_FILE = "status.json"
 PAGE_SIZE = 25
+ACTIVE_SURGE_HOURS = 3.5  # 入库 3.5 小时内归入上层“🔥 正在极速飙升”，之后顺移至下层“📌 过去 48 小时热点回溯”
 
 
 # ================= 2. 辅助工具函数 =================
@@ -96,6 +99,15 @@ def to_utc8_str(raw_str):
         except Exception:
             pass
     return s
+
+
+def format_hours_ago(erupted_ts, now_ts):
+    diff_sec = max(0, now_ts - int(erupted_ts))
+    hours = diff_sec / 3600.0
+    if hours < 1.0:
+        mins = max(1, int(diff_sec / 60))
+        return f"{mins}分钟前爆发"
+    return f"{int(hours)}小时前爆发"
 
 
 def make_unique_expander_label(base_label, unique_seed):
@@ -177,6 +189,22 @@ def load_news():
         return []
 
 
+def load_trending():
+    if not os.path.exists(TRENDING_FILE):
+        return []
+    try:
+        with open(TRENDING_FILE, "r", encoding="utf-8") as f:
+            now_ts = int(time.time())
+            data = json.load(f)
+            # 前端同步确保只展示 48 小时内的有效热点
+            return [
+                item for item in data
+                if (now_ts - int(item.get("first_erupted_ts", now_ts))) <= 48 * 3600
+            ]
+    except Exception:
+        return []
+
+
 def load_status():
     if not os.path.exists(STATUS_FILE):
         return None
@@ -187,21 +215,18 @@ def load_status():
         return None
 
 
-# ================= 3. 响应式 CSS（修复右侧顶部方框被顶栏遮挡问题） =================
+# ================= 3. 响应式 CSS =================
 st.markdown("""
 <style>
-/* 右侧主阅读区：预留 4.2rem 顶部安全间距，彻底避开 Streamlit 顶部固定栏遮挡 */
 .block-container,
 div[data-testid="stAppViewBlockContainer"] {
     padding-top: 4.2rem !important;
     padding-bottom: 2rem !important;
 }
-/* 左侧边栏：保持紧凑顶部间距 */
 section[data-testid="stSidebar"] .block-container {
     padding-top: 1.2rem !important;
     padding-bottom: 1.5rem !important;
 }
-/* 按钮方框通用样式 */
 div.stButton > button {
     height: 40px !important;
     padding: 0px 10px !important;
@@ -212,7 +237,6 @@ div.stButton > button {
 section[data-testid="stSidebar"] div.stButton > button {
     margin-bottom: 2px !important;
 }
-/* 未选中态：微光边框 */
 div.stButton > button[kind="secondary"] {
     border: 1px solid rgba(250, 250, 250, 0.15) !important;
     background-color: rgba(255, 255, 255, 0.02) !important;
@@ -221,7 +245,6 @@ div.stButton > button[kind="secondary"]:hover {
     border-color: rgba(255, 75, 75, 0.6) !important;
     background-color: rgba(255, 75, 75, 0.06) !important;
 }
-/* 选中态：高亮红框 */
 div.stButton > button[kind="primary"] {
     border: 1.5px solid #ff4b4b !important;
     background-color: rgba(255, 75, 75, 0.16) !important;
@@ -230,7 +253,6 @@ div.stButton > button[kind="primary"] {
     box-shadow: 0 0 10px rgba(255, 75, 75, 0.22) !important;
 }
 
-/* 📱 手机端（屏幕宽度 <= 640px）右侧子方框保持每行 2~3 个流式并排，且顶部不被遮挡 */
 @media (max-width: 640px) {
     .block-container,
     div[data-testid="stAppViewBlockContainer"] {
@@ -260,6 +282,7 @@ div.stButton > button[kind="primary"] {
 """, unsafe_allow_html=True)
 
 news_list = load_news()
+trending_list = load_trending()
 status_info = load_status()
 
 if "active_topic" not in st.session_state:
@@ -269,10 +292,27 @@ if "selected_subs" not in st.session_state:
 if "display_limit" not in st.session_state:
     st.session_state.display_limit = PAGE_SIZE
 
-# ================= 4. 左侧固定导航栏 =================
+# ================= 4. 左侧固定导航栏（置顶独立“🔥 热点风向标” + 原有 7 大深度门类） =================
 with st.sidebar:
     st.markdown("### 📡 硬核新闻监控")
 
+    # 独立置顶雷达：热点风向标（不混入全站总览）
+    is_trending_active = (st.session_state.active_topic == "热点风向标")
+    if st.button(
+        f"🔥 热点风向标 ({len(trending_list)})",
+        key="sidebar_ch_trending",
+        type="primary" if is_trending_active else "secondary",
+        use_container_width=True
+    ):
+        st.session_state.active_topic = "热点风向标"
+        st.session_state.selected_subs = set()
+        st.session_state.display_limit = PAGE_SIZE
+        st.rerun()
+
+    st.caption("↑ 全网关注度极速飙升雷达 (48h代谢)")
+    st.divider()
+
+    # 原有 7 大深度门类 + 全站总览（仅汇总7大深度门类，保持纯粹）
     channel_options = list(TOPIC_SCHEMA.keys()) + ["全站总览"]
     for ch_name in channel_options:
         if ch_name == "全站总览":
@@ -297,8 +337,8 @@ with st.sidebar:
 
     st.divider()
 
-    min_score = st.slider("🎯 最低评分门槛", min_value=8.5, max_value=10.0, value=8.5, step=0.1)
-    search_kw = st.text_input("🔍 关键词检索", value="", placeholder="搜公司、技术、作品、数据...")
+    min_score = st.slider("🎯 最低评分门槛 (深度门类)", min_value=8.5, max_value=10.0, value=8.5, step=0.1)
+    search_kw = st.text_input("🔍 关键词检索", value="", placeholder="搜公司、技术、作品、事件...")
 
     if status_info:
         st.divider()
@@ -312,130 +352,212 @@ with st.sidebar:
             f"🤖 `{status_info.get('model', '')}`"
         )
 
-# ================= 5. 右侧主阅读区：顶部子版块方框 =================
 current_topic = st.session_state.active_topic
 
-if current_topic == "全站总览":
-    topic_news = news_list
-    has_sub_boxes = False
-else:
-    topic_news = [n for n in news_list if n.get("topic") == current_topic]
-    current_subs_dict = TOPIC_SCHEMA[current_topic].get("subs", {})
-    has_sub_boxes = bool(current_subs_dict)
 
-if has_sub_boxes:
-    sub_keys = list(current_subs_dict.keys())
-    MAX_COLS_PER_ROW = 5
+# ================= 5. 分支视图 A：当选中【🔥 热点风向标】时，采用“上下两层”独立呈现 =================
+def render_trending_card(item, layer_tag, now_ts, view_key):
+    pub_time_utc8 = to_utc8_str(item.get("pub_date", ""))
+    score_val = item.get("score", 8.5)
+    vel_badge = item.get("velocity_badge", "🚀 热度飙升")
+    res_badge = item.get("resonance_badge", "📡 多方聚焦")
+    region_tag = item.get("region_tag", "国内热点")
+    erupted_ts = item.get("first_erupted_ts", now_ts)
+    ago_str = format_hours_ago(erupted_ts, now_ts)
 
-    box_items = [{
-        "key": "__ALL__",
-        "title": f"📦 全部 · {len(topic_news)}",
-        "is_active": (len(st.session_state.selected_subs) == 0)
-    }]
+    with st.container(border=True):
+        c_title, c_score = st.columns([5, 1])
+        with c_title:
+            st.markdown(f"### [{item['title']}]({item['url']})")
+            st.caption(
+                f"`{vel_badge}`  `{res_badge}`  `{region_tag} · {ago_str}` 　|　 "
+                f"📰 {item.get('source', '主流媒体')} 　|　 "
+                f"🕒 {pub_time_utc8}"
+            )
+        with c_score:
+            st.metric(label="飙升热度分", value=f"{score_val} / 10")
 
-    for sk in sub_keys:
-        info = current_subs_dict[sk]
-        cnt = sum(1 for n in topic_news if n.get("sub_topic") == sk)
-        box_items.append({
-            "key": sk,
-            "title": f"{info['icon']} {sk} · {cnt}",
-            "is_active": (sk in st.session_state.selected_subs)
-        })
-
-    for row_start in range(0, len(box_items), MAX_COLS_PER_ROW):
-        row_slice = box_items[row_start : row_start + MAX_COLS_PER_ROW]
-        cols = st.columns(MAX_COLS_PER_ROW)
-        for idx, box in enumerate(row_slice):
-            with cols[idx]:
-                if st.button(
-                    box["title"],
-                    key=f"box_{current_topic}_{box['key']}",
-                    type="primary" if box["is_active"] else "secondary",
-                    use_container_width=True
-                ):
-                    if box["key"] == "__ALL__":
-                        st.session_state.selected_subs = set()
-                    else:
-                        if box["key"] in st.session_state.selected_subs:
-                            st.session_state.selected_subs.remove(box["key"])
-                        else:
-                            st.session_state.selected_subs.add(box["key"])
-                        if len(st.session_state.selected_subs) == len(sub_keys):
-                            st.session_state.selected_subs = set()
-                    st.session_state.display_limit = PAGE_SIZE
-                    st.rerun()
-
-# ================= 6. 右侧新闻列表过滤与卡片渲染 =================
-active_subs = st.session_state.selected_subs
-filtered = [
-    n for n in topic_news
-    if (not has_sub_boxes or len(active_subs) == 0 or n.get("sub_topic") in active_subs)
-    and float(n.get("score", 0)) >= min_score
-    and (not search_kw or search_kw.lower() in (
-        n.get("title", "") + n.get("snippet", "") + n.get("key_quotes", "") + n.get("reason", "")
-    ).lower())
-]
-
-if current_topic == "全站总览":
-    filter_tag_str = "🌐 **全站总览**"
-elif not has_sub_boxes:
-    filter_tag_str = f"{TOPIC_SCHEMA[current_topic]['icon']} **{current_topic}**"
-elif len(active_subs) == 0:
-    filter_tag_str = f"{TOPIC_SCHEMA[current_topic]['icon']} **{current_topic} › 📦 全部精选**"
-else:
-    sub_str = " + ".join([f"**{TOPIC_SCHEMA[current_topic]['subs'][s]['icon']} {s}**" for s in TOPIC_SCHEMA[current_topic]['subs'] if s in active_subs])
-    filter_tag_str = f"{TOPIC_SCHEMA[current_topic]['icon']} **{current_topic}** › {sub_str}"
-
-st.caption(f"当前视图：{filter_tag_str} 　|　 共匹配 **{len(filtered)}** 篇硬核报道")
-
-if not filtered:
-    st.info(f"当前筛选条件（{filter_tag_str}）下暂无符合条件的文章。")
-else:
-    visible_items = filtered[:st.session_state.display_limit]
-    view_state_key = f"{current_topic}_{','.join(sorted(list(active_subs)))}_{min_score}_{search_kw}"
-
-    for item in visible_items:
-        t_name = item.get("topic", "AI与硬科技")
-        t_schema = TOPIC_SCHEMA.get(t_name, TOPIC_SCHEMA["AI与硬科技"])
-        sub_name = item.get("sub_topic", "")
-        pub_time_utc8 = to_utc8_str(item.get("pub_date", ""))
-        score_val = item.get("score", 8.5)
-
-        if t_schema.get("subs") and sub_name in t_schema["subs"]:
-            sub_icon = t_schema["subs"][sub_name]["icon"]
-            path_badge = f"`{t_name} › {sub_icon} {sub_name}`"
+        key_quotes = item.get("key_quotes", "").strip()
+        if key_quotes:
+            st.write(f"**📊 核心原句摘录：** “{key_quotes}”")
         else:
-            path_badge = f"`{t_schema.get('icon', '📡')} {t_name}`"
+            st.write(f"**原文前导：** {item.get('snippet', '')}")
 
-        with st.container(border=True):
-            c_title, c_score = st.columns([5, 1])
-            with c_title:
-                st.markdown(f"### [{item['title']}]({item['url']})")
-                st.caption(
-                    f"`🌟 {score_val}分`  {path_badge} 　|　 "
-                    f"📰 {item.get('source', '未知')} 　|　 "
-                    f"🕒 {pub_time_utc8}"
-                )
-            with c_score:
-                st.metric(label="质量评分", value=f"{score_val} / 10")
+        st.info(f"⚡ **热点风向解读：** {item.get('reason', '')}  *(把关引擎: `{item.get('model', '')}`)*")
 
-            key_quotes = item.get("key_quotes", "").strip()
-            if key_quotes:
-                st.write(f"**📊 核心原句摘录：** “{key_quotes}”")
+        full_body = item.get("body", "").strip()
+        if full_body:
+            unique_seed = f"trending_{item.get('url', '')}_{item.get('title', '')}_{layer_tag}_{view_key}"
+            exp_label = make_unique_expander_label("📖 展开阅读无广告纯净全文", unique_seed)
+            with st.expander(exp_label):
+                st.markdown(full_body.replace("\n", "\n\n"))
+
+
+if current_topic == "热点风向标":
+    now_ts = int(time.time())
+    filtered_trending = [
+        t for t in trending_list
+        if not search_kw or search_kw.lower() in (
+            t.get("title", "") + t.get("hot_keyword", "") + t.get("key_quotes", "") + t.get("reason", "")
+        ).lower()
+    ]
+
+    # 按爆发时间划分为上下两层：近 3.5 小时内为上层“正在极速飙升”，3.5~48 小时为下层“48小时热点回溯”
+    upper_surging = [
+        t for t in filtered_trending
+        if (now_ts - int(t.get("first_erupted_ts", now_ts))) <= ACTIVE_SURGE_HOURS * 3600
+    ]
+    lower_recent = [
+        t for t in filtered_trending
+        if (now_ts - int(t.get("first_erupted_ts", now_ts))) > ACTIVE_SURGE_HOURS * 3600
+    ]
+
+    st.caption(
+        f"当前视图：🔥 **热点风向标（混合双擎：平台热榜 1h 飙升斜率 + 国内外权威华文媒体短时共振）** 　|　 "
+        f"48小时有效池共 **{len(filtered_trending)}** 条"
+    )
+
+    if not filtered_trending:
+        st.info("当前暂无热点数据。请前往 GitHub Actions 手动运行一次 `Run workflow`，即可立即采集第一批全网飙升热点！")
+    else:
+        # --- 上层：此刻正在极速飙升 ---
+        st.markdown(f"#### 🔥 正在极速飙升（近 3 小时内新晋爆发 · {len(upper_surging)} 条）")
+        if not upper_surging:
+            st.caption("✨ 近 3 小时暂无新晋突发入库，以下为过去 48 小时已爆发的重点风向：")
+        else:
+            for item in upper_surging:
+                render_trending_card(item, "upper", now_ts, search_kw)
+
+        # --- 下层：过去 48 小时热点回溯 ---
+        if lower_recent:
+            st.divider()
+            st.markdown(f"#### 📌 过去 48 小时热点回溯（已进入平稳期，满 48h 自动代谢 · {len(lower_recent)} 条）")
+            for item in lower_recent:
+                render_trending_card(item, "lower", now_ts, search_kw)
+
+
+# ================= 6. 分支视图 B：原有 7 大深度门类与全站总览（完全保持原有逻辑与体验） =================
+else:
+    if current_topic == "全站总览":
+        topic_news = news_list
+        has_sub_boxes = False
+    else:
+        topic_news = [n for n in news_list if n.get("topic") == current_topic]
+        current_subs_dict = TOPIC_SCHEMA[current_topic].get("subs", {})
+        has_sub_boxes = bool(current_subs_dict)
+
+    if has_sub_boxes:
+        sub_keys = list(current_subs_dict.keys())
+        MAX_COLS_PER_ROW = 5
+
+        box_items = [{
+            "key": "__ALL__",
+            "title": f"📦 全部 · {len(topic_news)}",
+            "is_active": (len(st.session_state.selected_subs) == 0)
+        }]
+
+        for sk in sub_keys:
+            info = current_subs_dict[sk]
+            cnt = sum(1 for n in topic_news if n.get("sub_topic") == sk)
+            box_items.append({
+                "key": sk,
+                "title": f"{info['icon']} {sk} · {cnt}",
+                "is_active": (sk in st.session_state.selected_subs)
+            })
+
+        for row_start in range(0, len(box_items), MAX_COLS_PER_ROW):
+            row_slice = box_items[row_start : row_start + MAX_COLS_PER_ROW]
+            cols = st.columns(MAX_COLS_PER_ROW)
+            for idx, box in enumerate(row_slice):
+                with cols[idx]:
+                    if st.button(
+                        box["title"],
+                        key=f"box_{current_topic}_{box['key']}",
+                        type="primary" if box["is_active"] else "secondary",
+                        use_container_width=True
+                    ):
+                        if box["key"] == "__ALL__":
+                            st.session_state.selected_subs = set()
+                        else:
+                            if box["key"] in st.session_state.selected_subs:
+                                st.session_state.selected_subs.remove(box["key"])
+                            else:
+                                st.session_state.selected_subs.add(box["key"])
+                            if len(st.session_state.selected_subs) == len(sub_keys):
+                                st.session_state.selected_subs = set()
+                        st.session_state.display_limit = PAGE_SIZE
+                        st.rerun()
+
+    active_subs = st.session_state.selected_subs
+    filtered = [
+        n for n in topic_news
+        if (not has_sub_boxes or len(active_subs) == 0 or n.get("sub_topic") in active_subs)
+        and float(n.get("score", 0)) >= min_score
+        and (not search_kw or search_kw.lower() in (
+            n.get("title", "") + n.get("snippet", "") + n.get("key_quotes", "") + n.get("reason", "")
+        ).lower())
+    ]
+
+    if current_topic == "全站总览":
+        filter_tag_str = "🌐 **全站总览**"
+    elif not has_sub_boxes:
+        filter_tag_str = f"{TOPIC_SCHEMA[current_topic]['icon']} **{current_topic}**"
+    elif len(active_subs) == 0:
+        filter_tag_str = f"{TOPIC_SCHEMA[current_topic]['icon']} **{current_topic} › 📦 全部精选**"
+    else:
+        sub_str = " + ".join([f"**{TOPIC_SCHEMA[current_topic]['subs'][s]['icon']} {s}**" for s in TOPIC_SCHEMA[current_topic]['subs'] if s in active_subs])
+        filter_tag_str = f"{TOPIC_SCHEMA[current_topic]['icon']} **{current_topic}** › {sub_str}"
+
+    st.caption(f"当前视图：{filter_tag_str} 　|　 共匹配 **{len(filtered)}** 篇硬核报道")
+
+    if not filtered:
+        st.info(f"当前筛选条件（{filter_tag_str}）下暂无符合条件的文章。")
+    else:
+        visible_items = filtered[:st.session_state.display_limit]
+        view_state_key = f"{current_topic}_{','.join(sorted(list(active_subs)))}_{min_score}_{search_kw}"
+
+        for item in visible_items:
+            t_name = item.get("topic", "AI与硬科技")
+            t_schema = TOPIC_SCHEMA.get(t_name, TOPIC_SCHEMA["AI与硬科技"])
+            sub_name = item.get("sub_topic", "")
+            pub_time_utc8 = to_utc8_str(item.get("pub_date", ""))
+            score_val = item.get("score", 8.5)
+
+            if t_schema.get("subs") and sub_name in t_schema["subs"]:
+                sub_icon = t_schema["subs"][sub_name]["icon"]
+                path_badge = f"`{t_name} › {sub_icon} {sub_name}`"
             else:
-                st.write(f"**原文前导：** {item.get('snippet', '')}")
+                path_badge = f"`{t_schema.get('icon', '📡')} {t_name}`"
 
-            st.success(f"⚖️ **入选依据：** {item.get('reason', '')}  *(评审模型: `{item.get('model', '')}`)*")
+            with st.container(border=True):
+                c_title, c_score = st.columns([5, 1])
+                with c_title:
+                    st.markdown(f"### [{item['title']}]({item['url']})")
+                    st.caption(
+                        f"`🌟 {score_val}分`  {path_badge} 　|　 "
+                        f"📰 {item.get('source', '未知')} 　|　 "
+                        f"🕒 {pub_time_utc8}"
+                    )
+                with c_score:
+                    st.metric(label="质量评分", value=f"{score_val} / 10")
 
-            full_body = item.get("body", "").strip()
-            if full_body:
-                unique_seed = f"{item.get('url', '')}_{item.get('title', '')}_{view_state_key}"
-                exp_label = make_unique_expander_label("📖 展开阅读无广告纯净全文", unique_seed)
-                with st.expander(exp_label):
-                    st.markdown(full_body.replace("\n", "\n\n"))
+                key_quotes = item.get("key_quotes", "").strip()
+                if key_quotes:
+                    st.write(f"**📊 核心原句摘录：** “{key_quotes}”")
+                else:
+                    st.write(f"**原文前导：** {item.get('snippet', '')}")
 
-    if len(filtered) > st.session_state.display_limit:
-        remaining = len(filtered) - st.session_state.display_limit
-        if st.button(f"⏬ 加载更多历史文章（还有 {remaining} 篇）", use_container_width=True):
-            st.session_state.display_limit += PAGE_SIZE
-            st.rerun()
+                st.success(f"⚖️ **入选依据：** {item.get('reason', '')}  *(评审模型: `{item.get('model', '')}`)*")
+
+                full_body = item.get("body", "").strip()
+                if full_body:
+                    unique_seed = f"{item.get('url', '')}_{item.get('title', '')}_{view_state_key}"
+                    exp_label = make_unique_expander_label("📖 展开阅读无广告纯净全文", unique_seed)
+                    with st.expander(exp_label):
+                        st.markdown(full_body.replace("\n", "\n\n"))
+
+        if len(filtered) > st.session_state.display_limit:
+            remaining = len(filtered) - st.session_state.display_limit
+            if st.button(f"⏬ 加载更多历史文章（还有 {remaining} 篇）", use_container_width=True):
+                st.session_state.display_limit += PAGE_SIZE
+                st.rerun()
