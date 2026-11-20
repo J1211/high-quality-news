@@ -77,7 +77,7 @@ DATA_FILE = "high_quality_news.json"
 TRENDING_FILE = "trending_news.json"
 STATUS_FILE = "status.json"
 PAGE_SIZE = 25
-ACTIVE_SURGE_HOURS = 3.5  # 入库 3.5 小时内归入上层“🔥 正在极速飙升”，之后顺移至下层“📌 过去 48 小时热点回溯”
+ACTIVE_SURGE_HOURS = 3.5
 
 
 # ================= 2. 辅助工具函数 =================
@@ -196,7 +196,6 @@ def load_trending():
         with open(TRENDING_FILE, "r", encoding="utf-8") as f:
             now_ts = int(time.time())
             data = json.load(f)
-            # 前端同步确保只展示 48 小时内的有效热点
             return [
                 item for item in data
                 if (now_ts - int(item.get("first_erupted_ts", now_ts))) <= 48 * 3600
@@ -292,11 +291,10 @@ if "selected_subs" not in st.session_state:
 if "display_limit" not in st.session_state:
     st.session_state.display_limit = PAGE_SIZE
 
-# ================= 4. 左侧固定导航栏（置顶独立“🔥 热点风向标” + 原有 7 大深度门类） =================
+# ================= 4. 左侧固定导航栏 =================
 with st.sidebar:
     st.markdown("### 📡 硬核新闻监控")
 
-    # 独立置顶雷达：热点风向标（不混入全站总览）
     is_trending_active = (st.session_state.active_topic == "热点风向标")
     if st.button(
         f"🔥 热点风向标 ({len(trending_list)})",
@@ -312,7 +310,6 @@ with st.sidebar:
     st.caption("↑ 全网关注度极速飙升雷达 (48h代谢)")
     st.divider()
 
-    # 原有 7 大深度门类 + 全站总览（仅汇总7大深度门类，保持纯粹）
     channel_options = list(TOPIC_SCHEMA.keys()) + ["全站总览"]
     for ch_name in channel_options:
         if ch_name == "全站总览":
@@ -355,7 +352,7 @@ with st.sidebar:
 current_topic = st.session_state.active_topic
 
 
-# ================= 5. 分支视图 A：当选中【🔥 热点风向标】时，采用“上下两层”独立呈现 =================
+# ================= 5. 分支视图 A：【🔥 热点风向标】（上下两层均按飙升热度分从高到低排序） =================
 def render_trending_card(item, layer_tag, now_ts, view_key):
     pub_time_utc8 = to_utc8_str(item.get("pub_date", ""))
     score_val = item.get("score", 8.5)
@@ -402,7 +399,6 @@ if current_topic == "热点风向标":
         ).lower()
     ]
 
-    # 按爆发时间划分为上下两层：近 3.5 小时内为上层“正在极速飙升”，3.5~48 小时为下层“48小时热点回溯”
     upper_surging = [
         t for t in filtered_trending
         if (now_ts - int(t.get("first_erupted_ts", now_ts))) <= ACTIVE_SURGE_HOURS * 3600
@@ -412,6 +408,11 @@ if current_topic == "热点风向标":
         if (now_ts - int(t.get("first_erupted_ts", now_ts))) > ACTIVE_SURGE_HOURS * 3600
     ]
 
+    # 上下两层内部均按【飙升热度分】从高到低排序（同分时按爆发时间从新到旧排）
+    trending_sort_key = lambda x: (float(x.get("score", 0)), int(x.get("first_erupted_ts", 0)))
+    upper_surging.sort(key=trending_sort_key, reverse=True)
+    lower_recent.sort(key=trending_sort_key, reverse=True)
+
     st.caption(
         f"当前视图：🔥 **热点风向标（混合双擎：平台热榜 1h 飙升斜率 + 国内外权威华文媒体短时共振）** 　|　 "
         f"48小时有效池共 **{len(filtered_trending)}** 条"
@@ -420,7 +421,6 @@ if current_topic == "热点风向标":
     if not filtered_trending:
         st.info("当前暂无热点数据。请前往 GitHub Actions 手动运行一次 `Run workflow`，即可立即采集第一批全网飙升热点！")
     else:
-        # --- 上层：此刻正在极速飙升 ---
         st.markdown(f"#### 🔥 正在极速飙升（近 3 小时内新晋爆发 · {len(upper_surging)} 条）")
         if not upper_surging:
             st.caption("✨ 近 3 小时暂无新晋突发入库，以下为过去 48 小时已爆发的重点风向：")
@@ -428,7 +428,6 @@ if current_topic == "热点风向标":
             for item in upper_surging:
                 render_trending_card(item, "upper", now_ts, search_kw)
 
-        # --- 下层：过去 48 小时热点回溯 ---
         if lower_recent:
             st.divider()
             st.markdown(f"#### 📌 过去 48 小时热点回溯（已进入平稳期，满 48h 自动代谢 · {len(lower_recent)} 条）")
@@ -436,7 +435,7 @@ if current_topic == "热点风向标":
                 render_trending_card(item, "lower", now_ts, search_kw)
 
 
-# ================= 6. 分支视图 B：原有 7 大深度门类与全站总览（完全保持原有逻辑与体验） =================
+# ================= 6. 分支视图 B：原有 7 大深度门类与全站总览（保留入库时间顺序不变） =================
 else:
     if current_topic == "全站总览":
         topic_news = news_list
