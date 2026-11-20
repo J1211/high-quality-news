@@ -111,6 +111,7 @@ TAIL_BLACKLIST = re.compile(
 )
 
 MODEL_POOL = [
+    {"provider": "gemini", "model": "gemini-4-hydrogen"},
     {"provider": "gemini", "model": "gemini-3.6-flash"},
     {"provider": "groq",   "model": "openai/gpt-oss-120b"},
     {"provider": "groq",   "model": "qwen/qwen3.8-27b"},
