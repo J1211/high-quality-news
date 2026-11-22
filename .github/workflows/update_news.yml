@@ -30,13 +30,14 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
         run: python fetch_and_score.py
 
       - name: 5. 自动提交数据并防止 Git 历史膨胀
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add high_quality_news.json seen_urls.json status.json trending_news.json trending_snapshot.json || true
+          git add high_quality_news.json seen_urls.json status.json trending_news.json trending_snapshot.json gossip_news.json gossip_seen.json || true
           if ! git diff --staged --quiet; then
             LAST_AUTHOR=$(git log -1 --pretty=format:'%an')
             if [ "$LAST_AUTHOR" = "github-actions[bot]" ]; then
