@@ -6,6 +6,7 @@ import hashlib
 from datetime import datetime, timezone, timedelta
 from email.utils import parsedate_to_datetime
 import streamlit as st
+import streamlit.components.v1 as components
 
 st.set_page_config(
     page_title="高信噪比硬核新闻监控",
@@ -75,6 +76,7 @@ TOPIC_SCHEMA = {
 
 DATA_FILE = "high_quality_news.json"
 TRENDING_FILE = "trending_news.json"
+GOSSIP_FILE = "gossip_news.json"
 STATUS_FILE = "status.json"
 PAGE_SIZE = 25
 ACTIVE_SURGE_HOURS = 3.5
@@ -101,13 +103,13 @@ def to_utc8_str(raw_str):
     return s
 
 
-def format_hours_ago(erupted_ts, now_ts):
+def format_hours_ago(erupted_ts, now_ts, suffix="爆发"):
     diff_sec = max(0, now_ts - int(erupted_ts))
     hours = diff_sec / 3600.0
     if hours < 1.0:
         mins = max(1, int(diff_sec / 60))
-        return f"{mins}分钟前爆发"
-    return f"{int(hours)}小时前爆发"
+        return f"{mins}分钟前{suffix}"
+    return f"{int(hours)}小时前{suffix}"
 
 
 def make_unique_expander_label(base_label, unique_seed):
@@ -189,11 +191,11 @@ def load_news():
         return []
 
 
-def load_trending():
-    if not os.path.exists(TRENDING_FILE):
+def load_48h_json(filepath):
+    if not os.path.exists(filepath):
         return []
     try:
-        with open(TRENDING_FILE, "r", encoding="utf-8") as f:
+        with open(filepath, "r", encoding="utf-8") as f:
             now_ts = int(time.time())
             data = json.load(f)
             return [
@@ -281,7 +283,8 @@ div.stButton > button[kind="primary"] {
 """, unsafe_allow_html=True)
 
 news_list = load_news()
-trending_list = load_trending()
+trending_list = load_48h_json(TRENDING_FILE)
+gossip_list = load_48h_json(GOSSIP_FILE)
 status_info = load_status()
 
 if "active_topic" not in st.session_state:
@@ -290,11 +293,26 @@ if "selected_subs" not in st.session_state:
     st.session_state.selected_subs = set()
 if "display_limit" not in st.session_state:
     st.session_state.display_limit = PAGE_SIZE
+if "need_scroll_top" not in st.session_state:
+    st.session_state.need_scroll_top = False
+if "scroll_seq" not in st.session_state:
+    st.session_state.scroll_seq = 0
+
+
+def switch_channel(target_topic):
+    """切换频道时重置子选态、分页并触发自动滚回顶部"""
+    st.session_state.active_topic = target_topic
+    st.session_state.selected_subs = set()
+    st.session_state.display_limit = PAGE_SIZE
+    st.session_state.need_scroll_top = True
+    st.rerun()
+
 
 # ================= 4. 左侧固定导航栏 =================
 with st.sidebar:
     st.markdown("### 📡 硬核新闻监控")
 
+    # 1. 置顶独立雷达：🔥 热点风向标
     is_trending_active = (st.session_state.active_topic == "热点风向标")
     if st.button(
         f"🔥 热点风向标 ({len(trending_list)})",
@@ -302,14 +320,21 @@ with st.sidebar:
         type="primary" if is_trending_active else "secondary",
         use_container_width=True
     ):
-        st.session_state.active_topic = "热点风向标"
-        st.session_state.selected_subs = set()
-        st.session_state.display_limit = PAGE_SIZE
-        st.rerun()
+        switch_channel("热点风向标")
 
-    st.caption("↑ 全网关注度极速飙升雷达 (48h代谢)")
+    # 2. 紧跟热点风向标下方：🍉 全球抓马台（独立 JSON，不混入全站总览）
+    is_gossip_active = (st.session_state.active_topic == "全球抓马台")
+    if st.button(
+        f"🍉 全球抓马台 ({len(gossip_list)})",
+        key="sidebar_ch_gossip",
+        type="primary" if is_gossip_active else "secondary",
+        use_container_width=True
+    ):
+        switch_channel("全球抓马台")
+
     st.divider()
 
+    # 3. 原有 7 大深度门类 + 全站总览
     channel_options = list(TOPIC_SCHEMA.keys()) + ["全站总览"]
     for ch_name in channel_options:
         if ch_name == "全站总览":
@@ -327,10 +352,7 @@ with st.sidebar:
             type="primary" if is_active_ch else "secondary",
             use_container_width=True
         ):
-            st.session_state.active_topic = ch_name
-            st.session_state.selected_subs = set()
-            st.session_state.display_limit = PAGE_SIZE
-            st.rerun()
+            switch_channel(ch_name)
 
     st.divider()
 
@@ -352,7 +374,7 @@ with st.sidebar:
 current_topic = st.session_state.active_topic
 
 
-# ================= 5. 分支视图 A：【🔥 热点风向标】（上下两层均按飙升热度分从高到低排序） =================
+# ================= 5. 分支视图 A：【🔥 热点风向标】 =================
 def render_trending_card(item, layer_tag, now_ts, view_key):
     pub_time_utc8 = to_utc8_str(item.get("pub_date", ""))
     score_val = item.get("score", 8.5)
@@ -360,7 +382,7 @@ def render_trending_card(item, layer_tag, now_ts, view_key):
     res_badge = item.get("resonance_badge", "📡 多方聚焦")
     region_tag = item.get("region_tag", "国内热点")
     erupted_ts = item.get("first_erupted_ts", now_ts)
-    ago_str = format_hours_ago(erupted_ts, now_ts)
+    ago_str = format_hours_ago(erupted_ts, now_ts, suffix="爆发")
 
     with st.container(border=True):
         c_title, c_score = st.columns([5, 1])
@@ -408,7 +430,6 @@ if current_topic == "热点风向标":
         if (now_ts - int(t.get("first_erupted_ts", now_ts))) > ACTIVE_SURGE_HOURS * 3600
     ]
 
-    # 上下两层内部均按【飙升热度分】从高到低排序（同分时按爆发时间从新到旧排）
     trending_sort_key = lambda x: (float(x.get("score", 0)), int(x.get("first_erupted_ts", 0)))
     upper_surging.sort(key=trending_sort_key, reverse=True)
     lower_recent.sort(key=trending_sort_key, reverse=True)
@@ -419,7 +440,7 @@ if current_topic == "热点风向标":
     )
 
     if not filtered_trending:
-        st.info("当前暂无热点数据。请前往 GitHub Actions 手动运行一次 `Run workflow`，即可立即采集第一批全网飙升热点！")
+        st.info("当前暂无热点数据。请前往 GitHub Actions 手动运行一次 `Run workflow` 即可拉取最新热点。")
     else:
         st.markdown(f"#### 🔥 正在极速飙升（近 3 小时内新晋爆发 · {len(upper_surging)} 条）")
         if not upper_surging:
@@ -435,7 +456,70 @@ if current_topic == "热点风向标":
                 render_trending_card(item, "lower", now_ts, search_kw)
 
 
-# ================= 6. 分支视图 B：原有 7 大深度门类与全站总览（保留入库时间顺序不变） =================
+# ================= 6. 分支视图 B：【🍉 全球抓马台】（按 Drama 吸睛分从高到低排列，48h 自动清瓜） =================
+elif current_topic == "全球抓马台":
+    now_ts = int(time.time())
+    filtered_gossip = [
+        g for g in gossip_list
+        if not search_kw or search_kw.lower() in (
+            g.get("title", "") + g.get("orig_title", "") + g.get("drama_summary", "") + g.get("spicy_quote", "")
+        ).lower()
+    ]
+
+    # 按 Drama 吸睛分从高到低排，同分按最新爆出时间排
+    filtered_gossip.sort(
+        key=lambda x: (float(x.get("score", 0)), int(x.get("first_erupted_ts", 0))),
+        reverse=True
+    )
+
+    st.caption(
+        f"当前视图：🍉 **全球抓马台（国内/港台八卦 + TMZ · Page Six · Daily Mail 全球一手瓜，按 Drama 程度排序 · 48h代谢）** 　|　 "
+        f"当前瓜池共 **{len(filtered_gossip)}** 条"
+    )
+
+    if not filtered_gossip:
+        st.info("🍉 全球抓马台刚建好，瓜池暂空！请前往 GitHub Actions 手动点一次 `Run workflow`，立刻收割第一批全球高能大瓜！")
+    else:
+        for item in filtered_gossip:
+            pub_time_utc8 = to_utc8_str(item.get("pub_date", ""))
+            score_val = item.get("score", 8.5)
+            drama_tag = item.get("drama_tag", "🌟 娱乐圈大瓜")
+            origin_hint = item.get("origin_hint", "🍉 全球瓜田")
+            erupted_ts = item.get("first_erupted_ts", now_ts)
+            ago_str = format_hours_ago(erupted_ts, now_ts, suffix="爆出")
+
+            with st.container(border=True):
+                c_title, c_score = st.columns([5, 1])
+                with c_title:
+                    st.markdown(f"### [{item['title']}]({item['url']})")
+                    st.caption(
+                        f"`🍉 {score_val}分`  `{drama_tag}`  `{origin_hint} · {ago_str}` 　|　 "
+                        f"📰 {item.get('source', '八卦源')} 　|　 "
+                        f"🕒 {pub_time_utc8}"
+                    )
+                with c_score:
+                    st.metric(label="Drama 吸睛分", value=f"{score_val} / 10")
+
+                drama_summary = item.get("drama_summary", "").strip()
+                if drama_summary:
+                    st.write(f"**🍉 3秒省流吃瓜：** {drama_summary}")
+
+                spicy_quote = item.get("spicy_quote", "").strip()
+                if spicy_quote:
+                    st.warning(f"🌶️ **炸裂原话/细节：** “{spicy_quote}”  *(吃瓜引擎: `{item.get('model', '')}`)*")
+
+                full_body = item.get("body", "").strip()
+                if full_body:
+                    lang_hint = "（英文一手原稿）" if item.get("lang") == "en" else ""
+                    unique_seed = f"gossip_{item.get('url', '')}_{item.get('title', '')}_{search_kw}"
+                    exp_label = make_unique_expander_label(f"📖 展开看吃瓜原文{lang_hint}", unique_seed)
+                    with st.expander(exp_label):
+                        if item.get("lang") == "en" and item.get("orig_title"):
+                            st.caption(f"**Original Headline:** {item['orig_title']}")
+                        st.markdown(full_body.replace("\n", "\n\n"))
+
+
+# ================= 7. 分支视图 C：原有 7 大深度门类与全站总览（保持原样） =================
 else:
     if current_topic == "全站总览":
         topic_news = news_list
@@ -485,6 +569,7 @@ else:
                             if len(st.session_state.selected_subs) == len(sub_keys):
                                 st.session_state.selected_subs = set()
                         st.session_state.display_limit = PAGE_SIZE
+                        st.session_state.need_scroll_top = True
                         st.rerun()
 
     active_subs = st.session_state.selected_subs
@@ -560,3 +645,30 @@ else:
             if st.button(f"⏬ 加载更多历史文章（还有 {remaining} 篇）", use_container_width=True):
                 st.session_state.display_limit += PAGE_SIZE
                 st.rerun()
+
+# ================= 8. 切换板块/子版块自动滚回顶部脚本（零高度隐形注入） =================
+if st.session_state.need_scroll_top:
+    st.session_state.need_scroll_top = False
+    st.session_state.scroll_seq += 1
+    components.html(
+        f"""
+        <script>
+        // scroll_seq: {st.session_state.scroll_seq}
+        (function() {{
+            const doc = window.parent.document;
+            const selectors = [
+                'section[data-testid="stMain"]',
+                'div[data-testid="stAppViewContainer"]',
+                'section.main',
+                '.main'
+            ];
+            selectors.forEach(function(sel) {{
+                const el = doc.querySelector(sel);
+                if (el) el.scrollTo({{ top: 0, behavior: 'instant' }});
+            }});
+            window.parent.scrollTo(0, 0);
+        }})();
+        </script>
+        """,
+        height=0,
+    )
