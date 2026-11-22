@@ -22,12 +22,19 @@ DATA_FILE = "high_quality_news.json"
 SEEN_FILE = "seen_urls.json"
 STATUS_FILE = "status.json"
 
-# 热点风向标独立存储文件（与原有7大门类完全物理隔离）
+# 热点风向标独立存储文件
 TRENDING_FILE = "trending_news.json"
 TRENDING_SNAPSHOT_FILE = "trending_snapshot.json"
-TRENDING_TTL_SECONDS = 48 * 3600  # 热点 48 小时自动过期代谢
-MAX_TRENDING_SAVED = 35           # 热点库最多保留 35 条
-MAX_TRENDING_CANDIDATES = 8       # 每次巡检最多送审 8 个飙升热点（仅需 1 次 API 调用）
+TRENDING_TTL_SECONDS = 48 * 3600
+MAX_TRENDING_SAVED = 35
+MAX_TRENDING_CANDIDATES = 8
+
+# 全球抓马台独立存储文件（与原有门类、热点风向标完全物理隔离）
+GOSSIP_FILE = "gossip_news.json"
+GOSSIP_SEEN_FILE = "gossip_seen.json"
+GOSSIP_TTL_SECONDS = 48 * 3600
+MAX_GOSSIP_SAVED = 30
+MAX_GOSSIP_CANDIDATES = 8
 
 VALID_SUB_TOPICS = {
     "AI与硬科技": ["算力硬件", "模型应用", "财报资本", "宏观政经"],
@@ -72,14 +79,24 @@ TOPICS = {
     ]
 }
 
-# 梯度1：流派3（国内外权威华文媒体焦点簇与短时突发共振源）
+# 热点风向标媒体焦点源
 TRENDING_MEDIA_FEEDS = [
-    # 国内焦点聚合簇
     ("国内热点", "https://news.google.com/rss?hl=zh-CN&gl=CN&ceid=CN:zh-Hans"),
-    # 国际华文权威媒体焦点簇（新加坡/港台/外媒中文网对全球突发大事的共振报道）
     ("全球风向", "https://news.google.com/rss?hl=zh-CN&gl=SG&ceid=SG:zh-Hans"),
-    # 近 3 小时国内外权威严肃媒体突发快讯共振流
     ("突发共振", "https://news.google.com/rss/search?q=(突发+OR+通报+OR+紧急+OR+最新+OR+回应+OR+调查+OR+宣布)+(路透+OR+彭博+OR+联合早报+OR+澎湃+OR+财新+OR+第一财经+OR+新京报+OR+界面+OR+新华社+OR+央视)+when:3h&hl=zh-CN&gl=CN&ceid=CN:zh-Hans")
+]
+
+# 全球抓马台专属 RSS 源（路径 B：国内奇闻/港台小报 + 全球顶级英文八卦小报直连）
+GOSSIP_CN_FEEDS = [
+    ("国内瓜田", "https://news.google.com/rss/search?q=(曝+OR+实锤+OR+塌房+OR+出轨+OR+离婚+OR+互撕+OR+翻车+OR+豪门+OR+奇葩+OR+狗血+OR+小作文)+when:1d&hl=zh-CN&gl=CN&ceid=CN:zh-Hans"),
+    ("港台/日韩瓜", "https://news.google.com/rss/search?q=(好萊塢+OR+韓星+OR+日媒+OR+豪門+OR+出軌+OR+離婚+OR+翻車+OR+互撕+OR+醜聞+OR+奇葩)+when:1d&hl=zh-TW&gl=TW&ceid=TW:zh-Hant")
+]
+
+GOSSIP_GLOBAL_FEEDS = [
+    ("TMZ", "https://www.tmz.com/rss.xml"),
+    ("Page Six", "https://pagesix.com/feed/"),
+    ("Daily Mail Showbiz", "https://www.dailymail.co.uk/tvshowbiz/index.rss"),
+    ("Daily Mail Weird", "https://www.dailymail.co.uk/news/weird/index.rss")
 ]
 
 VIP_SOURCES = re.compile(
@@ -97,9 +114,13 @@ TITLE_BLACKLIST = re.compile(
     r"书荒|爽文|系统流|无限流|末世囤货|重生|穿越|修仙|完本|免费阅读|最新章节|TXT下载|笔趣阁)"
 )
 
-# 热点风向专用纯八卦过滤黑名单（允许社会民生突发，但剔除纯娱乐明星私生活与网红买榜）
 TRENDING_GOSSIP_BLACKLIST = re.compile(
-    r"(恋情|绯闻|出轨|街拍|红毯|艳压|少女感|冻龄|颜值|撕番|应援|生图|演技炸裂|综艺路透|壁纸|头像|星座运势|带货榜)"
+    r"(恋情|绯闻|出轨|离婚|塌房|互撕|翻车|街拍|红毯|艳压|少女感|冻龄|颜值|撕番|应援|生图|演技炸裂|综艺路透|壁纸|头像|星座运势|带货榜)"
+)
+
+# 全球抓马台仅拦截硬广、赌博与无聊纯穿搭词（彻底解封感叹号与情绪词）
+GOSSIP_AD_BLACKLIST = re.compile(
+    r"(彩票|博彩|代孕|微商|减肥药|星座运势|壁纸|头像|穿搭分享|显瘦指南|买一送一|优惠券|Shop the look|Best deals)"
 )
 
 HEAD_BLACKLIST = re.compile(
@@ -111,7 +132,6 @@ TAIL_BLACKLIST = re.compile(
 )
 
 MODEL_POOL = [
-    {"provider": "gemini", "model": "gemini-4-hydrogen"},
     {"provider": "gemini", "model": "gemini-3.6-flash"},
     {"provider": "groq",   "model": "openai/gpt-oss-120b"},
     {"provider": "groq",   "model": "qwen/qwen3.8-27b"},
@@ -120,7 +140,7 @@ MODEL_POOL = [
     {"provider": "groq",   "model": "openai/gpt-oss-20b"},
 ]
 
-# 7大深度门类 System Prompt（保持原样）
+# 7大深度门类 Prompt
 SYSTEM_PROMPT = """你是一位极其严苛、客观的跨领域总编（覆盖硬科技、宏观金融、国际政经、新能源制造、严肃影视、前沿科学与科幻文学）。请对输入的新闻列表进行独立质量打分（满分10分，支持小数如8.5、9.0），按每篇文章指定的合法选项归类 `sub_topic`，并摘录原文核心原句。
 
 【8.5分高分核心标准】：
@@ -160,7 +180,7 @@ SYSTEM_PROMPT = """你是一位极其严苛、客观的跨领域总编（覆盖�
   ]
 }"""
 
-# 热点风向标专用 Prompt（不限领域，聚焦突发公共价值与飙升风向解读）
+# 热点风向标 Prompt
 TRENDING_SYSTEM_PROMPT = """你是一位敏锐的全网突发热点与公共舆情总编。以下是通过“平台热榜1小时极速飙升算法”与“国内外权威媒体短时密集共振算法”捕捉到的候选热点事件及其配套报道。
 请在不限定领域的前提下（社会民生、突发事故、法治案件、国内外政经突发、商业黑天鹅、科技文体破圈大事均予以收纳），对每个候选热点进行公共价值与真实性把关（满分10分，>= 8.0 分予以收录）。
 
@@ -182,6 +202,40 @@ TRENDING_SYSTEM_PROMPT = """你是一位敏锐的全网突发热点与公共舆�
   ]
 }"""
 
+# 全球抓马台专用 Prompt（按 Drama 戏剧冲突程度打分，并将英文一手瓜翻译成接地气中文吃瓜剧透！）
+GOSSIP_SYSTEM_PROMPT = """你是一位眼光极毒、深谙全球娱乐圈与奇葩社会新闻的“顶级八卦小报主编”。你的唯一任务是从国内及全球英文小报（TMZ、Page Six、Daily Mail 等）的候选文章中，按【Drama（戏剧冲突与狗血猎奇）程度】打分（满分 10 分，>= 8.0 分入选“全球抓马台”）。
+
+【Drama 吸睛分（满分 10 分）四维打分标准】：
+1. 戏剧冲突与狗血烈度（35%）：撕破脸互爆猛料、公开翻车打脸、出轨/婚变/巨额分产大战、豪门宫斗、法庭荒诞互告、人设瞬间塌房。冲突越激烈分越高！
+2. 反转与猎奇离谱度（30%）：情节比电视剧还离谱、充满神反转的全球奇葩社会新闻或名人怪诞行为。
+3. “瓜料”实锤细节度（20%）：正文里有具体细节（聊天记录、小作文原话、荒诞金额或经过），绝不是标题党空壳。
+4. 破圈吸睛度（15%）：涉及知名明星、顶级网红、亿万富豪、王室名流，或极其离谱到让人忍不住转发的普通人奇闻。
+
+【一票否决（打 0.0 ~ 5.0 分淘汰！）】：
+- 【无聊吹捧/日常穿搭（最高 4.0 分）】：某明星穿裙子现身红毯很美、机场街拍、普通电影宣传、毫无冲突的日常晒娃或和平客套声明，毫无 Drama，一律淘汰！
+- 【标题诈骗（打 0.0 分）】：标题写得惊天动地，点进去正文其实啥也没发生或强行辟谣，一律淘汰！
+- 【同瓜去重（打 0.0 分）】：若与《过去48小时已吃大瓜清单》或同批次属同一个瓜且无新反转，打 0.0 分！
+
+【输出字段要求（全部使用生动接地气的简体中文！）】：
+- `cn_title`：若是英文报道（TMZ/Page Six/Daily Mail），请忠实于原意翻译并润色成一个极具吸睛感的中文八卦标题（切勿脱离事实瞎编）；若是中文报道，保留原标题（繁体转简体）。
+- `drama_tag`：严格四选一："🌟 娱乐圈大瓜" | "🌍 欧美日韩瓜" | "🎭 社会奇闻录" | "💣 翻车名场面"
+- `drama_summary`：【3秒省流吃瓜】用最直白、生动、带点吃瓜幽默的简体中文（50~90字），一口气剧透“谁和谁到底发生了什么狗血事”，跳过一切废话铺垫！
+- `spicy_quote`：【最炸裂原话/细节】摘录（英文则意译成传神中文）文中最炸裂、最狗血的一句当事人原话或最离谱的细节（25~75字）。
+
+请严格输出 JSON 格式（不要输出任何多余文字），格式如下：
+{
+  "results": [
+    {
+      "id": 0,
+      "score": 9.3,
+      "cn_title": "吸睛中文标题",
+      "drama_tag": "🌍 欧美日韩瓜",
+      "drama_summary": "3秒省流吃瓜大白话剧透...",
+      "spicy_quote": "最炸裂的一句原话或离谱细节..."
+    }
+  ]
+}"""
+
 
 # ================= 2. 辅助工具函数 =================
 def load_json(filepath, default):
@@ -199,6 +253,11 @@ def save_json(filepath, data):
 
 def make_hash(text):
     return hashlib.md5(text.encode("utf-8")).hexdigest()[:12]
+
+def clean_html_text(raw_html):
+    text = re.sub(r"<[^>]+>", " ", raw_html or "")
+    text = re.sub(r"\s+", " ", text).strip()
+    return text
 
 def fallback_sub_topic(topic, title, snippet, reason):
     valid_list = VALID_SUB_TOPICS.get(topic, ["模型应用"])
@@ -272,13 +331,13 @@ def is_similar_title(new_title, existing_titles, threshold=0.40):
             return True
     return False
 
-def decode_and_extract(gnews_url):
-    real_url = gnews_url
-    if "news.google.com" in gnews_url:
+def decode_and_extract(url):
+    real_url = url
+    if "news.google.com" in url:
         try:
-            res = gnewsdecoder(gnews_url, interval=0.5)
+            res = gnewsdecoder(url, interval=0.5)
             if res.get("status") or res.get("success"):
-                real_url = res.get("decoded_url", gnews_url)
+                real_url = res.get("decoded_url", url)
         except Exception as e:
             print(f"  [解码跳过] {e}")
             return real_url, ""
@@ -324,7 +383,7 @@ def call_llm_raw(system_prompt_text, user_prompt_text):
                 {"role": "system", "content": system_prompt_text},
                 {"role": "user", "content": user_prompt_text}
             ],
-            "temperature": 0.1,
+            "temperature": 0.15,
             "response_format": {"type": "json_object"}
         }
 
@@ -378,9 +437,8 @@ def call_llm_with_fallback(batch_articles, recent_accepted_titles):
     return call_llm_raw(SYSTEM_PROMPT, user_prompt)
 
 
-# ================= 4. 独立模块：【🔥 热点风向标】混合双擎采集与评估流水线 =================
+# ================= 4. 独立模块：【🔥 热点风向标】混合双擎流水线 =================
 def fetch_platform_hotlists():
-    """流派 2：采集百度实时热搜与今日头条热榜公开接口"""
     items = []
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
 
@@ -399,7 +457,6 @@ def fetch_platform_hotlists():
                         continue
                     hot_val = int(re.sub(r"\D", "", str(entry.get("hotScore", "0"))) or 0)
                     tag_code = str(entry.get("hotTag", ""))
-                    # 百度 hotTag: 1=新, 3=热, 4=沸, 5=爆
                     tag_map = {"1": "新", "4": "沸", "5": "爆"}
                     tag = tag_map.get(tag_code, "")
                     items.append({
@@ -437,27 +494,25 @@ def fetch_platform_hotlists():
     return items
 
 
-def find_authoritative_article_for_keyword(keyword):
-    """为热榜飙升词条自动检索并提取一篇正规主流媒体的报道全文"""
+def find_article_for_keyword(keyword, min_len=320, prefer_vip=True):
     q = urllib.parse.quote(keyword)
     rss_url = f"https://news.google.com/rss/search?q={q}+when:1d&hl=zh-CN&gl=CN&ceid=CN:zh-Hans"
     try:
         feed = feedparser.parse(rss_url)
-        sorted_entries = sorted(
-            feed.entries[:8],
-            key=lambda x: 0 if VIP_SOURCES.search(x.get("title", "")) else 1
-        )
-        for entry in sorted_entries[:3]:
+        entries = feed.entries[:8]
+        if prefer_vip:
+            entries = sorted(entries, key=lambda x: 0 if VIP_SOURCES.search(x.get("title", "")) else 1)
+        for entry in entries[:3]:
             raw_title = entry.get("title", "").strip()
             source = "主流媒体"
             title = raw_title
             if " - " in raw_title:
                 parts = raw_title.rsplit(" - ", 1)
                 title, source = parts[0].strip(), parts[1].strip()
-            if SOURCE_BLACKLIST.search(source):
+            if prefer_vip and SOURCE_BLACKLIST.search(source):
                 continue
             real_url, body = decode_and_extract(entry.get("link", ""))
-            if len(body) >= 320:
+            if len(body) >= min_len:
                 return {
                     "title": title,
                     "source": source,
@@ -472,11 +527,10 @@ def find_authoritative_article_for_keyword(keyword):
 
 
 def run_trending_pipeline():
-    """独立运行【🔥 热点风向标】混合双擎流水线（try-except 隔离保护，绝不影响原本7大板块）"""
+    """独立运行【🔥 热点风向标】并返回被拦截的八卦热词供【🍉 全球抓马台】废料回收"""
     print("\n🔥 Step 3: 启动【热点风向标】混合双擎（1h热榜斜率 + 国内外权威媒体共振）...")
     now_ts = int(time.time())
 
-    # 1. 加载并清理超过 48 小时的旧热点（自动新陈代谢）
     saved_trending = load_json(TRENDING_FILE, [])
     active_trending = [
         item for item in saved_trending
@@ -486,7 +540,6 @@ def run_trending_pipeline():
         item.get("hot_keyword", "") for item in active_trending if item.get("hot_keyword")
     ]
 
-    # 2. 加载上一小时热榜快照并清理超过 24 小时的过期快照记录
     snapshot = load_json(TRENDING_SNAPSHOT_FILE, {})
     snapshot = {
         k: v for k, v in snapshot.items()
@@ -494,12 +547,13 @@ def run_trending_pipeline():
     }
 
     surging_pool = []
+    recycled_gossip = []  # 回收被正经热点踢掉的娱乐/抓马热词
 
-    # --- 引擎 B：计算平台热榜 1 小时飙升斜率 ---
     hotlist_items = fetch_platform_hotlists()
     for item in hotlist_items:
         kw = item["title"]
         if TRENDING_GOSSIP_BLACKLIST.search(kw):
+            recycled_gossip.append(item)
             continue
 
         norm_key = make_hash(re.sub(r"\W+", "", kw)[:14])
@@ -512,7 +566,6 @@ def run_trending_pipeline():
         priority = 0
 
         if norm_key not in snapshot:
-            # 首次进入快照账本
             snapshot[norm_key] = {
                 "title": kw,
                 "first_seen_ts": now_ts,
@@ -530,11 +583,9 @@ def run_trending_pipeline():
             prev_rank = int(prev.get("last_rank", rank))
             prev_hot = int(prev.get("hot_val", hot_val))
 
-            # 更新当前排名与热度
             prev["last_rank"] = rank
             prev["hot_val"] = max(hot_val, prev_hot)
 
-            # 在榜超过 6 小时的老话题视为存量退潮期，跳过
             if age_hours > 6.0:
                 continue
 
@@ -554,7 +605,6 @@ def run_trending_pipeline():
         if is_similar_title(kw, existing_trending_titles, threshold=0.45):
             continue
 
-        # 检查是否与池中已有其他平台词条形成“跨榜共振”
         merged = False
         for existing in surging_pool:
             if is_similar_title(kw, [existing["hot_keyword"]], threshold=0.38):
@@ -576,7 +626,6 @@ def run_trending_pipeline():
                 "article": None
             })
 
-    # --- 引擎 A：采集国内外华文权威媒体焦点簇共振（流派 3，梯度 1） ---
     for region_label, feed_url in TRENDING_MEDIA_FEEDS:
         try:
             feed = feedparser.parse(feed_url)
@@ -594,7 +643,6 @@ def run_trending_pipeline():
                 if is_similar_title(title, existing_trending_titles, threshold=0.42):
                     continue
 
-                # 解析 Google News 焦点簇内同时跟进报道该事件的独立媒体名单
                 summary_html = entry.get("summary", "")
                 cluster_outlets = []
                 for m_name in re.findall(r"<font[^>]*>(.*?)</font>", summary_html):
@@ -603,11 +651,9 @@ def run_trending_pipeline():
                         cluster_outlets.append(clean_m)
 
                 media_count = max(len(cluster_outlets), 1)
-                # 焦点簇至少有 3 家媒体同时报道，或来自近3小时权威突发流且命中 VIP 媒体
                 if media_count < 3 and not (region_label == "突发共振" and VIP_SOURCES.search(source)):
                     continue
 
-                # 检查是否与热榜飙升池中的话题形成“热榜+主流媒体”跨界共振
                 merged = False
                 for existing in surging_pool:
                     if is_similar_title(title, [existing["hot_keyword"]], threshold=0.36):
@@ -638,7 +684,6 @@ def run_trending_pipeline():
         except Exception as e:
             print(f"  [媒体焦点簇跳过] {e}")
 
-    # 按爆发优先级排序，取前 MAX_TRENDING_CANDIDATES 个匹配权威正文并送 AI 终审
     surging_pool.sort(key=lambda x: x["priority"], reverse=True)
 
     ready_candidates = []
@@ -658,12 +703,11 @@ def run_trending_pipeline():
                     "snippet": body[:140].replace("\n", " ") + "..."
                 }
         else:
-            art = find_authoritative_article_for_keyword(cand["hot_keyword"])
+            art = find_article_for_keyword(cand["hot_keyword"], min_len=320, prefer_vip=True)
             if art:
                 cand["article"] = art
 
         if cand["article"]:
-            # 再次确保配出的文章标题不与已有库重复
             if not is_similar_title(cand["article"]["title"], existing_trending_titles, threshold=0.42):
                 ready_candidates.append(cand)
                 existing_trending_titles.append(cand["article"]["title"])
@@ -726,13 +770,219 @@ def run_trending_pipeline():
             else:
                 print(f"  🗑️ [热点剔除 {score}分] {c['hot_keyword'][:24]}...")
 
-        print(f"✅ 热点风向标更新完毕：本轮新增 {added_trending} 条飙升热点（当前48h库内共 {len(active_trending[:MAX_TRENDING_SAVED])} 条）。")
+        print(f"✅ 热点风向标更新完毕：本轮新增 {added_trending} 条飙升热点。")
 
     save_json(TRENDING_FILE, active_trending[:MAX_TRENDING_SAVED])
     save_json(TRENDING_SNAPSHOT_FILE, snapshot)
+    return recycled_gossip
 
 
-# ================= 5. 主流水线 =================
+# ================= 5. 独立模块：【🍉 全球抓马台】高能多巴胺八卦流水线（路径 B） =================
+def run_gossip_pipeline(recycled_hot_gossip=None):
+    """独立运行【🍉 全球抓马台】：国内废料回收+港台奇闻 + 欧美英文顶流小报（TMZ/Page Six/Daily Mail）"""
+    now_ts = int(time.time())
+    saved_gossip = load_json(GOSSIP_FILE, [])
+    active_gossip = [
+        item for item in saved_gossip
+        if (now_ts - int(item.get("first_erupted_ts", now_ts))) <= GOSSIP_TTL_SECONDS
+    ]
+
+    # 节能调度：若已有 >= 6 条大瓜，且非手动触发(workflow_dispatch)，仅在偶数小时运行（每天省一半API）
+    is_manual = (os.environ.get("GITHUB_EVENT_NAME") == "workflow_dispatch")
+    current_hour = datetime.now(timezone.utc).hour
+    if len(active_gossip) >= 6 and not is_manual and (current_hour % 2 != 0):
+        print("\n🍉 Step 4: 【全球抓马台】奇数小时节能休眠中（已保留 48h 内现有大瓜）。")
+        save_json(GOSSIP_FILE, active_gossip[:MAX_GOSSIP_SAVED])
+        return
+
+    print("\n🍉 Step 4: 启动【全球抓马台】（国内/港台八卦 + TMZ/Page Six/Daily Mail 全球一手瓜）...")
+    gossip_seen = set(load_json(GOSSIP_SEEN_FILE, []))
+    existing_gossip_titles = [item.get("title", "") for item in active_gossip] + [
+        item.get("orig_title", "") for item in active_gossip if item.get("orig_title")
+    ]
+
+    cn_bucket = []
+    global_bucket = []
+
+    # --- A. 国内池 1：废料回收（从热榜被正经热点踢掉的八卦热词） ---
+    for hot_item in (recycled_hot_gossip or [])[:4]:
+        kw = hot_item["title"]
+        h = make_hash("g_hot_" + re.sub(r"\W+", "", kw)[:14])
+        if h in gossip_seen or GOSSIP_AD_BLACKLIST.search(kw):
+            continue
+        if is_similar_title(kw, existing_gossip_titles, threshold=0.45):
+            continue
+        gossip_seen.add(h)
+        art = find_article_for_keyword(kw, min_len=180, prefer_vip=False)
+        if art:
+            tag_str = f" [{hot_item['tag']}]" if hot_item.get("tag") else ""
+            cn_bucket.append({
+                "orig_title": art["title"],
+                "source": f"{art['source']} ({hot_item['platform']}第{hot_item['rank']}{tag_str})",
+                "url": art["url"],
+                "pub_date": art["pub_date"],
+                "body": art["body"],
+                "lang": "zh",
+                "origin_hint": f"🔥 {hot_item['platform']}第{hot_item['rank']}{tag_str}"
+            })
+
+    # --- B. 国内池 2：国内奇闻与港台娱乐小报 RSS ---
+    for label, rss_url in GOSSIP_CN_FEEDS:
+        try:
+            feed = feedparser.parse(rss_url)
+            for entry in feed.entries[:10]:
+                if len(cn_bucket) >= 5:
+                    break
+                raw_title = entry.get("title", "").strip()
+                if not raw_title or GOSSIP_AD_BLACKLIST.search(raw_title):
+                    continue
+                source = label
+                title = raw_title
+                if " - " in raw_title:
+                    parts = raw_title.rsplit(" - ", 1)
+                    title, source = parts[0].strip(), parts[1].strip()
+
+                h = make_hash("g_cn_" + re.sub(r"\W+", "", title)[:14])
+                if h in gossip_seen or is_similar_title(title, existing_gossip_titles, threshold=0.42):
+                    continue
+
+                real_url, body = decode_and_extract(entry.get("link", ""))
+                gossip_seen.add(h)
+                if len(body) < 180:
+                    continue
+
+                existing_gossip_titles.append(title)
+                cn_bucket.append({
+                    "orig_title": title,
+                    "source": source,
+                    "url": real_url,
+                    "pub_date": entry.get("published", datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M")),
+                    "body": body[:MAX_BODY_CHARS],
+                    "lang": "zh",
+                    "origin_hint": f"🍉 {label}"
+                })
+        except Exception as e:
+            print(f"  [中文瓜源跳过 {label}] {e}")
+
+    # --- C. 海外池（路径 B 核心）：直连全球顶级英文小报 RSS (TMZ / Page Six / Daily Mail) ---
+    for outlet_name, rss_url in GOSSIP_GLOBAL_FEEDS:
+        try:
+            feed = feedparser.parse(rss_url)
+            picked = 0
+            for entry in feed.entries[:8]:
+                if picked >= 2 or len(global_bucket) >= 5:
+                    break
+                title = entry.get("title", "").strip()
+                link = entry.get("link", "").strip()
+                if not title or not link or GOSSIP_AD_BLACKLIST.search(title):
+                    continue
+
+                h = make_hash("g_en_" + re.sub(r"\W+", "", title.lower())[:20])
+                if h in gossip_seen or is_similar_title(title, existing_gossip_titles, threshold=0.45):
+                    continue
+
+                _, body = decode_and_extract(link)
+                gossip_seen.add(h)
+
+                # 若英文小报站点偶发反爬，自动回退读取 RSS 内置正文摘要
+                if len(body) < 180:
+                    fallback_summary = clean_html_text(entry.get("summary", ""))
+                    if len(fallback_summary) >= 120:
+                        body = fallback_summary
+                    else:
+                        continue
+
+                existing_gossip_titles.append(title)
+                global_bucket.append({
+                    "orig_title": title,
+                    "source": outlet_name,
+                    "url": link,
+                    "pub_date": entry.get("published", datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M")),
+                    "body": body[:MAX_BODY_CHARS],
+                    "lang": "en",
+                    "origin_hint": f"🌍 全球一手生瓜 · {outlet_name}"
+                })
+                picked += 1
+        except Exception as e:
+            print(f"  [英文瓜源跳过 {outlet_name}] {e}")
+
+    # 50/50 交替发牌抽样（保证国内大瓜与欧美全球一手大瓜均衡混合，共 8 篇 = 1 次 API 请求）
+    gossip_candidates = []
+    while len(gossip_candidates) < MAX_GOSSIP_CANDIDATES:
+        added = False
+        if global_bucket and len(gossip_candidates) < MAX_GOSSIP_CANDIDATES:
+            gossip_candidates.append(global_bucket.pop(0))
+            added = True
+        if cn_bucket and len(gossip_candidates) < MAX_GOSSIP_CANDIDATES:
+            gossip_candidates.append(cn_bucket.pop(0))
+            added = True
+        if not added:
+            break
+
+    print(f"🍉 全球抓马台共备齐 {len(gossip_candidates)} 篇候选大瓜进入 AI 抓马定级...")
+
+    if gossip_candidates:
+        history_str = "\n".join([f"- {t}" for t in existing_gossip_titles[:25]]) or "无"
+        blocks = []
+        for idx, g in enumerate(gossip_candidates):
+            body = g["body"]
+            sliced = body[:900] + "\n...\n" + body[-250:] if len(body) > 1150 else body
+            blocks.append(
+                f"【候选大瓜 ID: {idx}】\n"
+                f"语言：{'英文原稿(请翻译成吸睛简体中文标题及中文吃瓜剧透)' if g['lang'] == 'en' else '中文原稿'}\n"
+                f"来源：{g['source']}\n"
+                f"原标题：{g['orig_title']}\n"
+                f"正文内容：\n{sliced}\n"
+            )
+        user_prompt = (
+            f"《过去48小时已吃大瓜清单（重复且无新反转请打 0.0 分）》：\n{history_str}\n\n"
+            f"====================\n\n" + "\n====================\n".join(blocks)
+        )
+
+        results, used_model = call_llm_raw(GOSSIP_SYSTEM_PROMPT, user_prompt)
+        res_map = {item.get("id"): item for item in results if isinstance(item, dict)}
+
+        added_gossip = 0
+        for idx, g in enumerate(gossip_candidates):
+            r = res_map.get(idx)
+            if not r:
+                continue
+            score = float(r.get("score", 0))
+            if score >= 8.0:
+                cn_title = (r.get("cn_title") or g["orig_title"]).strip()
+                drama_tag = (r.get("drama_tag") or ("🌍 欧美日韩瓜" if g["lang"] == "en" else "🌟 娱乐圈大瓜")).strip()
+                drama_summary = (r.get("drama_summary") or "").strip()
+                spicy_quote = (r.get("spicy_quote") or "").strip()
+
+                print(f"  🍉 [顶级大瓜! {score}分 | {drama_tag}] {cn_title} ({g['source']})")
+                active_gossip.insert(0, {
+                    "title": cn_title,
+                    "orig_title": g["orig_title"],
+                    "source": g["source"],
+                    "url": g["url"],
+                    "pub_date": g["pub_date"],
+                    "body": g["body"],
+                    "score": score,
+                    "drama_tag": drama_tag,
+                    "origin_hint": g["origin_hint"],
+                    "drama_summary": drama_summary,
+                    "spicy_quote": spicy_quote,
+                    "lang": g["lang"],
+                    "model": used_model,
+                    "first_erupted_ts": now_ts,
+                    "fetched_at": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+                })
+                added_gossip += 1
+            else:
+                print(f"  🗑️ [无聊瓜剔除 {score}分] {g['orig_title'][:28]}...")
+
+        print(f"✅ 全球抓马台更新完毕：本轮新增 {added_gossip} 条高能大瓜。")
+
+    save_json(GOSSIP_FILE, active_gossip[:MAX_GOSSIP_SAVED])
+    save_json(GOSSIP_SEEN_FILE, list(gossip_seen)[-1500:])
+
+
+# ================= 6. 主流水线 =================
 def main():
     seen_ids = set(load_json(SEEN_FILE, []))
     saved_news = load_json(DATA_FILE, [])
@@ -825,7 +1075,6 @@ def main():
                 })
                 feed_count += 1
 
-    # 发牌式跨门类轮询抽样（Round-Robin）
     candidates = []
     while len(candidates) < MAX_ARTICLES_PER_RUN:
         added_any = False
@@ -889,11 +1138,18 @@ def main():
     save_json(DATA_FILE, saved_news)
     save_json(SEEN_FILE, list(seen_ids)[-3500:])
 
-    # 独立运行【热点风向标】流水线（异常隔离保护）
+    # 独立运行【🔥 热点风向标】，并回收被踢出的八卦词条
+    recycled_gossip = []
     try:
-        run_trending_pipeline()
+        recycled_gossip = run_trending_pipeline()
     except Exception as e:
         print(f"⚠️ [热点风向标流水线异常，不影响主板块]: {e}")
+
+    # 独立运行【🍉 全球抓马台】（完全异常隔离，绝不影响主板块与热点风向标）
+    try:
+        run_gossip_pipeline(recycled_gossip)
+    except Exception as e:
+        print(f"⚠️ [全球抓马台流水线异常，不影响主板块]: {e}")
 
     status_data = {
         "last_run_utc": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
